@@ -1,2 +1,4 @@
-# tccENAP
-Projeto para trabalho de conclusão de curso em análise de dados em Políticas Públicas na ENAP
+# Trabalho de Conclusão de Curso
+## Especialização em análise de dados em políticas públicas
+
+Projeto para organizar o desenvolvimento de trabalho de conclusão de curso pela Escola Nacional de Administração Pública (ENAP). 
