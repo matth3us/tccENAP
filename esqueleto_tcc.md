@@ -24,6 +24,11 @@ Explicar como é realizado o Data Wrangling
 
 Explicar como são realizadas as análises e decisões pelo script
 
+- Usar grid do IBGE para decobrir posicionamentos do país em que haja pelo menos um habitante
+- Usar accumulated cost com dados de valocidade levantados em artigo da Nature para decidir, para esses pontos, qual a posto de atendimento mais próximo
+- Fazer votação: para os municípios que tiverem sob a área de influência de mais de um posto de atendimento, "ganha" o município o posto de atendimento que tiver mais 
+  - Para os municípios que tiverem postos de atendimento, o posto sempre atende o município inteiro, para facilitar a análise; considerar relativizar isso no futuro
+
 Escolher algumas unidades de atendimento que possam ser interessantes, seja por si só, seja por comparação
 
 Demonstrar como o modelo criado permite a simulação da extinção de uma unidade de atendimento
