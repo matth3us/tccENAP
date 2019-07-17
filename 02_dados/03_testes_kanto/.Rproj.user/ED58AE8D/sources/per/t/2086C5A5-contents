@@ -1,0 +1,116 @@
+---
+title: "Teste em mapa de Kanto"
+author: "Celso Mattheus Cantanhede Silva"
+date: "10/07/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(raster)
+library(tidyverse)
+library(gdistance)
+library(RColorBrewer)
+```
+
+
+
+# Teste de técnicas de criação de Isocronos em mapa de teste
+
+O objetivo, neste teste, é aplicar técnicas de custo de movimentação em mapas em grade ( _raster maps_ ), para se responder qual a proximidade, a partir de cada ponto da grade, de um local de interesse definido. 
+
+Nesse teste, para se manter lúdico e simples, utilizou-se um mapa em rede gerado a partir de CSV da área de Kanto, do jogo _Pokémon Red_ . O mapa foi definido com o tamanho de cerca de 2km para cada lado dos _pixels_ da grade, e o mapa foi centralizado na coordenada de Tóquio, região real de Kanto, no Japão. 
+
+![](https://i.pinimg.com/originals/4e/02/36/4e0236e5a19286aa0dfeddbe1539d508.jpg)
+
+Os terrenos disponíveis para os jogadores forma classificados e, para cada tipo de terreno, foi definida uma velocidade de travessia, análoga aos terrenos descritos no Malaria World Atlas, utilizado como referência no TCC.
+
+```{r, warning=FALSE}
+
+#Fatores de tipo de terreno
+kanto_info <- read.csv('dataframe_kanto.csv', sep=';', header=F)
+terrain <- data.frame(
+            num_factor = c(0,1,2,3,4,5,6,7),
+            terrain = c('SE','LD','CT','RM','RC','RG','RF','SH'),
+            speed = c(6.5,0.55,5,1.65,15,4.5,3.5,20)
+            )
+kanto_terrain <- kanto_info %>% 
+                mutate(V1 = as.character(V1)) %>% 
+                left_join(., terrain, by=c('V1' = 'terrain')) %>% 
+                dplyr::select(num_factor) %>% 
+                rename(terrain = num_factor) %>% 
+                as.matrix(.)
+dim(kanto_terrain) <- c(17, 20)
+
+#fatores de velocidade
+kanto_speed <- kanto_info %>% 
+  mutate(V1 = as.character(V1)) %>% 
+  left_join(., terrain, by=c('V1' = 'terrain')) %>% 
+  dplyr::select(speed) %>% 
+  as.matrix(.)
+dim(kanto_speed) <- c(17, 20)
+
+#raster de terreno
+kanto <- raster(kanto_speed, 
+                xmn=139.81,
+                xmx=140.18,
+                ymn=34.81,
+                ymx=35.19,
+                crs=CRS("+proj=longlat +datum=WGS84")
+                )
+
+plot(kanto)
+
+```
+
+
+O local de interesse definido foram os chamados _centros pokémon_, únicos locais do jogo em que se pode regenerar os health points, e, como tal, pontos de retorno contínuo dos jogadores.
+
+**A pergunta a ser respondida pela análise então, fica: quais são as regiões dos mapa mais próximas e quais as regiões mais distantes de um _centro pokémon_ qualquer?**
+
+Incluindo-se ao mapa as localizações geográficas dos centros pokémons, podemos utilizar a função _accCost_ para responder essa questão. 
+
+```{r}
+#matriz de transição: custo de velocidade de cada tipo de terreno
+custoMov <- gdistance::transition(kanto, function(x) 1/mean(x), 8)
+custoMov <- gdistance::geoCorrection(custoMov)
+
+#localização dos pokécenters
+grid_centers <- rbind(
+c(3,3),
+c(5,4),
+c(5,16),
+c(8,4),
+c(10,6),
+c(11,14),
+c(13,3),
+c(13,6),
+c(13,10),
+c(17,6))
+
+convCoord <- function(vec){
+  #função para por os centros pokémons nas coordenadas corretas
+  delta_x <- (140.18-139.81)/21
+  delta_y <- (35.19-34.81)/18
+  result <- cbind(vec[,1] * delta_x + 139.81, vec[,2] * delta_y+34.81)
+  return(result)
+}
+
+kanto_centers <- convCoord(grid_centers)
+CostMap <- accCost(custoMov, kanto_centers)
+CostMap <- CostMap/7000
+
+plot(CostMap, col=brewer.pal(n= 9, name='Greens'))
+```
+
+Dessa forma, podemos visualizar, lado a lado, a influência da existência de infraestruras que permitam velocidades maiores na configuração das regiões de mais e menos acesso aos _centros pokémon_ .
+
+```{r}
+par(mfrow=c(1, 2))
+plot(kanto, main='Custo de movimentação de terreno')
+plot(CostMap, main='Isocronos para centros mais próximos', col=brewer.pal(n= 9, name='Greens'))
+```
+
+
+
