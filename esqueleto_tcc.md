@@ -80,40 +80,41 @@ Por fim, há um problema específico a análise do público-alvo de cada uma das
 
 Possuímos as informações da distribuição da população num mapa em grade, mas não possuímos diversos outras estatísticas relacionadas à demografia com esse nível de detalhe; em geral, elas estão registradas no nível municipal. Como tal, podemos calcular a distância dos postos de atendimento a cada um dos pontos do mapa, mas temos que usar essa informação para tomar uma decisão de qual unidade de atendimento atende a cada município. 
 
-Seria mais realista um modelo que pudessemos combinar as informações demográficas dis grupos populacionais mais próximos, independente de divisões municipais. Todavia, esse tipo de levantamento de dados não seria apenas custoso mas também traria diversos riscos à privacidade da população analisada <!-- citar IBGE aqui -->. Como tal, fazemos o registro apenas para reconher o risco, em nossa análise, de enfrentarmos algumas falácias estatísticas, como a falácia ecológica e o problema da unidade de área modificável. 
+Seria mais realista um modelo que pudessemos combinar as informações demográficas dos grupos populacionais mais próximos, independente de divisões municipais. Todavia, esse tipo de levantamento de dados não seria apenas custoso mas também traria diversos riscos à privacidade da população analisada <!-- citar IBGE aqui -->. Como tal, fazemos o registro apenas para reconher o risco, em nossa análise, de enfrentarmos algumas falácias estatísticas, como a falácia ecológica e o problema da unidade de área modificável. 
+
+```R
+# Como os dados foram baixados (Data Scrapping)
+## Relatar de onde os dados foram baixados e dar url do github
+## mostrar posicionamento geográficos das unidades de atendimento da Receita Federal do Brasil
+
+# Demonstração do raster map no Brasil usando dados da Nature e do IBGE
+## mostrar 4 regiões, duas com alto densidade de infraestrutura e 4 com baixa densidade, para mostrar o potencial de diferenças nas classificações
+
+# classificação dos municípios usando vectors (Open Street Map)
+## Usar library do open street map para calcular distância entre cada um dos pontos centrais dos municípios brasileiros e cada uma das unidades disponíveis, encontrando a unidade mais próxima para realizar a classificação
+
+# classificação dos municípios por unidade de atendimento
+## Municípios com unidades de atendimento já tem classificação; os que tem mais de uma unidade de atendimento são agrupados com todas as unidades dentro daquele município
+```
+
+
 
 ## Seção 3 (o que?)
 
 ### Seção 3.1
 
 ```R
-# Como os dados foram baixados (Data Scrapping)
-## mostrar script para download dos dados do IBGE
-## mostrar script para download dos dados da RFB
-## mostrar posicionamento geográficos das unidades de atendimento da Receita Federal do Brasil
+# Análise e simulações dos dados dos municípios, agrupados por unidade de atendimento, com a exclusão e adição de postos de atendimento
+## usar leaflet para gerar de forma interativa
+## tentar usar modelo do Ministério do Planejamento para digitalização de serviços (ou outro modelo melhor) para estimar o custo para a sociedade
+## incluir no Leaflet
 
-# classificação dos municípios usando vectors (Open Street Map)
-## Usar library do open street map para calcular distância entre cada um dos pontos centrais dos municípios brasileiros e cada uma das unidades disponíveis, encontrando a unidade mais próxima para realizar a classificação
-
-# preparação dos dados do raster grid
-## mostrar onde os brasileiros vivem, como na reportagem da Nexo
-
-# preparação da matriz de transição
-## usar dados da Nature
-
-# Cálculo da superfície de custo acumulado (Accumulated Surface Cost)
-## justificar fórmula utilizada
-
-# classificação dos municípios por unidade de atendimento
-## Municípios com unidades de atendimento já tem classificação; os que tem mais de uma unidade de atendimento são agrupados com todas as unidades dentro daquele município
-## Os Municípios que não tem unidade são classificador de acordo com uma "votação" da unidade mais próxima a cada um dos locus habitados do município
-
-# comparação entre raster e vector based
-## identificar municípios que mudaram de classificação
-
-# data mining dos dados do IBGE combinados a partir dos clusters gerados na classificação dos municípios
-
-# simulações com a exclusão e adição de postos de atendimento
+# Seleção dos contribuintes-alvo
+## justificar que os serviços às pessoas jurídicas são mais facilmente digitalizáveis, posto que é quase obrigatório que todos tenham certificados digitais
+## Levantar os serviços disponíveis às pessoas físicas
+## hipótese, a ser confirmada: basicamente serviços de cadastro e de IRPF
+## se confirmado, e posto que serviços de cadastros tem sido terceirizados a outras instituições como o Banco do Brasil e os Correios, selecionar os contribuintes fora dos limites de isenção do IRPF nos municípios, para fazer nova análise
+## Incluir no leaflet a opção de variar o limite de renda da população
 ```
 
 ### Seção 3.2
@@ -122,7 +123,7 @@ Seção para sugerir como inserir o modelo de análise num processo estratégico
 
 - definir, no processo estratégico da organização, qual a população alvo do atendimento físico, para estabelecer parâmetros de otimização
 - realizar acompanhamento formal do modelo, com métricas estabelecidas
-- incluir dados reais de atendimento para fazer cross-validation do modelo e estimar a relevãncia da distância na decisão do atendimento, assim como a distância entre o público ideal (definido estratégicamente) e o público real
+- incluir dados reais de atendimento para fazer cross-validation do modelo e estimar a relevância da distância na decisão do atendimento, assim como a distância entre o público ideal (definido estratégicamente) e o público real
 - revisar dados de infraestrutura de transporte para melhorar a acurácia das informações de movimentação
 
 ## Conclusão
