@@ -138,3 +138,5 @@ Seção para sugerir como inserir o modelo de análise num processo estratégico
 - revisar dados de infraestrutura de transporte para melhorar a acurácia das informações de movimentação
 
 ## Conclusão
+
+## Referências
