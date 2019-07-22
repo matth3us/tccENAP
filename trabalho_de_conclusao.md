@@ -165,7 +165,6 @@ associado àquele tipo de infraestrutura @AF. a movimentação, portanto,
 ocorre entre pontos, de acordo com as linhas disponíveis para cada
 ponto.
 
-<!-- inserir ilustração de modelo vetorial -->
 Os modelos de grade são compostos por uma série de celulas regulares,
 geralmente retangulares, de tamanho e distância padronizados. Cada ponto
 do mapa é resumido em um dos retângulos, e todas as informações
@@ -175,7 +174,10 @@ célula para outra, sempre em entre células adjacentes; assim, diferente
 do modelo em rede, os passos da viagem são sempre regulares em
 distância, variando apenas na velocidade @AF.
 
-<!-- inserir ilustração de modelo de grade -->
+![](https://raw.githubusercontent.com/matth3us/tccENAP/master/04_imagens/figure_12_measuring_geographic_access.png)
+Vemos acima, do artigo @AF, uma conversão entre um mapa em network para
+um mapa em grid. (figure 12 no documento)
+
 Há uma diferença fundamental na forma como esses modelos compreendem o
 espaço.
 
@@ -331,3 +333,6 @@ estratégico completo
 
 Conclusão
 ---------
+
+Referências
+-----------
