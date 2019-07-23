@@ -1,3 +1,15 @@
+-   [Proposta de procedimento geoestatísticos para a gestão estratégica
+    do atendimento presencial da Receita Federal do
+    Brasil](#proposta-de-procedimento-geoestatisticos-para-a-gestao-estrategica-do-atendimento-presencial-da-receita-federal-do-brasil)
+    -   [Introdução](#introducao)
+    -   [Seção 1 (por que?)](#secao-1-por-que)
+    -   [Seção 2 (como?)](#secao-2-como)
+    -   [Seção 3 (o que?)](#secao-3-o-que)
+        -   [Seção 3.1](#secao-3.1)
+        -   [Seção 3.2](#secao-3.2)
+    -   [Conclusão](#conclusao)
+    -   [Referências](#referencias)
+
 Proposta de procedimento geoestatísticos para a gestão estratégica do atendimento presencial da Receita Federal do Brasil
 =========================================================================================================================
 
@@ -286,13 +298,23 @@ unidade de área modificável.
 ##Descrever os dados e variáveis: inicialmente, usar semelhantes ao disponível no cidades.ibge.gov.br
 
 
-# Demonstração do raster map no Brasil usando dados da Nature e do IBGE
+## Levantar variáveis de interesse, comparando (https://www.ibge.gov.br/censo2010/apps/areaponderacao/) com o (cidades.gov.br)
+# Investigar dados de interesse por áreas de ponderação: https://www.ibge.gov.br/censo2010/apps/areaponderacao/
+# Comparar localização das áreas de ponderação na distãncia das unidades de atendimento
+# ver geoBr no github, repositórion com star
+
+
+ Demonstração do raster map no Brasil usando dados da Nature e do IBGE
 ## mostrar 4 regiões, duas com alto densidade de infraestrutura e 4 com baixa densidade, para mostrar o potencial de diferenças nas classificações
 
 # classificação dos municípios usando vectors (Open Street Map)
 ## Usar library do open street map para calcular distância entre cada um dos pontos centrais dos municípios brasileiros e cada uma das unidades disponíveis, encontrando a unidade mais próxima para realizar a classificação
 
-# classificação dos municípios por unidade de atendimento
+### Usar pacote OSRMR (https://cran.r-project.org/web/packages/osrmr/vignettes/osrmr.html) para calcular distância entre cidades e postos de atendimento
+## Usar distância linear quando não houver como calcular a distância utilizando os mapas do Open Street Map
+## Marcar os que precisarem usar distância linear
+
+ classificação dos municípios por unidade de atendimento
 ## Municípios com unidades de atendimento já tem classificação; os que tem mais de uma unidade de atendimento são agrupados com todas as unidades dentro daquele município
 ```
 
