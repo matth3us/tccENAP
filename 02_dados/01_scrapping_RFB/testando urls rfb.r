@@ -1,8 +1,9 @@
 library(RSelenium)
 library(XML)
+library(RCurl)
 library(tidyverse)
 
-#acessar firefox e Selenium instalados em Docker, ativo em servidor local
+#acessar firefox e Selenium instalados num container Docker, ativo em servidor local
 remDr <- remoteDriver(port = 4445L)
 remDr$open()
     
@@ -61,5 +62,16 @@ for(i in 2:length(tbl)){
 
 #problema para corrigir: não está pegando nenhuma informação das imagens das tabelas; como resolver?
 #após resolver esse problema, só vai faltar pegar as urls de todos os tipos de atendimento oferecidos, e depois fazer um data wrangling do output
-  
 
+#Pegar tabelas na raça, usando elementos CSS, scrapping old school
+#Fazer uma lista para todas as tabelas; pra cada tabela um elemento da lista
+#Elementos para extrair:
+#  Nome
+#  Nome popular
+#  Descrição
+#  Público Alvo
+#  Formas de atendimento (imgs)
+
+test <- remDr$findElements(using='css selector', value='td > a > img')
+test[[1]]$getElementAttribute('src')
+test[[1]]$get
