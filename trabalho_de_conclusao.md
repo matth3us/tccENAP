@@ -10,6 +10,13 @@
     -   [Conclusão](#conclusao)
     -   [Referências](#referencias)
 
+<!-- 
+# Informações para edição do documento de acordo com as normas da ENAP
+
+https://bookdown.org/yihui/rmarkdown/pdf-document.html
+https://stackoverflow.com/questions/52118202/change-line-spacing-for-rmd-abstract
+
+-->
 Proposta de procedimento geoestatísticos para a gestão estratégica do atendimento presencial da Receita Federal do Brasil
 =========================================================================================================================
 
@@ -56,10 +63,12 @@ largos; entre 2012 e 2017, o e-Cac, portal de atendimento na internet da
 RFB, passou de 66,6 milhões de atendimentos para 145,6 milhões de
 atendimentos. Enquanto isso, os atendimentos presenciais caíram de 20,2
 milhões para 14,9 milhões no mesmo período, de forma que o percentual
-destes passou de cerca de 24% do total para apenas 9% @gestãoRFB. Mesmo
-assim, 14,9 milhões equivalem a 40.000 cidadãos recebidos nas centenas
-de unidades <!-- 💭 conferir número exato de unidades --> da RFB por dia,
-em todo o país.
+destes passou de cerca de 24% do total para apenas 9% (<span
+class="citeproc-not-found"
+data-reference-id="gestãoRFB">**???**</span>). Mesmo assim, 14,9 milhões
+equivalem a 40.000 cidadãos recebidos nas centenas de unidades
+<!-- 💭 conferir número exato de unidades --> da RFB por dia, em todo o
+país.
 
 Desta realidade surgem os dilemas do gestor. Para suprir essa
 necessidade de simultaneidade física entre os servidores da RFB e o
@@ -75,20 +84,21 @@ numericamente satisfatórias.
 No exemplo do setor de saúde, por exemplo, o problema é exposto da
 seguinte forma: “health care services are provided at a finite number of
 fixed locations, yet they serve populations that are continuously and
-unevenly distributed throughout a region (@AF p. 1)”. Consequência
-natural desse arranjo é que as desigualdades são inevitáveis, mas a
-dimensão dessas é função: do arranjo de distribuições das partes do
-sistemas; da distribuição no espaço da população; e das características
-do espaço, como infraestrutura e relevo, que dificultem ou facilitem a
-movimentação @AF.
+unevenly distributed throughout a region (Delamater et al. 2012, 1)”.
+Consequência natural desse arranjo é que as desigualdades são
+inevitáveis, mas a dimensão dessas é função: do arranjo de distribuições
+das partes do sistemas; da distribuição no espaço da população; e das
+características do espaço, como infraestrutura e relevo, que dificultem
+ou facilitem a movimentação (Delamater et al. 2012).
 
 Ao se analisar a relação entre população e o espaço físico, podemos
 evidenciar o atrito contrário ao acesso a um sevriço de diferentes
 grupos populacionais, identificar áreas de maior limitação no acesso, e,
 assim, “understand the effects of opening, closing, or realocating
-health care facilities (@AF p. 2)”. Desta forma, promove-se a equidade,
-que “(…) manifests itself in the distribution, access to and utilization
-of health services between population groups (@AD p. 917)”.
+health care facilities (Delamater et al. 2012, 2)”. Desta forma,
+promove-se a equidade, que “(…) manifests itself in the distribution,
+access to and utilization of health services between population groups”
+(Noor et al. 2003, 917).
 
 A relevância da distribuição ótima é tanto mais importante quanto mais
 escassos forem os recursos disponíveis. O Brasil enfrenta desde meados
@@ -99,7 +109,7 @@ aplicado na tentativa de debela-la. Neste sentido, o TCU, em auditoria
 operacional realizada na RFB, relata que “além da crise econômica que o
 País vem enfrentando, que impacta a receita fazendária e a
 previdenciária, tem-se constatado a ocorrência de baixa recuperação dos
-créditos trbutários administrados pela RFB” (@AY p. 1).
+créditos trbutários administrados pela RFB” (Contas da União 2017, 1).
 
 Os reflexos internos na Receita Federal do Brasil são o
 contingenciamento de despesas e a consequente paralisação de concursos,
@@ -108,10 +118,10 @@ processo de aceleração no quantitativo de aposentadorias, muitas delas
 influenciadas pelo temor que os anúncios da reforma previdenciária
 inspiram. Vale lembrar que muitos servidores na ativa já alcançaram o
 requisito mínimo para aposentar-se, mas continuam em serviço,
-incentivados pelo chamado abono permanência @AY. Entre 2015 e 2017, a
-RFB perdeu 1.831 servidores, de um total inicial de 23.687, o que
-representa uma diminuição de 7,7% de sua força de trabalho em apenas 3
-anos.
+incentivados pelo chamado abono permanência (Contas da União 2017).
+Entre 2015 e 2017, a RFB perdeu 1.831 servidores, de um total inicial de
+23.687, o que representa uma diminuição de 7,7% de sua força de trabalho
+em apenas 3 anos.
 
 Este enxugamento, pode-se argumentar não seria de todo impactante na
 organização, posto que, com o avançar da digitalização do governo,
@@ -121,7 +131,8 @@ lembra o TCU que “(…) não se pode contar apenas com a evolução dos meios
 de tecnologia da informação, pois os mesmos dependem de fatores exógenos
 como questões orçamentárias, disponibilidade do Serpro para
 desenvolvimento de sistemas e outros que não permitem sua evolução com
-velocidade o suficiente para suprir a nova demanda” (@AY p. 20).
+velocidade o suficiente para suprir a nova demanda” (Contas da União
+2017, 20).
 
 Desta forma, temos todos os fatos em frente aos gestores da Receita
 Federal do Brasil. De um lado, há um quantitativo decrescente de
@@ -156,9 +167,10 @@ disponibilidade e a distância sejam fatores relevantes, não são
 suficientes; o aumento da acessibilidade nem sempre é acompanhado de um
 aumento da utilização dos serviços, e outros fatores devem ser avaliados
 também, como qualidade do serviço oferecido e disponibilidade de canais
-mais convenientes @AZ, como os próprios canais digitais supracitados.
-Que fique claro que a definição de onde dispor unidades de atendimento é
-apenas um passo do objetivo estratégico de atender bem a população.
+mais convenientes (Thaddeus and Maine 1994), como os próprios canais
+digitais supracitados. Que fique claro que a definição de onde dispor
+unidades de atendimento é apenas um passo do objetivo estratégico de
+atender bem a população.
 
 Seção 2 (como?)
 ---------------
@@ -173,9 +185,9 @@ representados por nós; conexões e infraestruturas como ferrovias e
 rodovias são linhas, e regiões são delimitadas por polígonos, nós
 combinados com vértices. Nos modelos vetoriais, o custo para atravessar
 uma linha é função do tamanho da linha e da velocidade de viagem
-associado àquele tipo de infraestrutura @AF. a movimentação, portanto,
-ocorre entre pontos, de acordo com as linhas disponíveis para cada
-ponto.
+associado àquele tipo de infraestrutura (Delamater et al. 2012). a
+movimentação, portanto, ocorre entre pontos, de acordo com as linhas
+disponíveis para cada ponto.
 
 Os modelos de grade são compostos por uma série de celulas regulares,
 geralmente retangulares, de tamanho e distância padronizados. Cada ponto
@@ -184,11 +196,11 @@ relevantes do mapa dentro da região encoberta por aquele retângulo são a
 ele atribuído. No modelo de grade, as viagens ocorrem na passagem de uma
 célula para outra, sempre em entre células adjacentes; assim, diferente
 do modelo em rede, os passos da viagem são sempre regulares em
-distância, variando apenas na velocidade @AF.
+distância, variando apenas na velocidade (Delamater et al. 2012).
 
 ![](https://raw.githubusercontent.com/matth3us/tccENAP/master/04_imagens/figure_12_measuring_geographic_access.png)
-Vemos acima, do artigo @AF, uma conversão entre um mapa em network para
-um mapa em grid. (figure 12 no documento)
+Vemos acima, do artigo (Delamater et al. 2012), uma conversão entre um
+mapa em network para um mapa em grid. (figure 12 no documento)
 
 Há uma diferença fundamental na forma como esses modelos compreendem o
 espaço.
@@ -196,21 +208,21 @@ espaço.
 “The raster data model defines space as a continuous surface where each
 cell within the data extent has a specific location and attribute value.
 The network data model defines space as an empty container that is
-populated only by features having specific locations and attributes.” (
-@AF p. 12)
+populated only by features having specific locations and attributes.”
+(Delamater et al. 2012, 12)
 
 Como todas as localizações do mapa são explicitamente definidadas nos
 modelos de grade, isso torna-os “(…) attractive for creating service
 areas, specially in regions without a all-encompassing transportation
-network (@AF p. 4)”. Todavia, “real-world connectivity is not accounted
-for in the raster data model.” (…) “Therefore, movement is less
-restricted in the raster data model than in the real world and travel
-time estimates will generaly be underestimated” (@AF p. 15). Isso ocorre
-porque o modelo considera que todos os pontos do mapa são atravessáveis,
-fazendo, por exemplo, que um viajante pudesse aproveitar-se da
-infraestrutura ferroviária entrando em qualquer ponto que fosse mais
-próximo dele, ignorando a existência de estações ou, no caso de
-rodovias, intersecções @AF, @AB.
+network (Delamater et al. 2012, 4)”. Todavia, “real-world connectivity
+is not accounted for in the raster data model.” (…) “Therefore, movement
+is less restricted in the raster data model than in the real world and
+travel time estimates will generaly be underestimated” (Delamater et al.
+2012, 15). Isso ocorre porque o modelo considera que todos os pontos do
+mapa são atravessáveis, fazendo, por exemplo, que um viajante pudesse
+aproveitar-se da infraestrutura ferroviária entrando em qualquer ponto
+que fosse mais próximo dele, ignorando a existência de estações ou, no
+caso de rodovias, intersecções (J. Weiss et al. 2018).
 
 Para nós, a adoção de um modelo em grade nos parece mais interessante.
 Embora ele tenha as limitações mencionadas acima, sem falar no seu custo
@@ -225,9 +237,9 @@ simples estimar as distâncias “as the crow flies” (com o voar do corvo),
 ou seja, a distância linear entre cada um dos pontos e as unidades de
 atendimento. Todavia, essa estimativa ignora completamente a
 infraestrutura e os obstáculos existentes, tornando a análise pouco útil
-@AC. Não faz sentido considerar que um posto de atendimento é o mais
-próximo de um município se houver outros postos mais acessíveis devido à
-infraestrutura disponível.
+(Etten 2017). Não faz sentido considerar que um posto de atendimento é o
+mais próximo de um município se houver outros postos mais acessíveis
+devido à infraestrutura disponível.
 
 Mais interessante é a estimativa “as the wold run” (com o correr dos
 lobos), pelo custo mínimo de viagem. Nele, atribuímos um custo de
@@ -236,18 +248,18 @@ e obstáculos daquele ponto, e assim, estimamos o caminho com menor
 fricção entre os pontos e as unidades de atendimento. Para tal fim,
 utilizaremos o pacote em R gdistance, que “(…) provides functionality to
 calculate various distance measures and routes in heterogeneous
-geographic spaces represented as grids” @AC p. 1.
+geographic spaces represented as grids” (Etten 2017, 1).
 
 Para este trabalho, utilizaremos o mapa gerado pelo Malaria Atlas
 Project para estimar o custo de friccão. Ele “quantifies travel time to
 cities in 2015 at a spatial resolution of approximately one by one
 kilometre by integrating ten global-scale surfaces that characterize
 factors affecting human movement rates and 13.840 high-density urban
-centres within an established geospatial-modelling framework” (@AB
-p. 333). O resultado é um mapa com informações que “(…) characterize the
-spatial locations and properties of roads, railroads, rivers, bodies of
-water, topographical conditions (elevantion and slope angle), land cover
-and national borders.” (@AB p. 337)
+centres within an established geospatial-modelling framework” (J. Weiss
+et al. 2018, 333). O resultado é um mapa com informações que “(…)
+characterize the spatial locations and properties of roads, railroads,
+rivers, bodies of water, topographical conditions (elevantion and slope
+angle), land cover and national borders” (J. Weiss et al. 2018, 337).
 
 Algumas presunções devem ser explicitadas antes de qualquer análise.
 Primeiro, os modelos assumem que todos possuem acesso a veículos
@@ -255,7 +267,8 @@ similares e que se movimentam nesses veículos de forma similar, o que
 pode ser pouco realista mesmo considerando-se apenas viagens terrestes.
 “Wealth, in particular, is a likely determinant of whether someone
 travels on foot rather than taking a vehicle and thus substantially
-affects acessibility on the level of the individual.” (@AB p. 338)
+affects acessibility on the level of the individual” (J. Weiss et al.
+2018, 338).
 
 Em segundo lugar, assume-se uniformidade nas condições de viagem,
 ignorando-se horário, sazonalidades como horário de rush ou fins de
@@ -266,7 +279,7 @@ navegação em celulares e computadores. Em quarto lugar, presume-se que
 as populações concentram-se num único ponto; ou seja, qualquer variação
 da distribuição interna a cada um dos retângulos da grade é ignorada, e
 atribui-se à centroide de cada retângulo a totalidade da população
-daquele espaço @AF.
+daquele espaço (Delamater et al. 2012).
 
 Por fim, há um problema específico a análise do público-alvo de cada uma
 das unidades de atendimento, como definiremos abaixo.
@@ -358,3 +371,31 @@ Conclusão
 
 Referências
 -----------
+
+Contas da União, Tribunal de. 2017. “Auditoria Operacional Realizada Na
+Secretaria Da Receita Federal Do Brasil.”
+
+Delamater, Paul, Joseph Messina, Ashton M Shortridge, and Sue C Grady.
+2012. “Measuring Geographic Access to Health Care: Raster and
+Network-Based Methods.” *International Journal of Health Geographics* 11
+(May): 15. <https://doi.org/10.1186/1476-072X-11-15>.
+
+Etten, Jacob van. 2017. “R Package Gdistance: Distances and Routes on
+Geographical Grids.” *Journal of Statistical Software* 76 (13).
+<https://www.researchgate.net/publication/305656946_R_Package_gdistance_Distances_and_Routes_on_Geographical_Grids>.
+
+J. Weiss, D, Andy Nelson, Harry Gibson, W Temperley, Stephen Peedel, A
+Lieber, M Hancher, et al. 2018. “A Global Map of Travel Time to Cities
+to Assess Inequalities in Accessibility in 2015.” *Nature* 553 (7688).
+<https://www.researchgate.net/publication/322368535_A_global_map_of_travel_time_to_cities_to_assess_inequalities_in_accessibility_in_2015?_sg=Im7RuSiWTkiNinanqup8V53CG0MB12I6dJ_p_Dvci_6XlpcaXrK517NFRuTIudP0Temj5nV3IkWmaog>.
+
+Noor, Abdisalan, Simon Iain Hay, D Zurovac, S.A. Ochola, and Robert W
+Snow. 2003. “Defining Equity in Physical Access to Clinical Services
+Using Geographical Information Systems as Part of Malaria Planning and
+Monitoring in Kenya.” *Tropical Medicine & International Health* 8 (10):
+917–26.
+<https://www.researchgate.net/publication/9075228_Defining_Equity_in_Physical_Access_to_Clinical_Services_Using_Geographical_Information_Systems_as_Part_of_Malaria_Planning_and_Monitoring_in_Kenya>.
+
+Thaddeus, Sereen, and Deborah Maine. 1994. “Too Far to Walk: Maternal
+Mortality in Context.” *Social Science & Medicine* 38 (8): 1091–1110.
+<https://www.researchgate.net/publication/46505614_Too_Far_to_Walk_Maternal_Mortality_in_Context>.
