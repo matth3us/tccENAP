@@ -33,13 +33,16 @@ Celso Mattheus Cantanhede Silva
 
 Os recursos, sabemos, são escassos frente às necessidades e desejos; a nobreza do serviço público não subverte tal incômoda realidade. Cabe aos gestores da coisa pública planejar, executar e controlar o que estiver sob sua responsabilidade de forma a conhecer a demanda e maximizar a oferta. 
 
-Serviços, diz a definição <!-- 💭 citation needed -->, são intangíveis:  transações que não envolvem a entrega de bens materiais e conquanto, não assumem uma forma. Como tal, não podem ser manufaturados, transportados, nem guardados para uso futuro. São produzidos e consumidos simultâneamente. Hoje, com o advento da internet e das TIC (tecnologias da informação e da comunicação), é possível oferecer diversos serviços sem que seja necessária a presença do ofertante e do demandante no mesmo local físico. O acesso a essas tecnologias, claro, ainda é limitado.
+<!-- 💭 citation needed: definição de serviços -->
+Serviços, diz a definição, são intangíveis:  transações que não envolvem a entrega de bens materiais e conquanto, não assumem uma forma. Como tal, não podem ser manufaturados, transportados, nem guardados para uso futuro. São produzidos e consumidos simultâneamente. Hoje, com o advento da internet e das TIC (tecnologias da informação e da comunicação), é possível oferecer diversos serviços sem que seja necessária a presença do ofertante e do demandante no mesmo local físico. O acesso a essas tecnologias, claro, ainda é limitado.
 
 Este é o caso do atendimento presencial oferecido por diversos órgãos públicos, conjunto no qual está inserida a Secretaria da Receita Federal do Brasil (RFB). Esse é um dos principais canais de contato do cidadão com a Receita Federal, junto aos entrepostos aduaneiros. Por ele, o cidadão pode tanto entregar quanto requisitar informações, declarações e documentos essenciais à conformidade tributária, auxiliando no papel da instituição de recolher os recursos necessários ao provimento dos diversos serviços públicos oferecidos pelo Estado brasileiro. No papel de orientação, são também instrumentos de educação fiscal e promoção da auto-regularização, fomentando uma cultura de conformidade pro-ativa e cidadã.
 
 O atendimento já foi alvo de larga digitalização, evidenciada em seus números. 
 
-A virtualização dos serviços de atendimento da RFB avança a passos largos; entre 2012 e 2017, o e-Cac, portal de atendimento na internet da RFB, passou de 66,6 milhões de atendimentos para 145,6 milhões de atendimentos. Enquanto isso, os atendimentos presenciais caíram de 20,2 milhões para 14,9 milhões no mesmo período, de forma que o percentual destes passou de cerca de 24% do total para apenas 9% @gestãoRFB. Mesmo assim, 14,9 milhões equivalem a 40.000 cidadãos recebidos nas centenas de unidades <!-- 💭 conferir número exato de unidades --> da RFB por dia, em todo o país.
+A virtualização dos serviços de atendimento da RFB avança a passos largos; entre 2012 e 2017, o e-Cac, portal de atendimento na internet da RFB, passou de 66,6 milhões de atendimentos para 145,6 milhões de atendimentos. Enquanto isso, os atendimentos presenciais caíram de 20,2 milhões para 14,9 milhões no mesmo período, de forma que o percentual destes passou de cerca de 24% do total para apenas 9% @gestãoRFB. Mesmo assim, 14,9 milhões equivalem a 40.000 cidadãos recebidos nas centenas de unidades da RFB por dia, em todo o país.
+
+<!-- 💭 conferir número exato de unidades -->
 
 Desta realidade surgem os dilemas do gestor. Para suprir essa necessidade de simultaneidade física entre os servidores da RFB e o cidadão demandando serviços, cabe a ele escolher como distribuir geograficamente os recursos materiais e os servidores disponíveis. 
 
@@ -151,13 +154,30 @@ Seria mais realista um modelo que pudessemos combinar as informações demográf
 ```
 
 ### Seção 3.2
+<!
+-- rescar livros com definição de políticas píblicas e a importância do público alvo -->
+Políticas públicas são respostas intencionais do Estado a um problema específico, seja pela ação ou pela omissão. Como tal, são definidas em torno de um problema enfrentado por uma seção da população. Para serem efetivas, as políticas públicas devem ser construídas de forma a maximizar o efeito dos recursos empregados sobre a população-alvo ao mesmo tempo em que se minimiza o dispêndio de recursos com aqueles fora da população-alvo, de forma a garantir a eficiência da resposta do Estado. 
 
-Seção para sugerir como inserir o modelo de análise num processo estratégico completo
+A definição de qual é a população-alvo de uma política pública, é portanto, um dos pontos mais cruciais para garantir sua eficiência, eficácia e efetividade. Se essa população não estiver bem definida, corre-se o risco de, dentro de um orçamento finito, não haver recursos o suficiente para resolver o problema para o qual a política pública foi inicialmente desenhada. 
 
-- definir, no processo estratégico da organização, qual a população alvo do atendimento físico, para estabelecer parâmetros de otimização
-- realizar acompanhamento formal do modelo, com métricas estabelecidas
-- incluir dados reais de atendimento para fazer cross-validation do modelo e estimar a relevância da distância na decisão do atendimento, assim como a distância entre o público ideal (definido estratégicamente) e o público real
-- revisar dados de infraestrutura de transporte para melhorar a acurácia das informações de movimentação
+A disponibilização de atendimento presencial na Receita Federal do Brasil é uma política pública. O serviço serve, primordialmente, para garantir que o cidadão terá acesso não só a informações necessárias para agir em conformidade com a norma tributária, mas também e eventualmente, ter acesso aos meios de efetivar essa conformidade, pela entrega e emissão de documentos e formulários assim como na geração e atualização de cadastros e outras informações.
+
+Com o avanço da digitalização dos serviços governamentais, cabe ao Estado repensar o público-alvo do atendimento presencial. Como o custo do atendimento digital é múltiplas vezes menor que o de manter postos de atendimento presenciais, cabe ao Estado equilibrar a garantia de acesso com a disponibilidade de recursos, buscando um ponto que maximize as duas variáveis conflitantes. Este ponto de equilíbrio muito provavelmente estará na oferta do serviço presencial preferencialmente àqueles que não podem ou não saber como acessar digitalmente.O primeiro passo, portanto, é identificar, hoje, quem são essas pessoas. 
+<!-- buscar citação que baseie a afirmação de que o serviço público digital é mais barato; preferencialmente BID ou OCDE -->
+
+Seria interessante que a Receita Federal do Brasil testasse hipóteses em cima das relações entre variáveis demográficas como renda, idade, gênero e nível educacional e a preferência entre os canais digitais e presenciais. Esses estudos podem ser realizados em cima das bases de dado internas de acesso ao e-Cac e de atendimentos realizados, estes últimos registrados no Sistema Nacional de Apoio ao Gerenciamento de Atendimento (SAGA). Conhecendo-se o perfil demográfico do público-alvo, seria interessante utilizar dados do IBGE e de outras fontes para se medir o nível de acesso dessa população aos serviços presenciais da secretaria. 
+
+<!-- https://repositorio.enap.gov.br/handle/1/585 -->
+<!--	O Sistema Nacional de Apoio ao Gerenciamento do Atendimento (SAGA) foi concebido como um sistema eletrônico de coleta de dados e gerenciamento do atendimento da Receita Federal, em todas as suas etapas. A partir de sua configuração, torna-se possível ajustar as disponibilidades de material e recursos humanos às demandas quantitativas e qualitativas por parte dos contribuintes, de modo a diminuir os tempos de espera e de atendimento e obter um alto grau de conclusividade. O SAGA introduziu novos conceitos na área de atendimento ao público da Receita Federal, aprimorou os mecanismos de controle e gerenciamento, modificou a cultura interna relativa à visão da relação com o contribuinte e proporcionou uma significativa melhoria nessa relação. Um sistema gerencial de fácil utilização e configuração por parte do usuário, constituiu-se em uma ferramenta indispensável de organização das atividades e planejamento de ações, para possibilitar o melhor atendimento ao contribuinte e desenvolver a capacidade gerencial dos chefes das unidades de atendimento  -->
+
+Para avaliarmos esse nível de acesso, poderia-se expandir o processo de mensuração do acesso realizado nesse artigo. Uma primeira opção seria realizar comparação mais paciente entre o uso de mapas de grade e mapas de rede, especialmente nas regiões do país com menor acesso à infraestrutura de transporte. A comparação forneceria maior flexibilidade ao modelo, buscando-se a melhor simulação possível.
+
+Segunda opção seria, em vez de utilizar apenas os dados do OpenStreetMap, adicionar mais bases de dados de infraestrutura e mais modais de transporte, como o hidroviário no norte do país. Aumentaria-se assim o realismo do modelo geográfico, possibilitando a construção de estimativas mais úteis.
+
+Por fim, devemos entender que isso é um processo, não um projeto, ou seja, ele é contínuo no tempo. À medida que os canais de atendimento presencial e físico vão se modificando, e a população também se modifica, novos testes devem ser realizados continuamente, seguindo o tradicional ciclo de planejamento, execução, controle e avaliação. Métricas devem ser estabelecidas e melhorias implementadas, buscando fidedignidade no modelo.
+
+Acreditamos que, dessa forma, estará estabelecido um processo de planejamento do atendimento presencial com foco no cidadão, otimizando o gasto público mas sem deixar de lado a garantia do direito de acesso desse ao serviço público.
+
 
 ## Conclusão
 
