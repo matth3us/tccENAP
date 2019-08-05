@@ -4,7 +4,7 @@ library(RCurl)
 library(tidyverse)
 
 #ativar o Docker para rodar o Selenium
-# sudo docker run -d -p 4445:4444 selenium/standalone-firefox
+# sudo docker run -d -p 4445:4444  --shm-size 2g selenium/standalone-firefox
 #acessar firefox e Selenium instalados num container Docker, ativo em servidor local  
 remDr <- remoteDriver(port = 4445L)
 remDr$open()
@@ -27,7 +27,7 @@ infoUnids <- list()
 
 #teste das URL, comparando a URL devolvida após o acesso da URl gerada com a URL de erro
 continue_unids <- unids %>% filter(is.na(status))
-for(i in 1:20){ #nrow(continue_unids)
+for(i in 1:nrow(continue_unids)){
   remDr$navigate(continue_unids$url[i])
   if(remDr$getCurrentUrl()[[1]] == urlErro){
     continue_unids$status[i] <- FALSE
@@ -60,33 +60,45 @@ unids <- unids %>% left_join(continue_unids, by = c('url' = 'url')) %>%
 #------------
 #Script para obtenção de serviços de atendimento para pessoa física
 
-#testar obtençao de informações dessa página
-urlAtt <- 'http://receita.economia.gov.br/interface/lista-de-servicos/publico/cidadao/aduana/colecao'
-
+#lista de urls com serviços de atendimento ao cidadão prestados pela RFB
 atends <- data.frame(url = c(
   'http://receita.economia.gov.br/interface/lista-de-servicos/publico/cidadao/aduana/colecao',
-  
+  'http://receita.economia.gov.br/interface/lista-de-servicos/publico/cidadao/cadastros/colecao',
+  'http://receita.economia.gov.br/interface/lista-de-servicos/publico/cidadao/certidoes-e-situacao-fiscal/colecao',
+  'http://receita.economia.gov.br/interface/lista-de-servicos/publico/cidadao/cobranca-e-fiscalizacao/colecao',
+'  http://receita.economia.gov.br/interface/lista-de-servicos/publico/cidadao/declaracoes-e-demonstrativos/colecao-1',
+  'http://receita.economia.gov.br/interface/lista-de-servicos/publico/cidadao/dau/colecao',
+  'http://receita.economia.gov.br/interface/lista-de-servicos/publico/cidadao/isencao/colecao',
+  'http://receita.economia.gov.br/interface/lista-de-servicos/publico/cidadao/legislacao/colecao',
+  'http://receita.economia.gov.br/interface/lista-de-servicos/publico/cidadao/pagamentos-e-parcelamentos/colecao',
+  'http://receita.economia.gov.br/interface/lista-de-servicos/publico/cidadao/processo/colecao',
+  'http://receita.economia.gov.br/interface/lista-de-servicos/publico/cidadao/procuracao/colecao',
+  'http://receita.economia.gov.br/interface/lista-de-servicos/publico/cidadao/restituicao-e-compensacao/colecao',
+  'http://receita.economia.gov.br/interface/lista-de-servicos/publico/cidadao/senhas/colecao'
 ))
 
-#funcionando, inserir outras urls de atendimentos de pessoa física
-
-remDr$navigate(urlAtt)
-remDr$screenshot(display = TRUE) #mostrar imagem só para testar conexão
+#lista de resultado final
 outputTables <- list()
-#esse output será onde ficarão guardadas as informações do atendimento
-tables <-remDr$findElements(using='css selector', value='table > tbody')
-for(i in 1:length(tables)){
-  lTest[[i]] <- list(
-            nome = tables[[i]]$findChildElements(using='css selector', value='tr:nth-child(1) > td:nth-child(2)')[[1]]$getElementText(), 
-            imagens = tables[[i]]$findChildElements(using='css selector', value='tr:nth-child(5) > td:nth-child(2) > a > img'), 
-            urls = NA, #urls das imagens
-            nome_popular = tables[[i]]$findChildElements(using='css selector', value='tr:nth-child(2) > td:nth-child(2)')[[1]]$getElementText(), 
-            descricao = tables[[i]]$findChildElements(using='css selector', value='tr:nth-child(3) > td:nth-child(2)')[[1]]$getElementText(), 
-            publico_alvo = tables[[i]]$findChildElements(using='css selector', value='tr:nth-child(4) > td:nth-child(2)')[[1]]$getElementText(), 
-            )
-  for(y in 1:length(lTest[[i]]$imagens)){
-    lTest[[i]]$urls[[y]] <- lTest[[i]]$imagens[[y]]$getElementAttribute('src')
+
+#extração programática das informações das páginas web
+for(x in 1:nrow(atends)){
+  urlAtt <- atends$url[x]
+  remDr$navigate(urlAtt)
+  tables <- remDr$findElements(using='css selector', value='table > tbody')
+  currOutput <- list()
+
+  for(y in 1:length(tables)){
+    currOutput[[y]] <- list(
+      nome = tables[[y]]$findChildElements(using='css selector', value='tr:nth-child(1) > td:nth-child(2)')[[1]]$getElementText(), 
+      imagens = tables[[y]]$findChildElements(using='css selector', value='a > img'), 
+      urls_imagens = lapply(tables[[y]]$findChildElements(using='css selector', value='a > img'), function(el){return(el$getElementAttribute('src'))}),
+      nome_popular = tables[[y]]$findChildElements(using='css selector', value='tr:nth-child(2) > td:nth-child(2)')[[1]]$getElementText(), 
+      descricao = tables[[y]]$findChildElements(using='css selector', value='tr:nth-child(3) > td:nth-child(2)')[[1]]$getElementText(), 
+      publico_alvo = tables[[y]]$findChildElements(using='css selector', value='tr:nth-child(4) > td:nth-child(2)')[[1]]$getElementText()
+    )
   }
+  outputTables <- append(outputTables, currOutput)
 }
 
-#salvar como RDS e fazer unlisting depois, no RDS
+#salvamento como RDS das informações extraídas
+saveRDS(outputTables, paste('servicos_atendimento_', Sys.Date(), '.rds', sep='', collapse=''))
