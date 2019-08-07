@@ -35,7 +35,7 @@ for(i in 1:nrow(continue_unids)){
     #quando o retorno do status é True, já pega as informações da página e joga na lista infoUnids
     continue_unids$status[i] <- TRUE
   }
-  cat(paste('url num. ', i, '/', nrow(unids), ' testada.', '\n', sep='', collapse=''))
+  cat(paste('url num. ', i, '/', nrow(continue_unids), ' testada.', '\n', sep='', collapse=''))
 }
 unids <- unids %>% left_join(continue_unids, by = c('url' = 'url')) %>% 
                 rowwise() %>% 
@@ -48,7 +48,7 @@ unids <- unids %>% left_join(continue_unids, by = c('url' = 'url')) %>%
                   status.x = NULL,
                   status.y = NULL
                 )
-
+saveRDS(unids, 'unids_2019_08_07.rds')
 #Pegar informações dos urls sem problemas
 #dfUnid <- readHTMLTable(htmlParse(remDr$getPageSource()[[1]], encoding = 'UTF-8')) [[1]] %>% 
 #  spread(key = V1, value = V2) %>% 
