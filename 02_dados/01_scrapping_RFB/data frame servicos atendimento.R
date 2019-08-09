@@ -1,5 +1,5 @@
 library(tidyverse)
-servicos_list <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/tccENAP/02_dados/01_scrapping_RFB/servicos_atendimento_2019-08-05.rds")
+servicos_list <- readRDS("./02_dados/01_scrapping_RFB/servicos_atendimento_2019-08-05.rds")
 
 servicos <- servicos_list
 for(i in 1:length(servicos)){
