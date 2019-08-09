@@ -51,6 +51,8 @@ unids <- unids %>% left_join(continue_unids, by = c('url' = 'url')) %>%
 saveRDS(unids, 'unids_2019_08_07.rds')
 unids <- readRDS('unids_2019_08_07.rds')
 validUnids <- unids %>% filter(status)
+tabelasUnids <- lapply(validUnids$url, tabularUnid)
+saveRDS(tabelasUnids, 'unids_validas_RFB_2019_08_08.rds')
 
 #Pegar informações dos urls sem problemas
 #dfUnid <- readHTMLTable(htmlParse(remDr$getPageSource()[[1]], encoding = 'UTF-8')) [[1]] %>% 
