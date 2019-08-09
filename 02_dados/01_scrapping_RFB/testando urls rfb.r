@@ -49,6 +49,9 @@ unids <- unids %>% left_join(continue_unids, by = c('url' = 'url')) %>%
                   status.y = NULL
                 )
 saveRDS(unids, 'unids_2019_08_07.rds')
+unids <- readRDS('unids_2019_08_07.rds')
+validUnids <- unids %>% filter(status)
+
 #Pegar informações dos urls sem problemas
 #dfUnid <- readHTMLTable(htmlParse(remDr$getPageSource()[[1]], encoding = 'UTF-8')) [[1]] %>% 
 #  spread(key = V1, value = V2) %>% 
