@@ -1,5 +1,5 @@
 library(tidyverse)
-unids_list <- readRDS("./02_dados/01_scrapping_RFB/unids_validas_RFB_2019_08_08.rds")
+unids_list <- readRDS("./02_ dados/02_ RFB/dados_modificados/unids_validas_RFB_2019_08_08.rds")
 unids <- unids_list %>% 
               lapply(., unlist) %>% 
               lapply(., as.data.frame) %>% 
@@ -20,11 +20,17 @@ unids <- unids_list %>%
                 filter(!Desativada) %>%
                 filter(!Desativado) %>% 
                 select(Unidade, Tipo, Estado, Cidade, Bairro, CEP, Logradouro, Atendimento, "Telefone(s)", Observações) %>% 
-                arrange(Estado, Cidade, Tipo, Unidade)
-saveRDS(unids, "./02_dados/01_scrapping_RFB/unidades atendimento 2019-08-11.rds")
+                arrange(Estado, Cidade, Tipo, Unidade) %>% 
+                mutate(
+                  Logradouro = str_squish(Logradouro),
+                  Tipo_Atend = ifelse(Tipo %in% c('ARF', 'PST', 'CAC'), "Tributo interno", "Tributo Externo")
+                  ) 
+                
 
 perCity <- unids %>% 
               group_by(Cidade, Estado) %>% 
               summarise(Num_unidades = n()) %>% 
               ungroup()
+
+
 
