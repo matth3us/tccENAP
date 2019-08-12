@@ -14,10 +14,17 @@ unids <- unids_list %>%
                 CEP = as.character(CEP),
                 Estado = as.character(Estado),
                 Logradouro = as.character(stringr::str_to_title(Logradouro)),
-                Desativada = str_detect(Unidade, 'Desativada')
+                Desativada = str_detect(Unidade, 'Desativada'),
+                Desativado = str_detect(Unidade, 'Desativado')
                 )  %>% 
-                filter(!Desativada) %>% 
+                filter(!Desativada) %>%
+                filter(!Desativado) %>% 
                 select(Unidade, Tipo, Estado, Cidade, Bairro, CEP, Logradouro, Atendimento, "Telefone(s)", Observações) %>% 
                 arrange(Estado, Cidade, Tipo, Unidade)
 saveRDS(unids, "./02_dados/01_scrapping_RFB/unidades atendimento 2019-08-11.rds")
+
+perCity <- unids %>% 
+              group_by(Cidade, Estado) %>% 
+              summarise(Num_unidades = n()) %>% 
+              ungroup()
 

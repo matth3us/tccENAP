@@ -19,7 +19,7 @@ servicos <- as.data.frame(servicos) %>%
                 nome_popular = ifelse(nome_popular %in% c("N/A", "N/A ", ""), NA, nome_popular)
                 )
 
-urls_atend <- read.csv('C:/Users/02741207399/Desktop/Escritório de Processos/Git/tccENAP/02_dados/01_scrapping_RFB/urls_imagens.csv', encoding = 'UTF-16') %>% select(-id)
+urls_atend <- read.csv('./02_dados/01_scrapping_RFB/urls_imagens.csv', sep=",") %>% select(-id)
 
 
 servicos <- servicos %>% 
@@ -28,18 +28,45 @@ servicos <- servicos %>%
                 select(-coluna_fonte) %>% 
                 left_join(urls_atend, by = c('url')) %>% 
                 filter(!is.na(tipo_atendimento)) %>% 
-                distinct() %>% 
+                distinct() #%>% 
                 group_by(nome) %>% 
-                mutate(n = n())
+                mutate(n = n()) %>% 
                 distinct(nome, .keep_all = TRUE)
                 
 tipos_atend <- unique(urls_atend$tipo_atendimento)
+
+eval_servicos <- servicos %>% 
+                    mutate(nome2 = nome) %>% 
+                    spread(key = tipo_atendimento, value = nome2) %>% 
+                    rename(
+                      distancia = 'Atendimento a distância', 
+                      ecac = 'Atendimento e-CAC',
+                      presencial = "Atendimento presencial",
+                      internet = "Atendimento pela internet"
+                    ) %>% 
+                    rowwise() %>% 
+                    mutate(
+                      tipos = 4-(is.na(distancia) + is.na(internet) + is.na(ecac) + is.na(presencial))
+                    ) %>% 
+                    ungroup()
+
+n_servicos <- eval_servicos %>% 
+                  group_by(nome) %>% 
+                  summarise(num = n()) %>% 
+                  ungroup()
+
+single_atend <- n_servicos %>% filter(num < 2)
+multi_atend  <- n_servicos %>% filter(num > 1)
               
 #Quantos e quais serviços são exclusivamente presenciais?
+apenas_presencial <- eval_servicos %>% filter(nome %in% single_atend$nome) %>% filter(!is.na(presencial)) %>% select(nome:publico_alvo)
+
 #Quantos e quais servicos podem ser atendidos à distância (facultativamente em unidades de atendimento)?
 #http://receita.economia.gov.br/interface/entrega-de-documentos-digitais/abrir-um-dossie-digital-de-atendimento
-#Há serviços exclusivamente à distância? Quais?
+talvez_presencial <- eval_servicos %>% filter(!(nome %in% single_atend$nome)) %>% filter(!is.na(distancia)) %>% select(nome:publico_alvo)
 
+#Há serviços exclusivamente à distância? Quais?
+apenas_distancia <- eval_servicos %>% filter(nome %in% single_atend$nome) %>% filter(!is.na(distancia)) %>% select(nome:publico_alvo)
 
 
 
