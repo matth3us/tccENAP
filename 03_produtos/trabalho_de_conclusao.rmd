@@ -74,7 +74,7 @@ Os modelos vetoriais consistem de uma série de nós, conectados por linhas, rep
 
 Os modelos de grade são compostos por uma série de celulas regulares, geralmente retangulares, de tamanho e distância padronizados. Cada ponto do mapa é resumido em um dos retângulos, e todas as informações relevantes do mapa dentro da região encoberta por aquele retângulo são a ele atribuído. No modelo de grade, as viagens ocorrem na passagem de uma célula para outra,  sempre em entre células adjacentes; assim, diferente do modelo em rede, os passos da viagem são sempre regulares em distância, variando apenas na velocidade [@delamater_measuring_2012].
 
-![](https://raw.githubusercontent.com/matth3us/tccENAP/master/04_imagens/figure_12_measuring_geographic_access.png)
+![](https://raw.githubusercontent.com/matth3us/tccENAP/master/03_produtos/figure_12_measuring_geographic_access.png)
 Vemos acima, do artigo [@delamater_measuring_2012], uma conversão entre um mapa em network para um mapa em grid. (figure 12 no documento)
 
 
