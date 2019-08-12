@@ -2,15 +2,19 @@
 title: "Trabalho de Conclusão de Curso"
 author: "Celso Mattheus Cantanhede Silva"
 date: "22/07/2019"
-bibliography: zotero.bib
 output:
   md_document:
     variant: markdown_github
-    toc: TRUE
+#    toc: TRUE
+#    citation_package: biblatex
+keep_text: TRUE
+bibliography: zotero.bib
+#biblio-style: abnt
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::write_bib(x = c("knitr", "rmarkdown"), file = "test.bib")
 ```
 
 <!-- 
