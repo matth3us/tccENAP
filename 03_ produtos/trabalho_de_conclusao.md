@@ -1,3 +1,15 @@
+-   [Proposta de procedimento geoestatísticos para a gestão estratégica
+    do atendimento presencial da Receita Federal do
+    Brasil](#proposta-de-procedimento-geoestatisticos-para-a-gestao-estrategica-do-atendimento-presencial-da-receita-federal-do-brasil)
+    -   [Introdução](#introducao)
+    -   [Seção 1 (por que?)](#secao-1-por-que)
+    -   [Seção 2 (como?)](#secao-2-como)
+    -   [Seção 3 (o que?)](#secao-3-o-que)
+        -   [Seção 3.1](#secao-3.1)
+        -   [Seção 3.2](#secao-3.2)
+    -   [Conclusão](#conclusao)
+    -   [Referências](#referencias)
+
 <!-- 
 # Informações para edição do documento de acordo com as normas da ENAP
 
@@ -5,7 +17,6 @@ https://bookdown.org/yihui/rmarkdown/pdf-document.html
 https://stackoverflow.com/questions/52118202/change-line-spacing-for-rmd-abstract
 
 -->
-
 Proposta de procedimento geoestatísticos para a gestão estratégica do atendimento presencial da Receita Federal do Brasil
 =========================================================================================================================
 
@@ -24,7 +35,6 @@ sob sua responsabilidade de forma a conhecer a demanda e maximizar a
 oferta.
 
 <!-- 💭 citation needed: definição de serviços -->
-
 Serviços, diz a definição, são intangíveis: transações que não envolvem
 a entrega de bens materiais e conquanto, não assumem uma forma. Como
 tal, não podem ser manufaturados, transportados, nem guardados para uso
@@ -61,7 +71,6 @@ equivalem a 40.000 cidadãos recebidos nas centenas de unidades da RFB
 por dia, em todo o país.
 
 <!-- 💭 conferir número exato de unidades -->
-
 Desta realidade surgem os dilemas do gestor. Para suprir essa
 necessidade de simultaneidade física entre os servidores da RFB e o
 cidadão demandando serviços, cabe a ele escolher como distribuir
@@ -190,7 +199,7 @@ célula para outra, sempre em entre células adjacentes; assim, diferente
 do modelo em rede, os passos da viagem são sempre regulares em
 distância, variando apenas na velocidade (Delamater et al. 2012).
 
-![](https://raw.githubusercontent.com/matth3us/tccENAP/master/03_produtos/figure_12_measuring_geographic_access.png)
+![](https://raw.githubusercontent.com/matth3us/tccENAP/master/04_imagens/figure_12_measuring_geographic_access.png)
 Vemos acima, do artigo (Delamater et al. 2012), uma conversão entre um
 mapa em network para um mapa em grid. (figure 12 no documento)
 
@@ -285,7 +294,6 @@ informação para tomar uma decisão de qual unidade de atendimento atende
 a cada município.
 
 <!-- segundo o professor, não preciso me justificar pelas decisões do IBGE. Reduzir esse parágrafo. -->
-
 Seria mais realista um modelo que pudessemos combinar as informações
 demográficas dos grupos populacionais mais próximos, independente de
 divisões municipais. Todavia, esse tipo de levantamento de dados não
@@ -346,7 +354,7 @@ Seção 3 (o que?)
 ### Seção 3.2
 
 &lt;! – rescar livros com definição de políticas píblicas e a
-importância do público alvo –&gt; Po líticas públicas são respostas
+importância do público alvo –&gt; Políticas públicas são respostas
 intencionais do Estado a um problema específico, seja pela ação ou pela
 omissão. Como tal, são definidas em torno de um problema enfrentado por
 uma seção da população. Para serem efetivas, as políticas públicas devem
@@ -394,7 +402,6 @@ secretaria.
 
 <!-- https://repositorio.enap.gov.br/handle/1/585 -->
 <!--    O Sistema Nacional de Apoio ao Gerenciamento do Atendimento (SAGA) foi concebido como um sistema eletrônico de coleta de dados e gerenciamento do atendimento da Receita Federal, em todas as suas etapas. A partir de sua configuração, torna-se possível ajustar as disponibilidades de material e recursos humanos às demandas quantitativas e qualitativas por parte dos contribuintes, de modo a diminuir os tempos de espera e de atendimento e obter um alto grau de conclusividade. O SAGA introduziu novos conceitos na área de atendimento ao público da Receita Federal, aprimorou os mecanismos de controle e gerenciamento, modificou a cultura interna relativa à visão da relação com o contribuinte e proporcionou uma significativa melhoria nessa relação. Um sistema gerencial de fácil utilização e configuração por parte do usuário, constituiu-se em uma ferramenta indispensável de organização das atividades e planejamento de ações, para possibilitar o melhor atendimento ao contribuinte e desenvolver a capacidade gerencial dos chefes das unidades de atendimento  -->
-
 Para avaliarmos esse nível de acesso, poderia-se expandir o processo de
 mensuração do acesso realizado nesse artigo. Uma primeira opção seria
 realizar comparação mais paciente entre o uso de mapas de grade e mapas
