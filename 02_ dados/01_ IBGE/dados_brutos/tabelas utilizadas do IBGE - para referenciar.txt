@@ -1,0 +1,7 @@
+"Tabela 6579 - População residente estimada"
+"Tabela 5938 - Produto interno bruto a preços correntes, impostos, líquidos de subsídios, sobre produtos a preços correntes e valor adicionado bruto a preços correntes total e por atividade econômica, e respectivas participações - Referência 2010"
+"Tabela 616 - Pessoas de 10 anos ou mais de idade por grupos de idade, condição de atividade na semana de referência, sexo e situação do domicílio"
+"Tabela 200 - População residente, por sexo, situação e grupos de idade - Amostra - Características Gerais da População"
+"Tabela 1384 - Pessoas de 10 anos ou mais de idade, por classes de rendimento nominal mensal - Universo"
+
+
