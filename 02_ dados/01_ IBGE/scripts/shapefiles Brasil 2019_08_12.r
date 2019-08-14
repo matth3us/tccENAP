@@ -7,3 +7,4 @@ geoInfo <- list(brasil = Brasil, estados = Estados, municipios = Municipios)
 
 #teste de plotagem do mapa do Brasil
 plot(st_geometry(Brasil))
+
