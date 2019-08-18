@@ -10,3 +10,5 @@ municipios <- read_sf("./02_ dados/01_ IBGE/dados_brutos/BR_Localidades_2010_v1.
 paraTestes <- municipios %>% filter(NM_MUNICIP %in% c("BRASÍLIA", "SÃO PAULO", "SÃO JOSÉ DOS CAMPOS", "SÃO LUÍS", "PARINTINS"))
 library(osrm)
 testTable <- osrm::osrmTable(paraTestes, measure = c("duration", "distance"))
+
+saveRDS(testTable, "testTable.rds")
