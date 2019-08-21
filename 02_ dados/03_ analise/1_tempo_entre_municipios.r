@@ -18,10 +18,16 @@ for(i in 1:278){
   
   srcMuni <- muni %>% select(CD_GEOCODM, geometry) %>% rename(cod_ibge = CD_GEOCODM) %>% slice(i_st:i_en)
   outputMuni <- osrmTable(src=srcMuni, dst=dstMuni, measure= c('duration', 'distance')) #duration in minutes; distance in meters 
-  cat("Cruzamento número ", i, "/279 realizado.", sep="")
-  l_osm <- append(l_osm, list(outputMuni))
+  cat("Cruzamento número ", i, "/279 realizado. \n", sep="")
+  l_Osm <- c(l_Osm, list(outputMuni))
 }
-rm(i)
+                                              
+
+srcMuni <- muni %>% select(CD_GEOCODM, geometry) %>% rename(cod_ibge = CD_GEOCODM) %>% slice(5561:5565)
+outputMuni <- osrmTable(src=srcMuni, dst=dstMuni, measure= c('duration', 'distance')) #duration in minutes; distance in meters 
+cat("Cruzamento número ", i, "/279 realizado. \n", sep="")
+l_Osm <- c(l_Osm, list(outputMuni))
 
 
-saveRDS(l_osm, '1_tempo_entre_municipios.rds')
+
+saveRDS(l_Osm, '1_tempo_entre_municipios.rds')
