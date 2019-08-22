@@ -79,8 +79,48 @@ ReceitaUnico <- Receita %>%
                   left_join(Receita, by = c("Cidade", "Estado"))
 
 
+### Testes de localização das unidades de atendimento em cidades com mais de um posto
 
 
+
+#Teste com Pacote nominatim
+library(nominatim)
+devtools::install_github("hrbrmstr/nominatim")
+test_adr <- paste("Brazil", ReceitaVarios$Estado[16], ReceitaVarios$Cidade[16], ReceitaVarios$Bairro[16], ReceitaVarios$Logradouro[16], sep = ", ")
+test <- osm_geocode("Brazil, São Paulo", key="ALN91qAX2xCpTTdwecBU7lmE1iBPCGh6")
+
+
+# Teste com Google Maps
+library(ggmap)
+register_google('AIzaSyA0wJ-nawHO4cRv9DqXJ9300V31dBeGlec')
+test <- ggmap::geocode('Brazil, São Paulo, Bela Vista, Rua Avanhadava')
+
+
+
+
+## geocoding function using OSM Nominatim API
+## details: http://wiki.openstreetmap.org/wiki/Nominatim
+## made by: D.Kisler 
+## https://datascienceplus.com/osm-nominatim-with-r-getting-locations-geo-coordinates-by-its-address/
+
+nominatim_osm <- function(address = NULL)
+{
+  if(suppressWarnings(is.null(address)))
+    return(data.frame())
+  tryCatch(
+    d <- jsonlite::fromJSON( 
+      gsub('\\@addr\\@', gsub('\\s+', '\\%20', address), 
+           'http://nominatim.openstreetmap.org/search/@addr@?format=json&addressdetails=0&limit=1')
+    ), error = function(c) return(data.frame())
+  )
+  if(length(d) == 0) return(data.frame())
+  return(data.frame(lon = as.numeric(d$lon), lat = as.numeric(d$lat)))
+}
+
+
+
+#conclusão do Teste: google maps funcionou após limitar o endereço apenas até a rua; 
+# pacote nominatin não funcionou; testar função sem pacote para endereços no nominatin
 
 
 
