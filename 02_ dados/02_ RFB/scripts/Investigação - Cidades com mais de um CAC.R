@@ -35,7 +35,7 @@ paraAlf <- c(
 
 library(tidyverse)
 
-unidsRFB <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/tccENAP/02_ dados/02_ RFB/dados_modificados/unidades atendimento 2019-08-11.rds") %>% 
+unidsRFB <- readRDS("./02_ dados/02_ RFB/dados_modificados/unidades atendimento 2019-08-11.rds") %>% 
               mutate(
                 Unidade = str_trim(Unidade),
                 Logradouro =  str_trim(str_squish(Logradouro)),
@@ -60,7 +60,7 @@ unidsRFB <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/t
               filter(!(Unidade == "Curitiba - Portão")) %>%
               filter(!(Unidade == "Pelotas" & Tipo == "CAC"));
 
-saveRDS(unidsRFB, "C:/Users/02741207399/Desktop/Escritório de Processos/Git/tccENAP/02_ dados/02_ RFB/dados_modificados/unidades atendimento 2019-08-22.rds")
+#saveRDS(unidsRFB, "./02_ dados/02_ RFB/dados_modificados/unidades atendimento 2019-09-01.rds")
               
   
 
@@ -80,20 +80,17 @@ ReceitaUnico <- Receita %>%
 
 
 ### Testes de localização das unidades de atendimento em cidades com mais de um posto
-
-
-
 #Teste com Pacote nominatim
-library(nominatim)
-devtools::install_github("hrbrmstr/nominatim")
-test_adr <- paste("Brazil", ReceitaVarios$Estado[16], ReceitaVarios$Cidade[16], ReceitaVarios$Bairro[16], ReceitaVarios$Logradouro[16], sep = ", ")
-test <- osm_geocode("Brazil, São Paulo", key="ALN91qAX2xCpTTdwecBU7lmE1iBPCGh6")
+#library(nominatim)
+#devtools::install_github("hrbrmstr/nominatim")
+#test_adr <- paste("Brazil", ReceitaVarios$Estado[16], ReceitaVarios$Cidade[16], ReceitaVarios$Bairro[16], ReceitaVarios$Logradouro[16], sep = ", ")
+#test <- osm_geocode("Brazil, São Paulo", key="ALN91qAX2xCpTTdwecBU7lmE1iBPCGh6")
 
 
 # Teste com Google Maps
-library(ggmap)
-register_google('AIzaSyA0wJ-nawHO4cRv9DqXJ9300V31dBeGlec')
-test <- ggmap::geocode('Brazil, São Paulo, Bela Vista, Rua Avanhadava')
+#library(ggmap)
+#register_google('AIzaSyA0wJ-nawHO4cRv9DqXJ9300V31dBeGlec')
+#test <- ggmap::geocode('Brazil, São Paulo, Bela Vista, Rua Avanhadava')
 
 
 
@@ -103,24 +100,42 @@ test <- ggmap::geocode('Brazil, São Paulo, Bela Vista, Rua Avanhadava')
 ## made by: D.Kisler 
 ## https://datascienceplus.com/osm-nominatim-with-r-getting-locations-geo-coordinates-by-its-address/
 
-nominatim_osm <- function(address = NULL)
-{
-  if(suppressWarnings(is.null(address)))
-    return(data.frame())
-  tryCatch(
-    d <- jsonlite::fromJSON( 
-      gsub('\\@addr\\@', gsub('\\s+', '\\%20', address), 
-           'http://nominatim.openstreetmap.org/search/@addr@?format=json&addressdetails=0&limit=1')
-    ), error = function(c) return(data.frame())
-  )
-  if(length(d) == 0) return(data.frame())
-  return(data.frame(lon = as.numeric(d$lon), lat = as.numeric(d$lat)))
-}
+#nominatim_osm <- function(address = NULL)
+#{
+  #if(suppressWarnings(is.null(address)))
+    #return(data.frame())
+  #tryCatch(
+    #d <- jsonlite::fromJSON( 
+      #gsub('\\@addr\\@', gsub('\\s+', '\\%20', address), 
+           #'http://nominatim.openstreetmap.org/search/@addr@?format=json&addressdetails=0&limit=1')
+    #), error = function(c) return(data.frame())
+  #)
+  #if(length(d) == 0) return(data.frame())
+  #return(data.frame(lon = as.numeric(d$lon), lat = as.numeric(d$lat)))
+#}
 
 
 
 #conclusão do Teste: google maps funcionou após limitar o endereço apenas até a rua; 
 # pacote nominatin não funcionou; testar função sem pacote para endereços no nominatin
+
+
+#Encontrando as posições geográficas das unidades 
+
+library(ggmap)
+register_google('AIzaSyA0wJ-nawHO4cRv9DqXJ9300V31dBeGlec')
+enderecos <- ReceitaVarios %>% select(Unidade, Cidade, Estado, Bairro, Logradouro) %>% 
+                            mutate(
+                              Endereço = stringr::str_split_fixed(Logradouro, ", ", n=2)[,1],
+                              Endereço = stringr::str_split_fixed(Endereço, " - ", n=2)[,1],
+                              Endereço = str_c(Cidade, Estado, Bairro, Endereço, sep = ", ")
+                              ) %>% 
+                            #select(Cidade, Estado, Endereço) %>% 
+                            #distinct() %>% 
+                            bind_cols(do.call(bind_rows, lapply(.$Endereço, ggmap::geocode)))
+
+saveRDS(enderecos, paste("./02_ dados/02_ RFB/dados_modificados/localizacao_unidades_municipios_varias_unidades_", Sys.Date(), ".rds", sep=""))
+
 
 
 
