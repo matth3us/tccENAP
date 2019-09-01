@@ -15,11 +15,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-#header-includes: 
-#  - \renewcommand\refname{Referências}
 
-#Corrigir as referências
-#Incluir imagem no PDF
+
 #Inserir definição de serviços na economia na linha 30
 #Reduzir parágrafos entre linhas 93 e 99, diminuindo as justificativas para as escolhas do IBGE
 #Desenvolver linha 144; o que é o SAGA e como ele poderia ser utilizado
@@ -28,6 +25,11 @@ knitr::opts_chunk$set(echo = TRUE)
 #Justificar a exclusão de CACs em locais de aduana
 #Terminar com a análise dos dados digeridos
 #Por fim, introdução e conclusão
+#Corrigir as referências
+#Incluir imagem no PDF
+
+#header-includes: 
+#  - \renewcommand\refname{Referências}
 
 ```
 
