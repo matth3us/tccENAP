@@ -13,6 +13,16 @@ test2 <- st_join(points2, shapes)
 
 
 ## Operação de junção para toda a tabela  
+travels <- readRDS("~/Área de Trabalho/tempo_municipios.rds")
+identif <- function(item){
+  dest <- item$destinations
+  sour <- item$sources
+  time <- item$durations
+  dist <- item$distances
+}
+
+l <- lapply(travels, identif)
+
 
 
 ### 4. Fazer o mesmo para todas os data frames das listas de tempos entre municípios
