@@ -1,18 +1,20 @@
 library(tidyverse)
 library(geobr)
 library(sf)
-#tempo_munis <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/1_tempo_entre_municipios.rds")
-#tester <- tempo_munis[[1]]
-#sf::st_coordinates(muni$geometry)
+
+## Teste de join do pacote SF, realizado com sucesso
+shapes <- geobr::read_municipality(code_muni = "all", year=2010)
+points <- readRDS("~/Área de Trabalho/tempo_municipios.rds")[[1]]$destinations %>% st_as_sf(coords = c('lon', 'lat'), crs = st_crs(shapes))
+test <- st_join(points, shapes)
+
+## Teste 2 de join, com menos pontos
+points2 <- readRDS("~/Área de Trabalho/tempo_municipios.rds")[[1]]$sources %>% st_as_sf(coords = c('lon', 'lat'), crs = st_crs(shapes))
+test2 <- st_join(points2, shapes)
 
 
-shape_m <- geobr::read_municipality(code_muni = "all", year=2010)
+## Operação de junção para toda a tabela  
 
 
-
-### 1. Converter os Data Frames de Destino e 
-### 2. Para cada posição geográfica, usar a função sf::st_within() para saber em que município se localiza
-### 3. Confirmar que cada posição do data frame se localiza em apenas um município, e não há municípios repetidos
 ### 4. Fazer o mesmo para todas os data frames das listas de tempos entre municípios
 ### 5. juntar todos os dataframes em uma única matrix de ~5500x5500
 ### 6. Salvar o Data Frame como um RDS
