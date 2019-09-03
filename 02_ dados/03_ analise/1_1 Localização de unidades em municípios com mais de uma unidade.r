@@ -18,11 +18,12 @@ pr <- read_sf("~/Área de Trabalho/git_folders/dados_IBGE_areas_ponderação/dad
 
 #ALTERAR SUMMARISE PARA PRESERVAR OUTRAS COLUNAS
 riodj <- rj %>% filter(NM_MUNICIP == 'RIO DE JANEIRO') %>% group_by(CD_GEOCODB) %>% summarise(do_union = TRUE)
-sampa <- sp %>% filter(NM_MUNICIP == 'SÃO PAULO') %>% group_by(CD_GEOCODB) %>% summarise(do_union = TRUE)
+sampa <- sp %>% filter(NM_MUNICIP == 'SÃO PAULO') #%>% filter(st_is_valid(., reason = TRUE) == 'Valid Geometry') #%>% group_by(CD_GEOCODB) %>% summarise(do_union = TRUE)
 beaga <- mg %>% filter(NM_MUNICIP == 'BELO HORIZONTE') %>% group_by(CD_GEOCODB) %>% summarise(do_union = TRUE)
-curit <- pr %>% filter(NM_MUNICIP == 'CURITIBA') %>% group_by(CD_GEOCODB) %>% summarise(do_union = TRUE)
+curit <- pr %>% filter(NM_MUNICIP == 'CURITIBA') #%>% group_by(CD_GEOCODB) %>% summarise(do_union = TRUE)
 
-test <- st_is_valid(sp %>% filter(NM_MUNICIP == 'SÃO PAULO'), reason = TRUE)
-test[!(test == 'Valid Geometry')]
-#algumas geometrias de são paulo estão dando erro. Tentar consertar. 
+
+test <- sp %>% filter(NM_MUNICIP == 'SÃO PAULO')
+test2 <- test[(st_is_valid(sp %>% filter(NM_MUNICIP == 'SÃO PAULO'), reason = TRUE) == 'Valid Geometry')]#algumas geometrias de são paulo estão dando erro. Tentar consertar. 
+test3 <- test2 %>% group_by(CD_GEOCODB) %>% summarise(do_union = TRUE)
 #https://www.r-spatial.org/r/2017/03/19/invalid.html
