@@ -70,10 +70,12 @@ timesDists <- travelsFinal %>%
               do.call(bind_rows, .) %>% 
               gather(key = 'destinos', value = 'distância', -origens) %>% 
               full_join(allTimes, by = c("origens", "destinos")) %>% 
-              rename(origem = origens, destino = destinos)
+              rename(origem = origens, destino = destinos) %>% 
+              distinct()
 
-saveRDS(timesDists)
+saveRDS(timesDists %>% distinct(), "timesDists.rds")
 
+nrow(timesDists %>% distinct())
 # inserir código em script do OpenStreetMap
 # Aplicar mesmo algoritmo para identificar localização de unidades de atendimento em áreas de ponderação
 
