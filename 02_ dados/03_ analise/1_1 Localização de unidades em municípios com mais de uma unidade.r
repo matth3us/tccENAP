@@ -49,14 +49,21 @@ areasP <- areasP %>%
                   st_join(unidades, left=TRUE) %>% 
                   mutate(is_rfb = is.na(Unidade)) %>% 
                   select(Estado, Cod_Cidade, Cidade, Cod_Area_Pond, Bairro, Logradouro, Unidade, is_rfb, geometry)
+
+areasP_unids <- areasP %>% filter(!is_rfb) %>% select(-is_rfb)
+
+#conferir unidades sem área de ponderação agregada
+
+#Limpar e juntar dados demográficos
+
+
+
 saveRDS(areasP, "03_01_areasPond&unidade.rds")
 
 
-#Descobrir em qual distrito estão as unidades da RFB
 
-##Separar dados de áreas de ponderação no SIDRA
-#Quais são as tabelas do SIDRA para os municípios?
-#Quais as tabelas do SIDRA que eu consigo para as áreas de ponderação?
+
+
 
 
 
