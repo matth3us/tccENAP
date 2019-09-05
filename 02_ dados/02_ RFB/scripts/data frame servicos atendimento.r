@@ -1,40 +1,39 @@
 library(tidyverse)
-servicos_list <- readRDS("./02_dados/01_scrapping_RFB/servicos_atendimento_2019-08-05.rds")
+servicos_list <- readRDS("./02_ dados/02_ RFB/dados_modificados/servicos_atendimento_2019-08-05.rds")
 
 servicos <- servicos_list
 for(i in 1:length(servicos)){
   servicos[[i]]$imagens <- NULL
 }
 rm(i)
+
+
+urls_atend <- read.csv('./02_ dados/02_ RFB/dados_brutos/urls_imagens.csv', sep=",", encoding = 'UTF-8') %>% select(-id)
+tipos_atend <- unique(urls_atend$tipo_atendimento)
+
 servicos <- lapply(servicos, unlist) %>% 
             lapply(., as.data.frame) %>% 
             lapply(., t) %>% 
             lapply(., as.data.frame) %>% 
-            do.call(plyr::rbind.fill, .)
-
-
-servicos <- as.data.frame(servicos) %>% 
-              mutate(
+            do.call(plyr::rbind.fill, .) %>% 
+            as.data.frame(.) %>% 
+            mutate(
                 nome_popular= as.character(nome_popular),
                 nome_popular = ifelse(nome_popular %in% c("N/A", "N/A ", ""), NA, nome_popular)
-                )
+                ) %>% 
+            select(nome, nome_popular, descricao, publico_alvo, urls_imagens, urls_imagens1:urls_imagens5) %>% 
+            gather("coluna_fonte", "url", urls_imagens:urls_imagens5) %>% 
+            select(-coluna_fonte) %>% 
+            left_join(urls_atend, by = c('url')) %>% 
+            filter(!is.na(tipo_atendimento)) %>% 
+            distinct() #%>% 
+            #group_by(nome) %>% 
+            #mutate(n = n()) %>% 
+            #distinct(nome, .keep_all = TRUE)
 
-urls_atend <- read.csv('./02_dados/01_scrapping_RFB/urls_imagens.csv', sep=",") %>% select(-id)
+saveRDS(servicos, "02_serviços_rfb.rds")
 
-
-servicos <- servicos %>% 
-                select(nome, nome_popular, descricao, publico_alvo, urls_imagens, urls_imagens1:urls_imagens5) %>% 
-                gather("coluna_fonte", "url", urls_imagens:urls_imagens5) %>% 
-                select(-coluna_fonte) %>% 
-                left_join(urls_atend, by = c('url')) %>% 
-                filter(!is.na(tipo_atendimento)) %>% 
-                distinct() #%>% 
-                group_by(nome) %>% 
-                mutate(n = n()) %>% 
-                distinct(nome, .keep_all = TRUE)
-                
-tipos_atend <- unique(urls_atend$tipo_atendimento)
-
+#ABAIXO, transformações para entendimento    
 eval_servicos <- servicos %>% 
                     mutate(nome2 = nome) %>% 
                     spread(key = tipo_atendimento, value = nome2) %>% 

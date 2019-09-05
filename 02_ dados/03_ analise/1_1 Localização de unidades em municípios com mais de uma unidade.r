@@ -1,29 +1,63 @@
 library(tidyverse)
 library(geobr)
-unidades <- readRDS("./02_ dados/02_ RFB/dados_modificados/localizacao_unidades_municipios_varias_unidades_2019-09-01.rds")
+library(sf)
+library(readxl)
+setwd("C:/Users/02741207399/Desktop/Escritório de Processos")
 
 
+#Tabela de join entre setores censitários e áreas de ponderação
+aPond <- read_excel("./Git/Informações extras IBGE/RESPOSTA_PEDIDO.xlsx") %>% mutate_all(as.character) %>% rename(setor = Setor, area_ponderacao = "Área de ponderação")
 
-#Separar dados de áreas de ponderação no SIDRA
-Quais são as tabelas do SIDRA para os municípios?
-Quais as tabelas do SIDRA que eu consigo para as áreas de ponderação?
-
-#Mapas de áreas de ponderação
+#Mapas de setores censitários
 #ftp://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_de_setores_censitarios__divisoes_intramunicipais/censo_2010/setores_censitarios_shp/
-  
-mg <- read_sf("~/Área de Trabalho/git_folders/dados_IBGE_areas_ponderação/dados_modificados/mg_setores_censitarios/31SEE250GC_SIR.shp")%>% mutate_if(is.character, function(x){return(str_conv(x, 'latin1'))})
-sp <- read_sf("~/Área de Trabalho/git_folders/dados_IBGE_areas_ponderação/dados_modificados/sp_setores_censitarios/33SEE250GC_SIR.shp")%>% mutate_if(is.character, function(x){return(str_conv(x, 'latin1'))})
-rj <- read_sf("~/Área de Trabalho/git_folders/dados_IBGE_areas_ponderação/dados_modificados/rj_setores_censitarios/33SEE250GC_SIR.shp")%>% mutate_if(is.character, function(x){return(str_conv(x, 'latin1'))})
-pr <- read_sf("~/Área de Trabalho/git_folders/dados_IBGE_areas_ponderação/dados_modificados/pr_setores_censitarios/41SEE250GC_SIR.shp")%>% mutate_if(is.character, function(x){return(str_conv(x, 'latin1'))})
 
-#ALTERAR SUMMARISE PARA PRESERVAR OUTRAS COLUNAS
-riodj <- rj %>% filter(NM_MUNICIP == 'RIO DE JANEIRO') %>% group_by(CD_GEOCODB) %>% summarise(do_union = TRUE)
-sampa <- sp %>% filter(NM_MUNICIP == 'SÃO PAULO') #%>% filter(st_is_valid(., reason = TRUE) == 'Valid Geometry') #%>% group_by(CD_GEOCODB) %>% summarise(do_union = TRUE)
-beaga <- mg %>% filter(NM_MUNICIP == 'BELO HORIZONTE') %>% group_by(CD_GEOCODB) %>% summarise(do_union = TRUE)
-curit <- pr %>% filter(NM_MUNICIP == 'CURITIBA') #%>% group_by(CD_GEOCODB) %>% summarise(do_union = TRUE)
+beaga <- read_sf("./Git/Informações extras IBGE/dados_IBGE_areas_ponderação/dados_modificados/mg_setores_censitarios/31SEE250GC_SIR.shp")%>% 
+        mutate_if(is.character, function(x){return(str_conv(x, 'latin1'))}) %>% 
+        filter(NM_MUNICIP == 'BELO HORIZONTE') %>% 
+        left_join(aPond, by = c("CD_GEOCODI" = "setor")) %>% 
+        group_by(area_ponderacao, NM_MUNICIP, CD_GEOCODM) %>% 
+        summarise(do_union = TRUE) %>% rename(Cidade = NM_MUNICIP, CodIBGE = CD_GEOCODM)
+sampa <- read_sf("./Git/Informações extras IBGE/dados_IBGE_areas_ponderação/dados_modificados/sp_setores_censitarios/33SEE250GC_SIR.shp")%>% 
+        mutate_if(is.character, function(x){return(str_conv(x, 'latin1'))}) %>% 
+        filter(NM_MUNICIP == 'SÃO PAULO') %>% 
+        filter(st_is_valid(., reason = TRUE) == 'Valid Geometry') %>% 
+        left_join(aPond, by = c("CD_GEOCODI" = "setor")) %>% 
+        group_by(area_ponderacao, NM_MUNICIP, CD_GEOCODM) %>% 
+        summarise(do_union = TRUE) %>% rename(Cidade = NM_MUNICIP, CodIBGE = CD_GEOCODM)
+riodj <- read_sf("./Git/Informações extras IBGE/dados_IBGE_areas_ponderação/dados_modificados/rj_setores_censitarios/33SEE250GC_SIR.shp")%>% 
+        mutate_if(is.character, function(x){return(str_conv(x, 'latin1'))}) %>% 
+        filter(NM_MUNICIP == 'RIO DE JANEIRO') %>% 
+        left_join(aPond, by = c("CD_GEOCODI" = "setor")) %>% 
+        group_by(area_ponderacao, NM_MUNICIP, CD_GEOCODM) %>% 
+        summarise(do_union = TRUE) %>% rename(Cidade = NM_MUNICIP, CodIBGE = CD_GEOCODM)
+curit <- read_sf("./Git/Informações extras IBGE/dados_IBGE_areas_ponderação/dados_modificados/pr_setores_censitarios/41SEE250GC_SIR.shp")%>% 
+        mutate_if(is.character, function(x){return(str_conv(x, 'latin1'))}) %>% 
+        filter(NM_MUNICIP == 'CURITIBA') %>% 
+        left_join(aPond, by = c("CD_GEOCODI" = "setor")) %>% 
+        group_by(area_ponderacao, NM_MUNICIP, CD_GEOCODM) %>% 
+        summarise(do_union = TRUE) %>% rename(Cidade = NM_MUNICIP, CodIBGE = CD_GEOCODM)
+
+areasP <- beaga %>% bind_rows(sampa) %>% bind_rows(riodj) %>% bind_rows(curit) %>% rename(Cod_Cidade = CodIBGE, Cod_Area_Pond = area_ponderacao) %>% select(Cidade, Cod_Cidade, Cod_Area_Pond, geometry) 
+rm(beaga, sampa, riodj, curit)
+
+#unidades RFB
+unidades <- readRDS("./02_ dados/02_ RFB/dados_modificados/localizacao_unidades_municipios_varias_unidades_2019-09-01.rds") %>%
+              sf::st_as_sf(coords = c('lon', 'lat'), crs = st_crs(areasP)) %>% 
+              select(-c(Cidade, Endereço))
+
+areasP <- areasP %>% 
+                  st_join(unidades, left=TRUE) %>% 
+                  mutate(is_rfb = is.na(Unidade)) %>% 
+                  select(Estado, Cod_Cidade, Cidade, Cod_Area_Pond, Bairro, Logradouro, Unidade, is_rfb, geometry)
+saveRDS(areasP, "03_01_areasPond&unidade.rds")
 
 
-test <- sp %>% filter(NM_MUNICIP == 'SÃO PAULO')
-test2 <- test[(st_is_valid(sp %>% filter(NM_MUNICIP == 'SÃO PAULO'), reason = TRUE) == 'Valid Geometry')]#algumas geometrias de são paulo estão dando erro. Tentar consertar. 
-test3 <- test2 %>% group_by(CD_GEOCODB) %>% summarise(do_union = TRUE)
-#https://www.r-spatial.org/r/2017/03/19/invalid.html
+#Descobrir em qual distrito estão as unidades da RFB
+
+##Separar dados de áreas de ponderação no SIDRA
+#Quais são as tabelas do SIDRA para os municípios?
+#Quais as tabelas do SIDRA que eu consigo para as áreas de ponderação?
+
+
+
+
