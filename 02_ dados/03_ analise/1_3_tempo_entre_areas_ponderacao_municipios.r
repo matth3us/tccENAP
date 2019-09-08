@@ -14,6 +14,8 @@ for(i in 1:nrow(area)){
   cent <- st_centroid(area$geometry[i])
   area$geometry[i] <- cent[[1]]
 }
+rm(i)
+st_crs(area) <- st_crs(muni)
 
 #Cruzamento de informações
 l_Osm <- list();
@@ -27,5 +29,6 @@ for(i in 1:279){
   cat("Cruzamento número ", i, "/279 realizado. \n", sep="")
   l_Osm <- c(l_Osm, list(outputMuni))
 }
+
 
 saveRDS(l_Osm, '1_tempo_municipios_areas.rds')
