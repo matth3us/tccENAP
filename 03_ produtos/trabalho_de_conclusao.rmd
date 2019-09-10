@@ -1,48 +1,49 @@
 ---
-title: "Trabalho de Conclusão de Curso"
-author: "Celso Mattheus Cantanhede Silva"
-date: "22/07/2019"
+title: "Proposta de procedimento geoestatísticos para a gestão estratégica do atendimento presencial da Receita Federal do Brasil"
+date: "`r format(Sys.time(), '%d/%B,/%Y')`"
 bibliography: zotero.bib
 output:
   md_document:
     variant: markdown_github
-    toc: TRUE
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+#output para PDF
+#  pdf_document:
+#    latex_engine: xelatex
+
+#Inserir definição de serviços na economia na linha 30
+#Reduzir parágrafos entre linhas 93 e 99, diminuindo as justificativas para as escolhas do IBGE
+#Desenvolver linha 144; o que é o SAGA e como ele poderia ser utilizado
+#Desenvolver seção 2, informando de onde vieram os dados que estão sendo utilizados
+#Incluir discussão sobre o tipo de serviço oferecido pela RFB, para justificar restrições nas unidades analisadas assim como na população atingida em cada município
+#Justificar a exclusão de CACs em locais de aduana
+#Terminar com a análise dos dados digeridos
+#Por fim, introdução e conclusão
+#Corrigir as referências
+#Incluir imagem no PDF
+
+#header-includes: 
+#  - \renewcommand\refname{Referências}
+
+#BOTAR IMAGENS NO DROPBOX, JUNTO COM OS OUTROS DADOS
+
 ```
-
-<!-- 
-# Informações para edição do documento de acordo com as normas da ENAP
-
-https://bookdown.org/yihui/rmarkdown/pdf-document.html
-https://stackoverflow.com/questions/52118202/change-line-spacing-for-rmd-abstract
-
---> 
-
-
-
-# Proposta de procedimento geoestatísticos para a gestão estratégica do atendimento presencial da Receita Federal do Brasil
-
-Celso Mattheus Cantanhede Silva
 
 ## Introdução
 
 ## Seção 1 (por que?)
 
 Os recursos, sabemos, são escassos frente às necessidades e desejos; a nobreza do serviço público não subverte tal incômoda realidade. Cabe aos gestores da coisa pública planejar, executar e controlar o que estiver sob sua responsabilidade de forma a conhecer a demanda e maximizar a oferta. 
-
-<!-- 💭 citation needed: definição de serviços -->
 Serviços, diz a definição, são intangíveis:  transações que não envolvem a entrega de bens materiais e conquanto, não assumem uma forma. Como tal, não podem ser manufaturados, transportados, nem guardados para uso futuro. São produzidos e consumidos simultâneamente. Hoje, com o advento da internet e das TIC (tecnologias da informação e da comunicação), é possível oferecer diversos serviços sem que seja necessária a presença do ofertante e do demandante no mesmo local físico. O acesso a essas tecnologias, claro, ainda é limitado.
 
 Este é o caso do atendimento presencial oferecido por diversos órgãos públicos, conjunto no qual está inserida a Secretaria da Receita Federal do Brasil (RFB). Esse é um dos principais canais de contato do cidadão com a Receita Federal, junto aos entrepostos aduaneiros. Por ele, o cidadão pode tanto entregar quanto requisitar informações, declarações e documentos essenciais à conformidade tributária, auxiliando no papel da instituição de recolher os recursos necessários ao provimento dos diversos serviços públicos oferecidos pelo Estado brasileiro. No papel de orientação, são também instrumentos de educação fiscal e promoção da auto-regularização, fomentando uma cultura de conformidade pro-ativa e cidadã.
 
 O atendimento já foi alvo de larga digitalização, evidenciada em seus números. 
 
-A virtualização dos serviços de atendimento da RFB avança a passos largos; entre 2012 e 2017, o e-Cac, portal de atendimento na internet da RFB, passou de 66,6 milhões de atendimentos para 145,6 milhões de atendimentos. Enquanto isso, os atendimentos presenciais caíram de 20,2 milhões para 14,9 milhões no mesmo período, de forma que o percentual destes passou de cerca de 24% do total para apenas 9% @gestãoRFB. Mesmo assim, 14,9 milhões equivalem a 40.000 cidadãos recebidos nas centenas de unidades da RFB por dia, em todo o país.
-
-<!-- 💭 conferir número exato de unidades -->
+A virtualização dos serviços de atendimento da RFB avança a passos largos; entre 2012 e 2017, o e-Cac, portal de atendimento na internet da RFB, passou de 66,6 milhões de atendimentos para 145,6 milhões de atendimentos. Enquanto isso, os atendimentos presenciais caíram de 20,2 milhões para 14,9 milhões no mesmo período, de forma que o percentual destes passou de cerca de 24% do total para apenas 9% @gestãoRFB. Mesmo assim, 14,9 milhões equivalem a 40.000 cidadãos recebidos nas 522 unidades da RFB por dia, em todo o país.
 
 Desta realidade surgem os dilemas do gestor. Para suprir essa necessidade de simultaneidade física entre os servidores da RFB e o cidadão demandando serviços, cabe a ele escolher como distribuir geograficamente os recursos materiais e os servidores disponíveis. 
 
@@ -74,7 +75,9 @@ Os modelos vetoriais consistem de uma série de nós, conectados por linhas, rep
 
 Os modelos de grade são compostos por uma série de celulas regulares, geralmente retangulares, de tamanho e distância padronizados. Cada ponto do mapa é resumido em um dos retângulos, e todas as informações relevantes do mapa dentro da região encoberta por aquele retângulo são a ele atribuído. No modelo de grade, as viagens ocorrem na passagem de uma célula para outra,  sempre em entre células adjacentes; assim, diferente do modelo em rede, os passos da viagem são sempre regulares em distância, variando apenas na velocidade [@delamater_measuring_2012].
 
-![](https://raw.githubusercontent.com/matth3us/tccENAP/master/03_produtos/figure_12_measuring_geographic_access.png)
+<!-- por no Dropbox, junto com outros dados -->
+<!-- ![](https://raw.githubusercontent.com/matth3us/tccENAP/master/03_ produtos/figure_12_measuring_geographic_access.png) -->
+
 Vemos acima, do artigo [@delamater_measuring_2012], uma conversão entre um mapa em network para um mapa em grid. (figure 12 no documento)
 
 
@@ -102,48 +105,93 @@ Possuímos as informações da distribuição da população num mapa em grade, 
 
 <!-- segundo o professor, não preciso me justificar pelas decisões do IBGE. Reduzir esse parágrafo. -->
 
-Seria mais realista um modelo que pudessemos combinar as informações demográficas dos grupos populacionais mais próximos, independente de divisões municipais. Todavia, esse tipo de levantamento de dados não seria apenas custoso mas também traria diversos riscos à privacidade da população analisada <!-- citar IBGE aqui -->. Como tal, fazemos o registro apenas para reconher o risco, em nossa análise, de enfrentarmos algumas falácias estatísticas, como a falácia ecológica e o problema da unidade de área modificável. 
+Seria mais realista um modelo que pudessemos combinar as informações demográficas dos grupos populacionais mais próximos, independente de divisões municipais. Todavia, esse tipo de levantamento de dados não seria apenas custoso mas também traria diversos riscos à privacidade da população analisada. Como tal, fazemos o registro apenas para reconher o risco, em nossa análise, de enfrentarmos algumas falácias estatísticas, como a falácia ecológica e o problema da unidade de área modificável. 
 
 ```R
-# 
-RFB: extração web dos serviços de atendimento
-RFB: extração web das unidades de atendimento
-IBGE: tabelas utilizadas e cruzamento das tabelas
-IBGE: localização dos municípios
-Open Street Map: servidor local e cruzamento dos dados com pacote osrm
-TUDO: cruzamento de unidades de atendimento, municípios e locais mais próximos
-`
+## Seção 2.2 Como os dados foram baixados e extraídos
 
+Como e onde eu extraí as informações de serviços da unidades de atendimento
+Como e onde eu extraí as informações das unidades de atendimento da RFB
+Como e onde eu extraí a localização geográfica das unidades de atendimento da RFB (áreas de ponderação)
+Como e onde eu extraí as informações demográficas do IBGE
+Como e onde eu extraí as informações de mapas dos municípios
+Como e onde eu extraí as informações de mapas das áreas de ponderação
+Como e onde eu extraí as informações de distância e duração de viagem entre municípios brasileiro
+Disponibilizar dados no Google Drive
 
+library(tidyverse)
+#limpar dados de público alvo:
+servicos <- servicos %>% 
+              mutate(
+                publico_alvo = as.character(publico_alvo),
+                publico_alvo = str_replace(publico_alvo, "  e", " e"),
+                publico_alvo = str_replace(publico_alvo, "\n", " e "),
+                publico_alvo = str_replace(publico_alvo, " \n", " e "),
+                publico_alvo = str_replace(publico_alvo, "\\(matrícula CEI\\).", ""),
+                publico_alvo = str_replace(publico_alvo, "\\(matrícula CEI\\)", ""),
+                publico_alvo = str_replace(publico_alvo, "Jurídica\\.", "Jurídica"),
+                publico_alvo = str_replace(publico_alvo, "Física\\.", "Física"),
+                publico_alvo = str_replace(publico_alvo, "Pessoa Jurídicae Pessoa Física\\(", "Pessoa Física e Pessoa Jurídica"),
+                publico_alvo = str_replace(publico_alvo, "Pessoa Jurídicae Pessoa Física\\(\\.", "Pessoa Física e Pessoa Jurídica"),
+                publico_alvo = str_replace(publico_alvo, "Pessoa Físicae Pessoa Jurídica", "Pessoa Física e Pessoa Jurídica"),
+                publico_alvo = str_replace(publico_alvo, "Pessoa Jurídica e Pessoa Física", "Pessoa Física e Pessoa Jurídica"),
+                publico_alvo = str_replace(publico_alvo, "Pessoa Física  e Pessoa Jurídica", "Pessoa Física e Pessoa Jurídica"),
+                publico_alvo = str_trim(publico_alvo),
+                publico_alvo = as.factor(publico_alvo)
+                )
+
+#Quais serviços são presenciais?
+eval01 <- servicos %>% filter(!(tipo_atendimento %in% c("Atendimento pela internet", "Atendimento e-CAC")))
+
+#Quais serviços são presenciais e apenas pessoa física?
+eval02 <- servicos %>% filter(!(tipo_atendimento %in% c("Atendimento pela internet", "Atendimento e-CAC"))) %>% filter(publico_alvo %in% c("Pessoa Física"))
+
+#Quais serviços não são presenciais e apenas pessoa física?
+eval03 <- servicos %>% filter((tipo_atendimento %in% c("Atendimento pela internet", "Atendimento e-CAC"))) %>% filter(publico_alvo %in% c("Pessoa Física"))
+
+#Quais serviços são APENAS presenciais e APENAS pessoa física?
+eval04 <- eval03 %>% select(nome, tipo_atendimento)
+eval05 <- eval02 %>% left_join(eval04, by=c("nome")) %>% filter(is.na(tipo_atendimento.y)) %>% rename(tipo_atendimento= tipo_atendimento.x)
+
+saveRDS(servicos, "02_serviços.rds")
 
 ## Seção 3 (o que?)
 
-### Seção 3.1
+### Seção 3.1 Potencial de digitalização dos serviços da RFB
 
-```R
-# AnSeleção dos contribuintes-alvo
-## justificar que os serviços às pessoas jurídicas são mais facilmente digitalizáveis, posto que é quase obrigatório que todos tenham certificados digitais
-## Levantar os serviços disponíveis às pessoas físicas
-## hipótese, a ser confirmada: basicamente serviços de cadastro e de IRPF
-## se confirmado, e posto que serviços de cadastros tem sido terceirizados a outras instituições como o Banco do Brasil e os Correios, selecionar os contribuintes fora dos limites de isenção do IRPF nos municípios, para fazer nova análise
+Explicar o problema dos certificados digitais (e como esse problema é limitado nas pessoas jurídicas)
+Mostrar iniciativa de login único do governo federal
+Níveis de digitalização:
+ - serviços para pessoas jurídicas (todos digitalizados ou digitalizáveis rapidamente)
+ - serviços exclusivos para pessoas físicas com opção digital (às vezes exigem certificado digital, parcialmente digitalizáveis, dado que se resolva o problema dos certificados digitais)
+ - serviços exclusivos para pessoas físicas sem opção digital (principais entraves à digitalização)
 
-# Análise e simulações dos dados dos municípios, agrupados por unidade de atendimento, com a exclusão e adição de postos de atendimento
-## tentar usar modelo do Ministério do Planejamento para digitalização de serviços (ou outro modelo melhor) para estimar o custo para a sociedade
-## incluir no Leaflet
-`
+### Seção 3.2 Cruzamento e análise da demografia dos público-alvos da unidades de atendimento da Receita Federal do Brasil
+
+Mapa das durações percorridas em cada município/área de ponderação
+Realizar curva ABC para distâncias/durações de viagem dos municípios brasileiros
+Investigar resumos estatísticos (média, mediana, desvio padrão) de dados demográficos dos atendidos por cada unidade de atendimento [idade, renda, população total]
+Qual a unidade de atendimento com maior público-alvo? Qual o perfil demográfico dessa unidade? 
+Qual a unidade de atendimento com menor público-alvo? Qual o perfil demográfico dessa unidade? 
+Quais as unidades com extremos de idade e renda?
+Possibilidade de simulações: qual o impacto nas unidades de atendimento próximas se a unidade de atendimento com menor público alvo for fechada?
+Quais as alterações na população atendida quando se limita a 2 salários mínimos por pessoa
+
+
+
+```
+
 
 ### Seção 3.2
-<!
--- rescar livros com definição de políticas píblicas e a importância do público alvo -->
-Po
-líticas públicas são respostas intencionais do Estado a um problema específico, seja pela ação ou pela omissão. Como tal, são definidas em torno de um problema enfrentado por uma seção da população. Para serem efetivas, as políticas públicas devem ser construídas de forma a maximizar o efeito dos recursos empregados sobre a população-alvo ao mesmo tempo em que se minimiza o dispêndio de recursos com aqueles fora da população-alvo, de forma a garantir a eficiência da resposta do Estado. 
+<!-- Buscar livros com definição de políticas públicas e a importância do público alvo -->
+
+Políticas públicas são respostas intencionais do Estado a um problema específico, seja pela ação ou pela omissão. Como tal, são definidas em torno de um problema enfrentado por uma seção da população. Para serem efetivas, as políticas públicas devem ser construídas de forma a maximizar o efeito dos recursos empregados sobre a população-alvo ao mesmo tempo em que se minimiza o dispêndio de recursos com aqueles fora da população-alvo, de forma a garantir a eficiência da resposta do Estado. 
 
 A definição de qual é a população-alvo de uma política pública, é portanto, um dos pontos mais cruciais para garantir sua eficiência, eficácia e efetividade. Se essa população não estiver bem definida, corre-se o risco de, dentro de um orçamento finito, não haver recursos o suficiente para resolver o problema para o qual a política pública foi inicialmente desenhada. 
 
 A disponibilização de atendimento presencial na Receita Federal do Brasil é uma política pública. O serviço serve, primordialmente, para garantir que o cidadão terá acesso não só a informações necessárias para agir em conformidade com a norma tributária, mas também e eventualmente, ter acesso aos meios de efetivar essa conformidade, pela entrega e emissão de documentos e formulários assim como na geração e atualização de cadastros e outras informações.
 
 Com o avanço da digitalização dos serviços governamentais, cabe ao Estado repensar o público-alvo do atendimento presencial. Como o custo do atendimento digital é múltiplas vezes menor que o de manter postos de atendimento presenciais, cabe ao Estado equilibrar a garantia de acesso com a disponibilidade de recursos, buscando um ponto que maximize as duas variáveis conflitantes. Este ponto de equilíbrio muito provavelmente estará na oferta do serviço presencial preferencialmente àqueles que não podem ou não saber como acessar digitalmente.O primeiro passo, portanto, é identificar, hoje, quem são essas pessoas. 
-<!-- buscar citação que baseie a afirmação de que o serviço público digital é mais barato; preferencialmente BID ou OCDE -->
 
 Seria interessante que a Receita Federal do Brasil testasse hipóteses em cima das relações entre variáveis demográficas como renda, idade, gênero e nível educacional e a preferência entre os canais digitais e presenciais. Esses estudos podem ser realizados em cima das bases de dado internas de acesso ao e-Cac e de atendimentos realizados, estes últimos registrados no Sistema Nacional de Apoio ao Gerenciamento de Atendimento (SAGA). Conhecendo-se o perfil demográfico do público-alvo, seria interessante utilizar dados do IBGE e de outras fontes para se medir o nível de acesso dessa população aos serviços presenciais da secretaria. 
 
