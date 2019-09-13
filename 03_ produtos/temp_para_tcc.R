@@ -1,5 +1,7 @@
 library(tidyverse)
-servicos <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/02_serviços.rds")
+  download.file("https://www.dropbox.com/s/jkiiwwxz73eys9e/01_viagens.rds?raw=1", destfile = "viagens.rds")
+
+  servicos <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/02_serviços.rds")
 viagens <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/01_viagens.rds")
 demog <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/03_demografia.rds")
 
@@ -19,5 +21,5 @@ classif <- viagens %>%
   ) %>% 
   left_join(unids, by=c("minDestino" = "ibge_unid"))
 
-
+plot(map_info)
 
