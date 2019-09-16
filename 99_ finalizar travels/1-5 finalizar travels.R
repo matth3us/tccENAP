@@ -54,17 +54,17 @@ rm(beaga, sampa, riodj, curit)
 
 # Cruzamento de dados
 
-identif <- function(item){
+identif_area2Area <- function(item){
   #identificar municípios de destinos e origens
   dest <- item$destinations %>% st_as_sf(coords = c('lon', 'lat'), crs = st_crs(setor)) %>% st_join(setor) %>% mutate(area_ponderacao = ifelse(is.na(area_ponderacao), "ignorar", area_ponderacao))
-  sour <- item$sources %>% st_as_sf(coords = c('lon', 'lat'), crs = st_crs(muni)) %>% st_join(muni)
+  sour <- item$sources %>% st_as_sf(coords = c('lon', 'lat'), crs = st_crs(setor)) %>% st_join(setor) %>% mutate(area_ponderacao = ifelse(is.na(area_ponderacao), "ignorar", area_ponderacao))
   time <- item$durations
   dist <- item$distances
   #corrigir nomes de destinos e origens nas tabelas de tempo e distância de viagem
   colnames(time) <- dest$area_ponderacao
-  rownames(time) <- sour$code_muni
+  rownames(time) <- sour$area_ponderacao
   colnames(dist) <- dest$area_ponderacao
-  rownames(dist) <- sour$code_muni
+  rownames(dist) <- sour$area_ponderacao
   
   #criar novo item, corrigido
   newItem <- list()
@@ -76,8 +76,33 @@ identif <- function(item){
   return(newItem)
 }
 
-travelsFinal <-lapply(travels, identif) 
-rm(travels)
+identif_area2Muni <- function(item){
+  #identificar municípios de destinos e origens
+  dest <- item$destinations %>% st_as_sf(coords = c('lon', 'lat'), crs = st_crs(muni)) %>% st_join(muni)
+  sour <- item$sources %>% st_as_sf(coords = c('lon', 'lat'), crs = st_crs(setor)) %>% st_join(setor) %>% mutate(area_ponderacao = ifelse(is.na(area_ponderacao), "ignorar", area_ponderacao))
+  time <- item$durations
+  dist <- item$distances
+  
+  #corrigir nomes de destinos e origens nas tabelas de tempo e distância de viagem
+  colnames(time) <- dest$code_muni
+  rownames(time) <- sour$area_ponderacao
+  colnames(dist) <- dest$code_muni
+  rownames(dist) <- sour$area_ponderacao
+  
+  #criar novo item, corrigido
+  newItem <- list()
+  newItem$destinations <- dest
+  newItem$sources <- sour      
+  newItem$durations <- time[, -which(colnames(time) %in% c("ignorar"))]
+  newItem$distances <- dist[, -which(colnames(dist) %in% c("ignorar"))]   
+  
+  return(newItem)
+}
+
+travelsFinal_1 <-lapply(final[1:33], identif_area2Muni)
+travelsFinal_2 <-lapply(final[34:66], identif_area2Area) 
+travelsFinal <- c(travelsFinal_1, travelsFinal_2)
+rm(travels, travelsFinal_1, travelsFinal_2)
 
 #junção de lista para toda a tabela
 allTimes <- travelsFinal %>% 
@@ -103,4 +128,6 @@ gather(key = 'destinos', value = 'distância', -origens) %>%
   rename(origem = origens, destino = destinos) %>% 
   distinct()
 
-saveRDS(timesDists, "timesDists_areas_pond.rds")
+timesDists_2 <- timesDists %>% filter(!is.na(distância)) %>% filter(!is.na(duração))
+
+saveRDS(timesDists_2, "timesDists_areas_pond_2.rds")
