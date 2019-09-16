@@ -11,16 +11,25 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(sf)
+library(kableExtra)
+theme_set(theme_bw())
 
 #output para PDF
+#geometry: "left=3cm,right=3cm,top=2.5cm,bottom=2.5cm"
+#output:
 #  pdf_document:
 #    latex_engine: xelatex
 
-#parágrafos justificados
-#margens e espaçamento da ENAP
-
 #header-includes: 
 #  - \renewcommand\refname{Referências}
+
+#resolver load de dados pelo Dropbox
+servicos <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/02_serviços.rds")
+viagens <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/01_viagens.rds")
+demog <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/03_demografia.rds")
+unids <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/tccENAP/02_ dados/03_ analise/00_unidades_RFB_cod_ibge.rds") %>% 
+        mutate(ibge_unid = ifelse(is.na(ibge_area), ibge_municipio,  ibge_area)) %>%
+        distinct()
 
 ```
 
@@ -139,33 +148,30 @@ Devido ao alto custo, o número de pessoas físicas com certificado digital é p
 <!-- citar faq login único -->
 
 É possível que, no futuro, a RFB adote outras formas mais simples e baratas de autenticação do cidadão, expandindo os acessos digitais a seus serviços. Um exemplo é o login único do governo federal, que está sendo lentamente adotado por diversos órgão da União (http://faq-login-unico.servicos.gov.br/en/latest/_perguntasdafaq/oquee.html). Até lá, as unidades presenciais servirão como canal de complementação àqueles que não possuírem os meios para acessar os serviços digitais. 
-Mas quantos serviços são esses? Como os serviços voltados às pessoas jurídicas caminham rapidamente para a completa digitalização, temos que levantar os serviços que possuem como alvo as pessoas físicas. De acordo com o site da Receita federal, temos 253 serviços que tem como público alvo as pessoas físicas ou jurídicas. 
 
-```{r}
-servicos <- readRDS(url('https://www.dropbox.com/s/84hrt2ntrx9k0t0/02_servi%C3%A7os.rds?raw=1'))
-nrow(servicos)
-```
+
+Pois bem, podemos então nos perguntar, que serviços não estão digitalizados e, como tal, a resolução do problema do certificado digital não bastaria para que deixassem de ser realizados em unidades de atedimento?
+No site de serviços da Receita Federal do Brasil, a segmentação de público é em conveniados e parceiros, cidadão e empresas. As empresas, em sua massiva maioria, já possuem certificado digital, se não por necessidade, mas por obrigação legal, que está se extendendo progressivamente aos CNPJs de menor faturamente. Em julho de 2018, por exemplo, passou a ser obrigatório para pequenas empresas. Desta forma, podemos nos concentrar nos serviços prestados ao cidadão, listados 253 nessa página da internet.
+
+<!-- Por no zotero e citar: https://noticias.r7.com/economia/certificacao-digital-sera-obrigatoria-para-pequenas-empresas-25062018 -->
 
 <!-- Citar serviços ao cidadão receita federal -->
 
-Os serviços cujos alvos são tanto pessoas físicas e jurídicas são serviços que, em geral, são realizados por pessas jurídicas, mas que não há impedimento legal à realização por pessoa física, como é o caso de diversos serviços aduaneiros. 
 
-<!-- reescrever parágrafo abaixo -->
+```{r}
+#servicos <- readRDS(url('https://www.dropbox.com/s/84hrt2ntrx9k0t0/02_servi%C3%A7os.rds?raw=1'))
+nrow(servicos)
+```
 
-Como tal, para entender a demanda por unidades de atendimento presencial, devemos nos restringir aos serviços voltados exclusivamente às pessoas físicas. 
+Alguns dos serviços desta lista se misturam com os serviços às empresas, posto que podem ser fornecidos aos dois. Em geral, um serviço que se presta a uma empresa mas também pode ser prestado a um cidadão é fornecido desta maneira simplesmente para não criar obstáculos desnecessários àqueles que ainda não tenham um CNPJ. Na prática, são serviços exclusivos para CNPJs, que, por desburocratização, podem ser prestados a alguém que não o tenha em mão. Por isso, para saber quais os serviços criados com foco nas pessoas físicas, devemos filtrar essa lista.
 
 ```{r}
 eval02 <- servicos %>% filter(publico_alvo %in% c("Pessoa Física"))
 nrow(eval02)
 ```
 
-<!-- reescrever dois parágrafos abaixo -->
-
-Desses, a imensa maioria já está parcialmente ou completamente digitalizado. Por parcialmente, falamos dos que podem ser realizados por meio digital, mas que há ainda a opção de realizá-lo em unidade presencial. Ora, como discutido acima, o principal entrave à completa digitalização desses serviços é a dificuldade de autenticação, um problema de política pública mais amplo do que a simples disponibilização pela organização de sistemas que forneça o serviço. 
-
-Nos perguntamos então, quais seria os serviços completamente presenciais? Aqueles que nem mesmo há um sistema oferecido para realizá-lo, ainda que facultativamente, por via digital? Esses serviços seriam, por óbvio, o maior entrave imediato à digitalização completa do atendimento da organização
-
-<!-- usar tabelas Kable -->
+Resta-nos portanto, 60 serviços prestados pela Receita Federal a pessoas físicas, ou seja, a pessoas que não são obrigadas a possuir e, como discutido, provavelmente não possuem certificados digitais. Diversos desses serviços tem o canal digital, portanto, como opcional. Se a pessoa possuir o certificado digital, ela pode acessar um canal eletrônico da Receita (geralmente mas nem sempre o e-Cac), mas, se não possuir, pode se dirigir a uma unidade de atendimento. 
+Assim, para responder a pergunta de quantos serviços são exclusivamente presenciais, temos que filtrar essa lista mais ainda, para os serviços que não possuem qualquer opção de canal eletrônico. 
 
 ```{r}
 eval03 <- servicos %>% 
@@ -178,39 +184,31 @@ eval04 <- servicos %>%
             left_join(eval03, by=c("nome")) %>%
             filter(is.na(tipo_atendimento.y)) %>% 
             select(nome:descricao)
-eval04
+
+kable(eval04) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
 ```
 
-Como podemos conferir, dos 253 serviços iniciais, apenas 8 se encaixam nessa lista restrita. 3 deles se referem a casos específicos de tratamento de CPF, 1 se refere a habilitação aduaneira de pessoa física, 3 se referem ao tratamento de bagagem para viajantes internacionais e 1 a possibilidade de cancelamento do imposto de renda. Como tal, com exceção óbvia dos serviços de análise de bagagens em viagens internacionais, realizadas na descida do avião de passageiro de vôo internacional, parece-nos pouco provável que esses serviços escapariam à digitalização. 
-
-Portanto, o que tiramos disso é que a necessidade das unidades presenciais se deve muito menos à inexistência de canais digitais, para os serviços da organização, e mais à dificuldade de se conceder acesso seguro e barato à população nesses canais. 
+Como podemos conferir, dos 253 serviços iniciais, apenas oito se encaixam nessa lista restrita. Três deles se referem a casos específicos de tratamento de CPF, um se refere a habilitação aduaneira de pessoa física, três se referem ao tratamento de bagagem para viajantes internacionais e um a possibilidade de cancelamento do imposto de renda. Como tal, com exceção óbvia dos serviços de análise de bagagens em viagens internacionais, realizadas na descida do avião de passageiro de vôo internacional, parece-nos pouco provável que esses serviços escapariam à digitalização. 
+Portanto, o que concluímos disso é que a necessidade das unidades presenciais se deve muito menos à inexistência de canais digitais e muito mais à dificuldade de se conceder acesso seguro e barato à população nesses canais. 
 
 ### 3.2 Público-alvo da unidades de atendimento da Receita Federal do Brasil
 
-Mapa das durações percorridas em cada município/área de ponderação
+Posto que o problema dos certificados digitais não está resolvido, resta-nos analisar as unidades de atendimento existentes. A análise que faremos será de buscar qual o público-alvo hipotético de cada unidade de atendimento da Receita Federal. 
+Nós estamos definindo público alvo de uma unidade de atendimento como toda a população dos municípios para os quais *é mais rápido, em tempo de viagem chegar à aquela unidade de atendimento do que a qualquer outra unidade de atendimento disponível. 
+Nós dizemos que é hipotético porque, como discutido nas ressalvas finais da seção 2, o tempo de viagem e a distância não são os únicos fatores a definirem para onde o cidadão vai escolher ser atendido. Ainda assim, acreditamos ser dos fatores mais importantes, e por isso, uma boa primeira aproximação.
 
-Primeiro, mostrar mapa e explicar o que o mapa significa. 
-Segundo, mostrar e analisar duração de viagem médio por unidade de atendimento, identificar médias e forma da distribuição
-Terceiro, mostrar e analisar público-alvo total de cada unidade de atendimento
-Quarto, mostrar distribuição de idade média (geral / ativo / inativo) e de renda por unidade de atendimento; argumentar pela baixa quantidade de idosos (absoluto e percentualmente) e como a população mais velha (+60) não pode ser argumento contra a digitalização; ademais, mostrar alta população com menos de 30 anos
-Quinto, argumentar que a população com menos de 2 salários mínimos dificilmente é atingida pela Receita; mostrar nova distribuição de público-alvo; argumentar pela remoção de unidades com público alvo muito baixo
-
+<!-- por arquivo de unidades no Dropbox -->
 
 ```{r}
 # usar dados de viagens para, para cada município, descobrir a unidade de atendimento mais próxima
-# produzir mapas com essas informações
 #viagens <- readRDS(url("https://www.dropbox.com/s/jkiiwwxz73eys9e/01_viagens.rds?raw=1"))
 #demog <- readRDS(url('https://www.dropbox.com/s/stsxm0cl98lmnzg/03_demografia.rds?raw=1'))
-#load pelo URL temporariamente dando problema, fazer load local
-
-viagens <- readRDS("/home/celso/Área de Trabalho/git_folders/tccENAP/viagens.rds")
-demog <- readRDS("/home/celso/Área de Trabalho/git_folders/tccENAP/demografia.rds")
 
 #quais os códigos de ibge dos municípios e áreas de ponderação para cada unidade da RFB?
-## por arquivo de unidades no Dropbox
-unids <- readRDS("/home/celso/Área de Trabalho/git_folders/tccENAP/02_ dados/03_ analise/00_unidades_RFB_cod_ibge.rds") %>% 
-            mutate(ibge_unid = ifelse(is.na(ibge_area), ibge_municipio,  ibge_area)) %>% 
-            distinct()
+#unids <- readRDS("./02_ dados/03_ analise/00_unidades_RFB_cod_ibge.rds") %>% 
+            #mutate(ibge_unid = ifelse(is.na(ibge_area), ibge_municipio,  ibge_area)) %>% 
+            #distinct()
 
 #qual a unidade de atendimento mais próxima, saindo do município?
 classif <- viagens %>% 
@@ -248,18 +246,19 @@ map_info <- classif %>%
               select(ibge_unid, ibge_nome, ibge_tipo, duração, ibge_destino, Unidade:Logradouro, salMin_01to02:geometry) %>% 
               st_as_sf()
 
-#https://www.r-bloggers.com/solving-the-map-coloring-problem-in-r/
-
-#plot de teste para ver o que é possível com as informações do Map_info
-#Este mapa mostra todos os municípios que estejam mais próximos das Unidades de atendimento da 3RF (Maranhão, Piauí e Ceará)
-#Note que os municípios extrapolam os três estados, posto que há municípios em estados vizinhos cuja proximidade, medida em duração de tempo de viagem de carro, é mais próximo destas unidades separadas do que de unidades dentro de seus próprios estados
-map_test <- map_info %>% select(Unidade, Estado, geometry) %>% filter(Estado %in% c('MA', 'PI', 'CE'))
-theme_set(theme_bw())
-map <- ggplot(map_test) + geom_sf(aes(fill = Unidade))
+#mapa do brasi, divididor por municípios e colorido por unidade de atendimento da RFB
+map_test <- map_info %>% select(Unidade, Estado, geometry)
+map <- ggplot(map_test) + geom_sf(aes(fill = Unidade)) + theme(legend.position = "none") + scale_colour_viridis_c()
 map
 ```
 
+Geramos então. o mapa completo do Brasil divididos por municípios e as cores representando as áreas atingidas por cada unidade de atendimento, medido por tempo de viagem de carro, notamos já de início alguns pontos não categorizados. 
+Como discutido anteriormente, na região norte, com o parco acesso a infraestrutura rodoviária e grande dependência de viagens em meio hidroviários, não disponíveis no OpenStreetMap, acaba por não haver rotas identificadas para estes municípios. 
+Haveria duas possíveis soluções. Uma solução seria inserir informações vetoriais de rotas hidrográficas disponíveis na região. A segunda solução seria a o uso de mapas em grade ( _raster_ ) especificamente nessas regiões, para identificas as unidades mais próximas nos municípios que ficaram de fora. 
+Seja como for, deixa evidenciado como as diferentes realidades do país impedem a aplicação de uma única técnicas para todas as situações. Ainda assim, com os dados que temos, podemos fazer algumas avaliações das informações disponíveis. 
+
 ```{r}
+# dados demográficos agregados por unidade de atendimento da RFB 
 aggr <- map_info %>% 
           sf::st_drop_geometry() %>% 
           group_by(
@@ -297,108 +296,160 @@ aggr <- map_info %>%
             inativo_19less = sum(inativo_19less, na.rm = T)
           ) %>% 
         ungroup()
-head(aggr)
-
-
-
-
 ```
 
 ```{r}
-# qual a média de duração de viagem no Brasil (em minutos)? Qual a máxima duração, e qual a mínima?
-map_eval1 <- c(media = mean(aggr$duração), máxima=max(aggr$duração), mínima = min(aggr %>% filter(!(duração %in% c(0))) %>% select(duração)))
-map_eval1
+tempoViag <- ggplot(aggr, aes(x = reorder(Unidade, duração), y= duração)) + geom_bar(stat = 'identity') + theme_minimal() + theme(axis.text.x = element_blank())
+tempoViag
 ```
 
+Ao analisarmos o tempo de viagem entre os municípios e suas respectivas unidades de atendimento, percebemos que há uma grande uniformidade, mas com alguns outliers com tempos fora do normal. 
 
 ```{r}
-#Qual a unidade com maior público-alvo? E a com menor público alvo? Qual o público alvo médio da população?
-map_eval2_info <- aggr %>% select(ativo_2024:inativo_19less) %>% mutate(total = rowSums(., na.rm = T))
+summary(aggr$duração)
+```
 
-map_eval2 <- c(
-  maior = max(map_eval2_info$total),
-  menor = min(map_eval2_info$total),
-  medio = mean(map_eval2_info$total)
-)
-map_eval2
+Em verdade, percebemos que o tempo mediano de viagem para uma unidade de atendimento é de 42 minutos de carro, e a média vai para 76 minutos, certamente puxado pelos outliers.
 
+```{r}
+pop_outlier <- aggr %>% filter(duração > mean(aggr$duração)) %>% select(ativo_2024:inativo_19less) %>% mutate(total = rowSums(., na.rm = T))
+sum(pop_outlier$total)
+```
+
+É possível que esses outliers existam pelas já discutidas limitações na infraestrutura rodoviária, mas seria interessante analisar com mais calma a situação dos municípios que estão muito acima da média, de um ponto de vista de garantia da acessibilidade. Afinal, como podemos ver acima, são 3 milhões e 300 mil pessoas nessa situação. 
+
+```{r}
+popUnidades <- aggr %>% select(Unidade, ativo_2024:inativo_19less) %>% mutate(total = rowSums(.[2:ncol(.)], na.rm = T))
+popUnidsChart <- ggplot(popUnidades, aes(x = reorder(Unidade, total), y= total))+ geom_bar(stat = 'identity') + theme_minimal() + theme(axis.text.x = element_blank())
+popUnidsChart
 ```
 
 ```{r}
-# qual o percentual MÉDIO no público alvo das unidades DE
-# qual o percentual MEDIANO no público alvo das unidades DE
-# qual o percentual MÁXIMO no público alvo das unidades DE 
-# qual o percentual MÍNIMO no público alvo das unidades DE 
-# pessoas com mais de 10 anos e menos de 02 salários mínimos (isentos do IRPF)
-map_eval3_info <- aggr %>% 
-                    select(salMin_01to02:salMin_semrendimento) %>% 
+summary(popUnidades$total)
+```
+
+Novamente encontramos cenário de grandes desigualdades, que mereceriam atenção para um planejamento mais estratégico do posicionamento das unidades. A média de pessoas dentro do público-alvo das unidades é de cerca de 870 mil, mas essa média é fortemente puxada por outliers com um número muito alto de atingidos. A unidade com maior número de atendidos chega a uma população estimada de 12 milhões de pessoas, enquanto a menor unidade atinge apenas 20 mil pessoa.
+
+Todavia, até o momento, estamos tratando as populações inteiras dos municípios como população-alvo das unidades de atendimento. Na prática, aqueles que não possuem renda, que estejam economica inativos, em geral, não possuem grandes motivos para lidar com a Receita Federal. Ademais, há também o argumento de que o serviços presenciais servem principalmente às populações mais velhas, com menos familiaridade com os canais digitais. Essas seleções são exemplos de como se poderia refinar e definir com mais precisão o público das unidades de atendimento, a fim de prestar um melhor serviço. 
+
+Primeiramente, podemos analisar a idade média da população econômicamente ativa atendida por cada unidade. 
+
+```{r}
+meanAge <- aggr %>% 
+              select(Unidade, ativo_2024:ativo_19less) %>% 
+              mutate(
+                total = rowSums(.[2:ncol(.)]),
+                
+                weightAge = (ativo_2024 * (20+24)/2 +
+                ativo_2529 * (25+29)/2 + 
+                ativo_3034 * (30+34)/2 +
+                ativo_3539 * (35+39)/2 +
+                ativo_4044 * (40+44)/2 +
+                ativo_4549 * (45+49)/2 +
+                ativo_5054 * (50+54)/2 +
+                ativo_5559 * (55+59)/2 +
+                ativo_6069 * (60+69)/2 +
+                ativo_70plus * (70+100)/2 +
+                ativo_19less * (19)/2) / total
+              ) %>% 
+              filter(weightAge <= max(weightAge))
+
+
+meanAgeChart <- ggplot(meanAge, aes(x = reorder(Unidade, weightAge), y = weightAge)) + geom_point()+  theme(axis.text.x = element_blank())
+meanAgeChart
+```
+
+A idade média das unidades de atendimento aponta para uma população economicamente ativa relativamente jovem, com idade média próxima dos 36 anos de idade. Todavia, não podemos nos esquecer que estes dados são do censo de 2010, e o próximo censo, de 2020, pode já apontar uma população mais envelhecida. 
+
+```{r}
+summary(meanAge$weightAge)
+```
+
+```{r}
+meanAgeTodos <- aggr %>% 
+              select(Unidade, ativo_2024:inativo_19less) %>% 
+              mutate(
+                total = rowSums(.[2:ncol(.)]),
+                
+                weightAge = (ativo_2024 * (20+24)/2 +
+                ativo_2529 * (25+29)/2 + 
+                ativo_3034 * (30+34)/2 +
+                ativo_3539 * (35+39)/2 +
+                ativo_4044 * (40+44)/2 +
+                ativo_4549 * (45+49)/2 +
+                ativo_5054 * (50+54)/2 +
+                ativo_5559 * (55+59)/2 +
+                ativo_6069 * (60+69)/2 +
+                ativo_70plus * (70+100)/2 +
+                ativo_19less * (19)/2 +
+                  
+                inativo_2024 * (20+24)/2 +
+                inativo_2529 * (25+29)/2 + 
+                inativo_3034 * (30+34)/2 +
+                inativo_3539 * (35+39)/2 +
+                inativo_4044 * (40+44)/2 +
+                inativo_4549 * (45+49)/2 +
+                inativo_5054 * (50+54)/2 +
+                inativo_5559 * (55+59)/2 +
+                inativo_6069 * (60+69)/2 +
+                inativo_70plus * (70+100)/2 +
+                inativo_19less * (19)/2
+                  
+                ) / total
+              ) %>% 
+              filter(weightAge <= max(weightAge))
+
+summary(meanAgeTodos$weightAge)
+```
+
+Todavia, mesmo quando incluímos os inativos, as médias e medianas permanecem em torno de 35 anos, indicando-nos que as unidades atendem uma população mais jovem, que provavelmente possui mais contato e conhecimento de uso dos canais digitais.
+
+Em verdade, se formos investigar o percentual de pessoas com mais de 60 anos de idade, percebemos que eles não representam uma parcela relevante para praticamente nenhuma das unidades. 
+
+```{r}
+pop60plus <- aggr %>% 
+                    select(Unidade, ativo_2024:inativo_19less) %>% 
                     mutate(
-                      total = rowSums(., na.rm=T),
-                      perc_less02 = salMin_01to02/total
-                    )
-map_eval3 <- c(
-  maior = max(map_eval3_info$perc_less02),
-  menor = min(map_eval3_info$perc_less02),
-  medio = mean(map_eval3_info$perc_less02),
-  mediano = median(map_eval3_info$perc_less02)
-)
-map_eval3  
-
-
-```
-
-```{r}
-# qual o percentual MÉDIO no público alvo das unidades DE
-# qual o percentual MEDIANO no público alvo das unidades DE
-# qual o percentual MÁXIMO no público alvo das unidades DE 
-# qual o percentual MÍNIMO no público alvo das unidades DE 
-# pessoas com mais de 60 anos de idade
-
-map_eval4_info <- aggr %>% 
-                    select(ativo_2024:inativo_19less) %>% 
-                    mutate(
-                      total = rowSums(., na.rm=T),
+                      total = rowSums(.[2:ncol(.)], na.rm=T),
                       perc_60plus = (ativo_6069+ativo_70plus+inativo_6069+inativo_70plus)/total
                     )
-map_eval4 <- c(
-  maior = max(map_eval4_info$perc_60plus),
-  menor = min(map_eval4_info$perc_60plus),
-  medio = mean(map_eval4_info$perc_60plus),
-  mediano = median(map_eval4_info$perc_60plus)
-)
-map_eval4  
+plu60Chart <- ggplot(pop60plus, aes(x = reorder(Unidade, perc_60plus), y = perc_60plus)) + geom_point()+  theme(axis.text.x = element_blank())
+plu60Chart
 
 ```
 
 ```{r}
-# qual o percentual MÉDIO no público alvo das unidades DE
-# qual o percentual MEDIANO no público alvo das unidades DE
-# qual o percentual MÁXIMO no público alvo das unidades DE 
-# qual o percentual MÍNIMO no público alvo das unidades DE 
-# pessoas com menos de 30 anos de idade
+summary(pop60plus$perc_60plus)
+```
 
-map_eval5_info <- aggr %>% 
-                    select(ativo_2024:inativo_19less) %>% 
+Em termos percentuais, estamos falando de no máximo 23% da população, mas, na prática, a média e a mediana estão firmes em torno de 13%.
+
+Uma última análise interessante seria em relação à renda. Independente da idade, os principais motivos para que pessoas físicas se dirijam a unidades de atendimento da Receita Federal são o Cadastro de Pessoas Física (CPF) e a DIRPF (Declaração de Imposto de Renda de Pessoa Física). O CPF pode ser gerado, alterado e cancelado em diversos outros órgãos conveniados, incluindo os Correios e o Banco do Brasil. o que diminuir fortemente a necessidade do cidadão se deslocar a um posto de atendimento da RFB. A DIRPF, por outro lado, só pode ser resolvida na própria instituição. 
+Todavia, podemos argumentar que o público-alvo, neste caso, se restringiria apenas àqueles que tivessem renda mensal acima de 4 salários mínimos, posto que o salário mínimo correspondia a R$ 510,00 em 2010, ano do Censo. Como não temos o quantitativo de pessoas que ganham entre 4 e 5 salários mínimos separado, podemos analisar qual o percentual e o número absoluto da população que ganha acima de 5 salários mínimos, de acordo com o censo de 2010, como uma aproximação do que queremos visualizar. 
+
+
+```{r}
+popIrpf <- aggr %>% 
+                    select(Unidade, salMin_01to02:salMin_semrendimento) %>% 
                     mutate(
-                      total = rowSums(., na.rm=T),
-                      perc_30less = (ativo_19less+ativo_2024+ativo_2529+inativo_19less+inativo_2024+inativo_2529)/total
+                      total = rowSums(.[2:ncol(.)], na.rm=T),
+                      perc_more05 = 1-((salMin_01to02+salMin_semrendimento+salMin_02to05)/total)
                     )
 
-map_eval5 <- c(
-  maior = max(map_eval5_info$perc_30less),
-  menor = min(map_eval5_info$perc_30less),
-  medio = mean(map_eval5_info$perc_30less),
-  mediano = median(map_eval5_info$perc_30less)
-)
-map_eval5  
-```
+popIrpfChart <- ggplot(popIrpf, aes(x = reorder(Unidade, perc_more05), y = perc_more05)) + geom_point()+  theme(axis.text.x = element_blank())
+popIrpfChart
 
+```
 
 ```{r}
-#escolher uma unidade de atendimento para remover, removê-la, e testar novamente as informações demográficas acima
-#Possibilidade de simulações: qual o impacto nas unidades de atendimento próximas se a unidade de atendimento com menor público alvo for fechada?
+summary(popIrpf$perc_more05)
 ```
 
+A informação que tiramos é que a população brasileira é bastante carente, e que a parcela que tem mais contato com a Receita Federal é bastante pequena. Enquanto há unidades atendendo a um máximo de 46% do público-alvo, a média e a mediana são em torno de 10%, com um mínimo de 4% do público-alvo. 
+Todas essas análises são aproximações, utilizando dados antigos, do Censo de 2010. Todavia, podem ser refinados, e mesmo como aproximações, já nos servem para algumas lições. 
+Percebemos que a população atingida por cada uma das unidades da Receita Federal é, no geral, relativamente pobre e relativamente jovem. Disso, tiramos que, por um lado, é uma população que não deveria ter grande dificuldade de aprender a acessar os canais digitais, para os que necessitassem de acesso, que, pela análise da renda, não é uma parcela tão grande da população. 
+Por outro lado, a Receita Federal poderia desde já, buscar aumentar o foco de suas unidades presenciais. Estudar os pontos fora da curva de população atingida e de duração de viagem poderiam das insights importantes sobre possíveis fechamentos e aberturas de unidades, reorganizando a distribuição no território da população e buscando aumentar a acessibilidade de seus serviços. 
+Acima de tudo, nos ensina que há ineficiências que são possíveis de ser visualizadas com a mais simples das aproximações analíticas, e que, portanto, existe um potencial significativo no uso de análise de dados para a gestão do atendimento da Receita Federal do Brasil.
 
 
 ### Atendimento tributário como política pública
