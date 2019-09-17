@@ -8,6 +8,8 @@ output:
     highlight: github
 ---
 
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
@@ -15,24 +17,34 @@ library(sf)
 library(kableExtra)
 theme_set(theme_bw())
 
-#output para PDF
-#geometry: "left=3cm,right=3cm,top=2.5cm,bottom=2.5cm"
-#output:
-#  pdf_document:
-#    latex_engine: xelatex
-
-#header-includes: 
-#  - \renewcommand\refname{Referências}
-
-#resolver load de dados pelo Dropbox
-servicos <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/02_serviços.rds")
-viagens <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/01_viagens.rds")
-demog <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/03_demografia.rds")
-unids <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/tccENAP/02_ dados/03_ analise/00_unidades_RFB_cod_ibge.rds") %>% 
-        mutate(ibge_unid = ifelse(is.na(ibge_area), ibge_municipio,  ibge_area)) %>%
-        distinct()
-
 ```
+
+```{r}
+#load de dados pelo Dropbox
+#servicos <- readRDS(url('https://www.dropbox.com/s/84hrt2ntrx9k0t0/02_servi%C3%A7os.rds?raw=1'))
+#viagens <- readRDS('https://www.dropbox.com/s/t17zlg8y8spfmno/01_viagens_2.rds?dl=0')
+#demog <- readRDS(url('https://www.dropbox.com/s/stsxm0cl98lmnzg/03_demografia.rds?raw=1'))
+#unids <- readRDS(url('https://www.dropbox.com/s/qaypq8bsoa5gfoa/04_unidadesRFB.rds?raw=1')) %>% 
+            #mutate(ibge_unid = ifelse(is.na(ibge_area), ibge_municipio,  ibge_area)) %>% 
+            #distinct()
+
+servicos <- readRDS("02_serviços.rds")
+viagens <- readRDS('01_viagens.rds')
+demog <- readRDS('03_demografia.rds')
+unids <- readRDS('04_unidadesRFB.rds') %>% 
+            mutate(ibge_unid = ifelse(is.na(ibge_area), ibge_municipio,  ibge_area)) %>% 
+            distinct()
+
+
+#unids <- readRDS("./02_ dados/03_ analise/00_unidades_RFB_cod_ibge.rds")
+#servicos <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/02_serviços.rds")
+#viagens <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/01_viagens.rds")
+#demog <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/03_demografia.rds")
+#unids <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/tccENAP/02_ dados/03_ analise/00_unidades_RFB_cod_ibge.rds") %>% 
+#        mutate(ibge_unid = ifelse(is.na(ibge_area), ibge_municipio,  ibge_area)) %>%
+        #distinct()
+```
+
 
 # Introdução
 
@@ -42,17 +54,13 @@ Na primeira seção, iremos discutir a urgência da aplicação de um método ma
 
 # 1. Digitalização, crise e atendimento
 
-Os recursos, sabemos, são escassos. Frente às necessidades e desejos, a nobreza do serviço público não subverte tal incômoda realidade. Cabe aos gestores da coisa pública planejar, executar e controlar o que estiver sob sua responsabilidade de forma a conhecer a demanda e maximizar a oferta. 
-
-<!-- citar: https://www.wikiwand.com/en/Service_(economics) -->
+Os recursos, sabemos, são escassos. Frente às necessidades e desejos, a nobreza do serviço público não subverte tal incômoda realidade. Cabe aos gestores da coisa pública planejar, executar e controlar o que estiver sob sua responsabilidade de forma a conhecer a demanda e maximizar a oferta [@wikipedia_service_2019]. 
 
 Serviços, diz a definição, são intangíveis:  transações que não envolvem a entrega de bens materiais e conquanto, não assumem uma forma. São produzidos e consumidos simultâneamente. Hoje, com o advento da internet e das TIC (tecnologias da informação e da comunicação), é possível oferecer diversos serviços sem que seja necessária a presença do ofertante e do demandante no mesmo local físico. O acesso a essas tecnologias, claro, ainda é limitado.
 
 Este é o caso do atendimento presencial oferecido por diversos órgãos públicos, conjunto no qual está inserida a Secretaria da Receita Federal do Brasil (RFB). Por ele, o cidadão pode tanto entregar quanto requisitar informações, declarações e documentos essenciais à conformidade tributária, auxiliando no papel da instituição de recolher os recursos necessários ao provimento dos diversos serviços públicos oferecidos pelo Estado brasileiro. No papel de orientação, são também instrumentos de educação fiscal e promoção da auto-regularização, fomentando uma cultura de conformidade pro-ativa e cidadã.
 
-<!-- citação @gestãoRFB com problema -->
-
-O atendimento já foi alvo de extensa digitalização, evidenciado em seus números. A virtualização dos serviços de atendimento da RFB avança a passos largos; entre 2012 e 2017, o e-Cac, portal de atendimento na internet da RFB, passou de 66,6 milhões de atendimentos para 145,6 milhões de atendimentos. Enquanto isso, os atendimentos presenciais caíram de 20,2 milhões para 14,9 milhões no mesmo período, de forma que o percentual destes passou de cerca de 24% do total para apenas 9% @gestãoRFB. Mesmo assim, 14,9 milhões equivalem a 40.000 cidadãos recebidos nas 522 unidades da RFB por dia, em todo o país.
+O atendimento já foi alvo de extensa digitalização, evidenciado em seus números. A virtualização dos serviços de atendimento da RFB avança a passos largos; entre 2012 e 2017, o e-Cac, portal de atendimento na internet da RFB, passou de 66,6 milhões de atendimentos para 145,6 milhões de atendimentos. Enquanto isso, os atendimentos presenciais caíram de 20,2 milhões para 14,9 milhões no mesmo período, de forma que o percentual destes passou de cerca de 24% do total para apenas 9%. Mesmo assim, 14,9 milhões equivalem a 40.000 cidadãos recebidos nas 522 unidades da RFB por dia, em todo o país [@receita_federal_do_brasil_relatorio_2018].
 
 Desta realidade, surgem os dilemas do gestor. Para suprir essa necessidade de simultaneidade física entre os servidores da RFB e o cidadão demandando serviços, cabe a ele escolher como distribuir geograficamente os recursos materiais e os servidores disponíveis. 
 
@@ -72,15 +80,15 @@ Ao se analisar a relação entre população e o espaço físico, podemos eviden
 
 A relevância da distribuição ótima é tanto mais importante quanto mais escassos forem os recursos disponíveis. O Brasil enfrenta desde meados de 2014 uma grave crise econômica, com efeitos diversos sobre a população e sobre a estrutura administrativa do Estado. Mesmo o órgão arrecadador não escapa das restrições necessárias ao ajuste fiscal aplicado na tentativa de debela-la. Neste sentido, o TCU, em auditoria operacional realizada na RFB, relata que
 
-> "além da crise econômica que o País vem enfrentando, que impacta a receita fazendária e a previdenciária, tem-se constatado a ocorrência de baixa recuperação dos créditos trbutários administrados pela RFB" [@tribunal_de_contas_da_uniao_auditoria_2017, pp. 1]. 
+> "além da crise econômica que o País vem enfrentando, que impacta a receita fazendária e a previdenciária, tem-se constatado a ocorrência de baixa recuperação dos créditos trbutários administrados pela RFB" [@uniao_auditoria_2017, pp. 1]. 
 
 Os reflexos internos na Receita Federal do Brasil são o contingenciamento de despesas e a paralisação de concursos, estancando o fluxo de renovação de servidores. Em paralelo, há um processo de aceleração nas aposentadorias, muitas delas influenciadas pelo temor que os anúncios da reforma previdenciária inspiram. 
 
-Vale lembrar que muitos servidores na ativa  já alcançaram o requisito mínimo para aposentar-se mas continuam em serviço, incentivados pelo chamado abono permanência [@tribunal_de_contas_da_uniao_auditoria_2017]. Entre 2015 e 2017, a RFB perdeu 1.831 servidores, de um total inicial de 23.687, o que representa uma diminuição de 7,7% de sua força de trabalho em apenas 3 anos.
+Vale lembrar que muitos servidores na ativa  já alcançaram o requisito mínimo para aposentar-se mas continuam em serviço, incentivados pelo chamado abono permanência [@uniao_auditoria_2017]. Entre 2015 e 2017, a RFB perdeu 1.831 servidores, de um total inicial de 23.687, o que representa uma diminuição de 7,7% de sua força de trabalho em apenas 3 anos.
 
 Este enxugamento, pode-se argumentar, não seria de todo impactante na organização, posto que, com o avançar da digitalização, haveria um aumento na produtividade que compensaria em parte ou mesmo totalmente os efeitos da diminuição na quantidade de servidores. Todavia, lembra o TCU  que 
 
-> "(...) não se pode contar apenas com a evolução dos meios de tecnologia da informação, pois os mesmos dependem de fatores exógenos como questões orçamentárias, disponibilidade do Serpro para desenvolvimento de sistemas e outros que não permitem sua evolução com velocidade o suficiente para suprir a nova demanda" [@tribunal_de_contas_da_uniao_auditoria_2017, pp. 20].
+> "(...) não se pode contar apenas com a evolução dos meios de tecnologia da informação, pois os mesmos dependem de fatores exógenos como questões orçamentárias, disponibilidade do Serpro para desenvolvimento de sistemas e outros que não permitem sua evolução com velocidade o suficiente para suprir a nova demanda" [@uniao_auditoria_2017, pp. 20].
 
 Desta forma, temos todos os fatos em frente aos gestores da Receita Federal do Brasil. De um lado, há um quantitativo decrescente de servidores disponíveis para as tarefas da organização. De outro, percebemos uma gama de obstáculos que impossibilitam sua substituição imediata por canais digitais. Cabe-os então decidir, como distribuir as unidades da forma mais eficiente? De que maneira promover a equidade no acesso aos serviços da organização? O objetivo do presente trabalho é sugerir um modelo que, incluído num processo maior, possa responda às essas necessidades.
 
@@ -99,9 +107,8 @@ Os modelos vetoriais consistem de uma série de nós, conectados por linhas, rep
 
 Os modelos de grade são compostos por uma série de celulas regulares, geralmente retangulares, de tamanho e distância padronizados. Cada ponto do mapa é resumido em um dos retângulos, e todas as informações relevantes do mapa dentro da região encoberta por aquele retângulo são a ele atribuído. No modelo de grade, as viagens ocorrem na passagem de uma célula para outra,  sempre em entre células adjacentes; assim, diferente do modelo em rede, os passos da viagem são sempre regulares em distância, variando apenas na velocidade [@delamater_measuring_2012].
 
-<!--
-![](https://www.dropbox.com/s/l06je2ddp3f2ldb/figure_12_measuring_geographic_access.png?raw=1)
--->
+![](figure_12_measuring_geographic_access.png)
+
 
 Vemos acima uma conversão entre um mapa em network para um mapa em grid [@delamater_measuring_2012, figure 12]. Há uma diferença fundamental na forma como esses modelos compreendem o espaço.
 
@@ -132,21 +139,17 @@ Seria mais realista um modelo que pudessemos combinar as informações demográf
 
 Para realizar as analises propostas, uma gama de fontes de dados de natureza e informações diferentes foram levantadas. As informações levantadas foram:
 
-<!-- citar nas listas abaixo: site da RFB; github geobr, Sidra IBGE, IBGE mapas, resposta do IBGE sobre mapas de áreas de ponderação na CGU, site em que se baixou mapas do OpenStreeMap --> 
-
-1. Serviços de atendimento disponibilizados pela Receita Federal do Brasil, tanto digitalmente quanto presenciais
-1. Unidades de atendimento da RFB em funcionamento, com endereço e tipo de unidade, de acordo com a estrutura organizacional
-1. Malha digitais dos municípios brasileiros presentes no Censo 2010
-1. Tabelas agregadas de população economicamente ativa e inativa e de população por faixa etária em cada um dos municípios presentes no Censo 2010
-1. Malha digitais das áreas de ponderação presentes no Censo 2010, restritas aos municípios de São Paulo, Rio de Janeiro, Belo Horizonte e Curitiba
-1. Tabelas agregadas de população economicamente ativa e inativa e de população por faixa etária em cada uma das áreas de ponderação mencionadas no Censo 2010
-1. Duração e tempo de viagem à carro entre todos os municípios e áreas de ponderação mencionadas acima
+1. Serviços de atendimento disponibilizados pela Receita Federal do Brasil, tanto digitalmente quanto presenciais [@receita_federal_do_brasil_lista_nodate]
+1. Unidades de atendimento da RFB em funcionamento, com endereço e tipo de unidade, de acordo com a estrutura organizacional [@receita_federal_do_brasil_unidades_nodate]
+1. Malha digitais dos municípios brasileiros presentes no Censo 2010 [@pereira_geobr:_nodate]
+1. Tabelas agregadas de população economicamente ativa e inativa e de população por faixa etária em cada um dos municípios presentes no Censo 2010 [@ibge_censo_2011]
+1. Malha digitais das áreas de ponderação presentes no Censo 2010, restritas aos municípios de São Paulo, Rio de Janeiro, Belo Horizonte e Curitiba [@pereira_geobr:_nodate]
+1. Tabelas agregadas de população economicamente ativa e inativa e de população por faixa etária em cada uma das áreas de ponderação mencionadas no Censo 2010 [@ibge_censo_2011]
+1. Duração e tempo de viagem à carro entre todos os municípios e áreas de ponderação mencionadas acima [@geofabrik_openstreetmap_nodate]
 
 Primeiramente, foram levantados os serviços disponíveis na Receita Federal, para descobrirmos quais dos serviços oferecidos necessitam do canal presencial das unidades de atendimento. Essas informações foram extraídas diretamente do site da RFB na internet. Outra informação obtida no site da Receita foi a lista atualizada de unidades de atendimento disponíveis, incluindo seus endereços e tipos. 
 
-<!-- citar docker.com --> 
-
-Para efetuas essas extrações, utilizamos o pacote RSelenium rodando em um container Docker, para garantir uma extração rápida e fácil de ser reproduzida. Um container é uma unidade padrão de software que empacota um código e todas a suas dependências, rodando-o de forma consistente e rápida, e muito mais leve do que se fosse criada toda uma máquina virtual para a tarefa (https://www.docker.com/resources/what-container). Esse esquema foi necessário porque, infelizmente, essas informações ou não estão disponibilizadas como Dados Abertos pela RFB, ou estão desatualizadas. 
+Para efetuas essas extrações, utilizamos o pacote RSelenium rodando em um container Docker, para garantir uma extração rápida e fácil de ser reproduzida. Um container é uma unidade padrão de software que empacota um código e todas a suas dependências, rodando-o de forma consistente e rápida, e muito mais leve do que se fosse criada toda uma máquina virtual para a tarefa [@docker_what_nodate]. Esse esquema foi necessário porque, infelizmente, essas informações ou não estão disponibilizadas como Dados Abertos pela RFB, ou estão desatualizadas. 
 
 Com os dados das unidades de atendimento e dos serviços, uma escolha pode ser realizada. Percebemos que, em geral, há uma divisão muito clara entre serviços de atendimento de natureza aduaneira e serviços de natureza tributária; ademais, para as pessoas físicas, os serviços aduaneiros resumem-se àqueles de verificação de bagagem internacional. Essas descobertas são melhor desenvolvidas na seção 3.1, abaixo.
 
@@ -154,15 +157,7 @@ Ademais, quando restringimos as unidades de atendimento àquelas que prestam ser
 
 Com essa informação em mãos, decidimos que a localização geográfica exata das unidades de atendimento, em geral, não nos interessava; bastava-nos saber que eles estavam localizados num município, e poderíamos utilizar a localização do município, registrado em banco de dados fornecido pelo IBGE, como localização da unidade, com baixa margem de erro nos cálculos de tempo de viagem entre os outros municípios e aquela unidade.
 
-<!-- 
-Citar google maps 
-Google Maps como autor
-No date
-url google maps
-data de retrieve das url
---> 
-
-A exceção se deu nos quatro municípios citados. Para essas unidades, decidimos ir ao nível de área de ponderação, subdivisão censitária estabelecida pelo IBGE. Por isso, precisávamos da localização de cada unidade de atendimento destes municípios para identificar a qual área de ponderação ela estava contida. Para isso, utilizamos a API do Google Maps, que, a partir do endereço extraído no site da RFB, nos devolvia uma coordenada geográfica que podíamos utilizar para definir a área de ponderação que a continha.
+A exceção se deu nos quatro municípios citados. Para essas unidades, decidimos ir ao nível de área de ponderação, subdivisão censitária estabelecida pelo IBGE. Por isso, precisávamos da localização de cada unidade de atendimento destes municípios para identificar a qual área de ponderação ela estava contida. Para isso, utilizamos a API do Google Maps, que, a partir do endereço extraído no site da RFB, nos devolvia uma coordenada geográfica que podíamos utilizar para definir a área de ponderação que a continha [@google_plataforma_nodate].
 
 As malhas digitais dos municípios foram obtidas no IBGE. As malhas dos municípios puderam ser obtidas sem grandes dificuldades utilizando o pacote GeoBr, disponibilizado no GitHub pelo IPEA; as malhas das áreas de ponderação, todavia, não puderam ser obtidas com o mesmo pacote, devido à problemas no código desse; baixamos as malhas dos setores censitários, disponibilizadas em FTP pelo IBGE, e utlizando informação entregue pelo IBGE em consulta de SAI, fizemos o agrupamento dos setores nas áreas de ponderação. 
 
@@ -173,6 +168,7 @@ Todos esses dados processados estão disponíveis publicamente, via Dropbox, nas
 
 - [Arquivo RDS com informações dos tempos e distâncias de viagens](https://www.dropbox.com/s/jkiiwwxz73eys9e/01_viagens.rds?raw=1)
 - [Arquivo RDS com informações dos serviços prestados pela Receita Federal do Brasil](https://www.dropbox.com/s/84hrt2ntrx9k0t0/02_servi%C3%A7os.rds?raw=1)
+- [Arquivo RDS com informações das unidades da Receita Federal do Brasil](https://www.dropbox.com/s/qaypq8bsoa5gfoa/04_unidadesRFB.rds?raw=1)
 - [Arquivo RDS com informações demográficas de municípios e áreas de ponderação selecionados](https://www.dropbox.com/s/stsxm0cl98lmnzg/03_demografia.rds?raw=1)
 
 # 3. Dos resultados
@@ -180,28 +176,17 @@ Todos esses dados processados estão disponíveis publicamente, via Dropbox, nas
 
 A principal limitação à plena digitalização dos serviços da Receita Federal está na necessidade de autenticação digital dos cidadãos. Devido à sensibilidade dos serviços da RFB, que envolvem tanto informações sensíveis da vida financeira e da identidade da pessoa, como também envolvem impactos financeiros, é necessário utilzar certificados digitais para a maioria dos serviços online. 
 
-<!-- citar nfe.io -->
+O certificado digital é uma assinatura eletrônica com criptografia para confirmar a identidade de uma pessoa física (e-CPF) ou empresa (e-CNPJ). Ele possui poder jurídico e contém dados do titular como nome, registro civil e assinatura da autoridade certificadora, e pode custa de cerca de 100 reais até 400 reais por ano, dependendo do segmento e do tipo do certificado [@nfe.io_quanto_2018].
 
-O certificado digital é uma assinatura eletrônica com criptografia para confirmar a identidade de uma pessoa física (e-CPF) ou empresa (e-CNPJ). Ele possui poder jurídico e contém dados do titular como nome, registro civil e assinatura da autoridade certificadora, e pode custa de cerca de 100 reais até 400 reais por ano, dependendo do segmento e do tipo do certificado (https://nfe.io/blog/assinatura/quanto-custa-certificado-digital/).
+Devido ao alto custo, o número de pessoas físicas com certificado digital é pequeno; por outro lado, a obrigatoriedade legal da posse de certificados digitais para pessoas jurídicas está se expandindo ano a ano, e por isso, os serviços presenciais de pessoas jurídicas na RFB está em franco declínio, restando às unidades atenderem as pessoas física.  As empresas, em sua massiva maioria, já possuem certificado digital, se não por necessidade, mas por obrigação legal, que está se extendendo progressivamente aos CNPJs de menor faturamente. Em julho de 2018, por exemplo, passou a ser obrigatório para pequenas empresas. Desta forma, podemos nos concentrar nos serviços prestados ao cidadão, listados 253 nessa página da internet [@dunder_certificacao_2018].
 
-Devido ao alto custo, o número de pessoas físicas com certificado digital é pequeno; por outro lado, a obrigatoriedade legal da posse de certificados digitais para pessoas jurídicas está se expandindo ano a ano, e por isso, os serviços presenciais de pessoas jurídicas na RFB está em franco declínio, restando às unidades atenderem as pessoas física.  As empresas, em sua massiva maioria, já possuem certificado digital, se não por necessidade, mas por obrigação legal, que está se extendendo progressivamente aos CNPJs de menor faturamente. Em julho de 2018, por exemplo, passou a ser obrigatório para pequenas empresas. Desta forma, podemos nos concentrar nos serviços prestados ao cidadão, listados 253 nessa página da internet.
-
-<!-- Por no zotero e citar: https://noticias.r7.com/economia/certificacao-digital-sera-obrigatoria-para-pequenas-empresas-25062018 -->
+É possível que, no futuro, a RFB adote outras formas mais simples e baratas de autenticação do cidadão, expandindo os acessos digitais a seus serviços. Um exemplo é o login único do governo federal, que está sendo lentamente adotado por diversos órgão da União [@ministerio_da_economia_o_nodate]. Até lá, as unidades presenciais servirão como canal de complementação àqueles que não possuírem os meios para acessar os serviços digitais. 
 
 
-
-<!-- citar faq login único -->
-
-É possível que, no futuro, a RFB adote outras formas mais simples e baratas de autenticação do cidadão, expandindo os acessos digitais a seus serviços. Um exemplo é o login único do governo federal, que está sendo lentamente adotado por diversos órgão da União (http://faq-login-unico.servicos.gov.br/en/latest/_perguntasdafaq/oquee.html). Até lá, as unidades presenciais servirão como canal de complementação àqueles que não possuírem os meios para acessar os serviços digitais. 
-
-
-Pois bem, podemos então nos perguntar, que serviços não estão digitalizados e, como tal, a resolução do problema do certificado digital não bastaria para que deixassem de ser realizados em unidades de atedimento? Pelas razões já citadas, iremos nos ater aos serviços ao cidadão, e não às empresas, como listados no site da Receita Federal. 
-
-<!-- Citar serviços ao cidadão receita federal -->
+Pois bem, podemos então nos perguntar, que serviços não estão digitalizados e, como tal, a resolução do problema do certificado digital não bastaria para que deixassem de ser realizados em unidades de atedimento? Pelas razões já citadas, iremos nos ater aos serviços ao cidadão, e não às empresas, como listados no site da Receita Federal [@receita_federal_do_brasil_lista_nodate]. 
 
 
 ```{r}
-#servicos <- readRDS(url('https://www.dropbox.com/s/84hrt2ntrx9k0t0/02_servi%C3%A7os.rds?raw=1'))
 nrow(servicos)
 ```
 
@@ -244,18 +229,7 @@ Nós estamos definindo público alvo de uma unidade de atendimento como toda a p
 
 Nós dizemos que é hipotético porque, como discutido nas ressalvas finais da seção 1, o tempo de viagem e a distância não são os únicos fatores a definirem para onde o cidadão vai escolher ser atendido. Ainda assim, acreditamos ser dos fatores mais importantes, e por isso, uma boa primeira aproximação.
 
-<!-- por arquivo de unidades no Dropbox -->
-
 ```{r}
-# usar dados de viagens para, para cada município, descobrir a unidade de atendimento mais próxima
-#viagens <- readRDS(url("https://www.dropbox.com/s/jkiiwwxz73eys9e/01_viagens.rds?raw=1"))
-#demog <- readRDS(url('https://www.dropbox.com/s/stsxm0cl98lmnzg/03_demografia.rds?raw=1'))
-
-#quais os códigos de ibge dos municípios e áreas de ponderação para cada unidade da RFB?
-#unids <- readRDS("./02_ dados/03_ analise/00_unidades_RFB_cod_ibge.rds") %>% 
-            #mutate(ibge_unid = ifelse(is.na(ibge_area), ibge_municipio,  ibge_area)) %>% 
-            #distinct()
-
 #qual a unidade de atendimento mais próxima, saindo do município?
 classif <- viagens %>% 
   filter(destino %in% unids$ibge_unid) %>% 
@@ -511,9 +485,7 @@ A disponibilização de atendimento presencial na Receita Federal do Brasil é u
 
 Com o avanço da digitalização dos serviços governamentais, cabe ao Estado repensar o público-alvo do atendimento presencial. Como o custo do atendimento digital é múltiplas vezes menor que o de manter postos de atendimento presenciais, cabe ao Estado equilibrar a garantia de acesso com a disponibilidade de recursos, buscando um ponto que maximize as duas variáveis conflitantes. Este ponto de equilíbrio muito provavelmente estará na oferta do serviço presencial preferencialmente àqueles que não podem ou não saber como acessar digitalmente.O primeiro passo, portanto, é identificar, hoje, quem são essas pessoas. 
 
-Seria interessante que a Receita Federal do Brasil testasse hipóteses em cima das relações entre variáveis demográficas como renda, idade, gênero e nível educacional e a preferência entre os canais digitais e presenciais. Esses estudos podem ser realizados em cima das bases de dado internas de acesso ao e-Cac e de atendimentos realizados, estes últimos registrados no Sistema Nacional de Apoio ao Gerenciamento de Atendimento (SAGA).
-
-<!-- citar ENAP Saga -->
+Seria interessante que a Receita Federal do Brasil testasse hipóteses em cima das relações entre variáveis demográficas como renda, idade, gênero e nível educacional e a preferência entre os canais digitais e presenciais. Esses estudos podem ser realizados em cima das bases de dado internas de acesso ao e-Cac e de atendimentos realizados, estes últimos registrados no Sistema Nacional de Apoio ao Gerenciamento de Atendimento (SAGA)[@ministerio_da_economia_sistema_2000].
 
 O SAGA, ou Sistema Nacional de Apoio ao Gerenciamento do Atendimento, é um sistema eletrônico de coleta de dados e gerenciamento do atendimento da Receita Federal, em todas as suas etapas. Como tal, é o sistema que melhor permitiria à instituição conhecer o perfil demográfico de seu  público-alvo, e, cruzando com dados do IBGE e de outras fontes, medir o nível de acesso de cada setor da população aos serviços presenciais da secretaria. 
 
