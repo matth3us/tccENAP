@@ -85,29 +85,18 @@ theme_set(theme_bw())
 ```
 
 ```{r}
-#load de dados pelo Dropbox
-#servicos <- readRDS(url('https://www.dropbox.com/s/84hrt2ntrx9k0t0/02_servi%C3%A7os.rds?raw=1'))
-#viagens <- readRDS('https://www.dropbox.com/s/t17zlg8y8spfmno/01_viagens_2.rds?dl=0')
-#demog <- readRDS(url('https://www.dropbox.com/s/stsxm0cl98lmnzg/03_demografia.rds?raw=1'))
-#unids <- readRDS(url('https://www.dropbox.com/s/qaypq8bsoa5gfoa/04_unidadesRFB.rds?raw=1')) %>% 
-            #mutate(ibge_unid = ifelse(is.na(ibge_area), ibge_municipio,  ibge_area)) %>% 
-            #distinct()
-
-servicos <- readRDS("02_serviços.rds")
-viagens <- readRDS('01_viagens.rds')
-demog <- readRDS('03_demografia.rds')
-unids <- readRDS('04_unidadesRFB.rds') %>% 
-            mutate(ibge_unid = ifelse(is.na(ibge_area), ibge_municipio,  ibge_area)) %>% 
+servicos <- readRDS("./dados/02_serviços.rds")
+viagens <- readRDS('./dados/01_viagens_2.rds')
+demog <- readRDS('./dados/03_demografia.rds')
+unids <- readRDS('./dados/04_unidadesRFB.rds') %>% 
+            mutate(
+              ibge_unid = ifelse(
+                is.na(ibge_area), 
+                ibge_municipio,  
+                ibge_area)
+              ) %>% 
             distinct()
 
-
-#unids <- readRDS("./02_ dados/03_ analise/00_unidades_RFB_cod_ibge.rds")
-#servicos <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/02_serviços.rds")
-#viagens <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/01_viagens.rds")
-#demog <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/03_demografia.rds")
-#unids <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/tccENAP/02_ dados/03_ analise/00_unidades_RFB_cod_ibge.rds") %>% 
-#        mutate(ibge_unid = ifelse(is.na(ibge_area), ibge_municipio,  ibge_area)) %>%
-        #distinct()
 ```
 
 
@@ -172,9 +161,8 @@ Os modelos vetoriais consistem de uma série de nós, conectados por linhas, rep
 
 Os modelos de grade são compostos por uma série de celulas regulares, geralmente retangulares, de tamanho e distância padronizados. Cada ponto do mapa é resumido em um dos retângulos, e todas as informações relevantes do mapa dentro da região encoberta por aquele retângulo são a ele atribuído. No modelo de grade, as viagens ocorrem na passagem de uma célula para outra,  sempre em entre células adjacentes; assim, diferente do modelo em rede, os passos da viagem são sempre regulares em distância, variando apenas na velocidade [@delamater_measuring_2012].
 
-<!--
-![](https://www.dropbox.com/s/l06je2ddp3f2ldb/figure_12_measuring_geographic_access.png?raw=1)
--->
+
+![](figure_12_measuring_geographic_access.jpg)
 
 
 Vemos acima uma conversão entre um mapa em network para um mapa em grid [@delamater_measuring_2012, figure 12]. Há uma diferença fundamental na forma como esses modelos compreendem o espaço.
@@ -260,7 +248,8 @@ nrow(servicos)
 Alguns dos serviços desta lista se misturam com os serviços às empresas, posto que podem ser fornecidos aos dois. Em geral, um serviço que se presta a uma empresa mas também pode ser prestado a um cidadão é fornecido desta maneira simplesmente para não criar obstáculos desnecessários àqueles que ainda não tenham um CNPJ. Na prática, são serviços exclusivos para CNPJs, que, por desburocratização, podem ser prestados a alguém que não o tenha em mão. Por isso, para saber quais os serviços criados com foco nas pessoas físicas, devemos filtrar essa lista.
 
 ```{r}
-eval02 <- servicos %>% filter(publico_alvo %in% c("Pessoa Física"))
+eval02 <- servicos %>% 
+              filter(publico_alvo %in% c("Pessoa Física"))
 nrow(eval02)
 ```
 
@@ -270,18 +259,36 @@ Assim, para responder a pergunta de quantos serviços são exclusivamente presen
 
 ```{r}
 eval03 <- servicos %>% 
-            filter((tipo_atendimento %in% c("Atendimento pela internet", "Atendimento e-CAC"))) %>%
+            filter(
+              (tipo_atendimento %in% 
+                 c("Atendimento pela internet", "Atendimento e-CAC"))
+              ) %>%
             filter(publico_alvo %in% c("Pessoa Física")) %>% 
             select(nome, tipo_atendimento)
+
 eval04 <- servicos %>% 
-            filter(!(tipo_atendimento %in% c("Atendimento pela internet", "Atendimento e-CAC"))) %>%
+            filter(
+              !(tipo_atendimento %in% 
+                  c("Atendimento pela internet", "Atendimento e-CAC"))
+              ) %>%
             filter(publico_alvo %in% c("Pessoa Física")) %>% 
             left_join(eval03, by=c("nome")) %>%
             filter(is.na(tipo_atendimento.y)) %>% 
-            select(nome:descricao)
+            select(nome:descricao) %>% 
+            mutate(
+              nome_popular = ifelse(is.na(nome_popular), "", nome_popular)
+              ) %>% 
+            rename(
+              Nome = nome,
+              "Nome Popular"= nome_popular,
+              Descrição = descricao
+            )
 
 kable(eval04) %>%
-  kable_styling(bootstrap_options = c("striped", "hover"))
+  kable_styling(full_width = TRUE) %>% 
+  column_spec(1, color = "blue", width = '10em') %>%
+  column_spec(2, width = '5em')
+  
 ```
 
 Como podemos conferir, dos 253 serviços iniciais, apenas oito se encaixam nessa lista restrita. Três deles se referem a casos específicos de tratamento de CPF, um se refere a habilitação aduaneira de pessoa física, três se referem ao tratamento de bagagem para viajantes internacionais e um a possibilidade de cancelamento do imposto de renda. Como tal, com exceção óbvia dos serviços de análise de bagagens em viagens internacionais, realizadas na descida do avião de passageiro de vôo internacional, parece-nos pouco provável que esses serviços escapariam à digitalização. 
@@ -310,13 +317,24 @@ classif <- viagens %>%
 
 demog <- demog %>% 
             mutate(
-              ibge_unid = ifelse(is.na(Cod_Area_Pond), Cod_ibge,  Cod_Area_Pond),
-              ibge_nome = ifelse(is.na(Cod_Area_Pond), Cidade,  area_ponderacao),
-              ibge_tipo = ifelse(is.na(Cod_Area_Pond), "Cidade",  "Área de ponderação"),
+              ibge_unid = ifelse(
+                is.na(Cod_Area_Pond), 
+                Cod_ibge,  
+                Cod_Area_Pond),
+              ibge_nome = ifelse(
+                is.na(Cod_Area_Pond), 
+                Cidade,  
+                area_ponderacao),
+              ibge_tipo = ifelse(
+                is.na(Cod_Area_Pond), 
+                "Cidade",  
+                "Área de ponderação"),
               ) %>%
             select(-c(Cod_Area_Pond, Cod_ibge, Cidade, area_ponderacao))
 
-#Este Map_info congrega tanto a informação de quais unidades estão mais próximas de cada município/unidade de atendimento mas também as informações demográficas do Ibge
+#Este Map_info congrega tanto a informação de quais unidades estão mais 
+#próximas de cada município/unidade de atendimento mas também as informações 
+#demográficas do Ibge
 map_info <- classif %>% 
                 left_join(demog, by=c("origem" = "ibge_unid")) %>% 
                 filter(!is.na(geometry)) %>% 
@@ -329,13 +347,29 @@ map_info <- classif %>%
                   Estado= Estado.x,
                   Bairro = Bairro.x
                 ) %>% 
-              select(-c(Estado.y, Bairro.y, Unidade.y, Tipo.y, 'Telefone(s)')) %>% 
-              select(ibge_unid, ibge_nome, ibge_tipo, duração, ibge_destino, Unidade:Logradouro, salMin_01to02:geometry) %>% 
+              select(
+                -c(Estado.y, Bairro.y, Unidade.y, Tipo.y, 'Telefone(s)')
+                ) %>% 
+              select(
+                ibge_unid, 
+                ibge_nome, 
+                ibge_tipo, 
+                duração, 
+                ibge_destino, 
+                Unidade:Logradouro, 
+                salMin_01to02:geometry
+                ) %>% 
               st_as_sf()
 
-#mapa do brasi, divididor por municípios e colorido por unidade de atendimento da RFB
-map_test <- map_info %>% select(Unidade, Estado, geometry)
-map <- ggplot(map_test) + geom_sf(aes(fill = Unidade)) + theme(legend.position = "none") + scale_colour_viridis_c()
+#mapa do Brasil, divididor por municípios e colorido por unidade de
+#atendimento da RFB
+map_test <- map_info %>% 
+              select(Unidade, Estado, geometry)
+
+map <- ggplot(map_test) + 
+            geom_sf(aes(fill = Unidade)) + 
+            theme(legend.position = "none") + 
+            scale_colour_viridis_c()
 map
 ```
 
@@ -385,7 +419,10 @@ aggr <- map_info %>%
 ```
 
 ```{r}
-tempoViag <- ggplot(aggr, aes(x = reorder(Unidade, duração), y= duração)) + geom_bar(stat = 'identity') + theme_minimal() + theme(axis.text.x = element_blank())
+tempoViag <- ggplot(aggr, aes(x = reorder(Unidade, duração), y= duração)) +
+                geom_bar(stat = 'identity') + 
+                theme_minimal() + 
+                theme(axis.text.x = element_blank())
 tempoViag
 ```
 
@@ -398,15 +435,24 @@ summary(aggr$duração)
 Em verdade, percebemos que o tempo mediano de viagem para uma unidade de atendimento é de 42 minutos de carro, e a média vai para 76 minutos, certamente puxado pelos outliers.
 
 ```{r}
-pop_outlier <- aggr %>% filter(duração > mean(aggr$duração)) %>% select(ativo_2024:inativo_19less) %>% mutate(total = rowSums(., na.rm = T))
+pop_outlier <- aggr %>% 
+                  filter(duração > mean(aggr$duração)) %>%
+                  select(ativo_2024:inativo_19less) %>% 
+                  mutate(total = rowSums(., na.rm = T))
 sum(pop_outlier$total)
 ```
 
 É possível que esses outliers existam pelas já discutidas limitações na infraestrutura rodoviária, mas seria interessante analisar com mais calma a situação dos municípios que estão muito acima da média, de um ponto de vista de garantia da acessibilidade. Afinal, como podemos ver acima, são 3 milhões e 300 mil pessoas nessa situação. 
 
 ```{r}
-popUnidades <- aggr %>% select(Unidade, ativo_2024:inativo_19less) %>% mutate(total = rowSums(.[2:ncol(.)], na.rm = T))
-popUnidsChart <- ggplot(popUnidades, aes(x = reorder(Unidade, total), y= total))+ geom_bar(stat = 'identity') + theme_minimal() + theme(axis.text.x = element_blank())
+popUnidades <- aggr %>% 
+                select(Unidade, ativo_2024:inativo_19less) %>% 
+                mutate(total = rowSums(.[2:ncol(.)], na.rm = T))
+
+popUnidsChart <- ggplot(popUnidades, aes(x = reorder(Unidade, total), y= total))+ 
+  geom_bar(stat = 'identity') + 
+  theme_minimal() + 
+  theme(axis.text.x = element_blank())
 popUnidsChart
 ```
 
@@ -425,7 +471,6 @@ meanAge <- aggr %>%
               select(Unidade, ativo_2024:ativo_19less) %>% 
               mutate(
                 total = rowSums(.[2:ncol(.)]),
-                
                 weightAge = (ativo_2024 * (20+24)/2 +
                 ativo_2529 * (25+29)/2 + 
                 ativo_3034 * (30+34)/2 +
@@ -441,7 +486,12 @@ meanAge <- aggr %>%
               filter(weightAge <= max(weightAge))
 
 
-meanAgeChart <- ggplot(meanAge, aes(x = reorder(Unidade, weightAge), y = weightAge)) + geom_point()+  theme(axis.text.x = element_blank())
+meanAgeChart <- ggplot(
+  meanAge, aes(x = reorder(Unidade, weightAge), y = weightAge)
+  ) + 
+  geom_point()+  
+  theme(axis.text.x = element_blank())
+
 meanAgeChart
 ```
 
@@ -540,7 +590,6 @@ Percebemos que a população atingida por cada uma das unidades da Receita Feder
 Por outro lado, a Receita Federal poderia desde já, buscar aumentar o foco de suas unidades presenciais. Estudar os pontos fora da curva de população atingida e de duração de viagem poderiam das _insights_ importantes sobre possíveis fechamentos e aberturas de unidades, reorganizando a distribuição no território da população e buscando aumentar a acessibilidade de seus serviços. 
 
 Acima de tudo, nos ensina que há ineficiências que podem ser visualizadas com a mais simples das aproximações analíticas, e que, portanto, existe um potencial significativo no uso de análise de dados para a gestão do atendimento da Receita Federal do Brasil.
-
 
 ## 3.3 Atendimento tributário como política pública
 
