@@ -3,6 +3,8 @@ title: "Proposta de procedimento geoestatístico para a gestão estratégica do 
 date: "`r format(Sys.time(), '%d/%B/%Y')`"
 bibliography: zotero.bib
 geometry: "left=3cm,right=3cm,top=2.5cm,bottom=2.5cm"
+fontsize: 12pt
+mainfont: Times New Roman
 output:
   pdf_document:
     latex_engine: xelatex
@@ -10,7 +12,6 @@ output:
 
 \renewcommand\refname{Referências}
 
-<!-- conferir fonte e tamanho do LATEX -->
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -113,12 +114,7 @@ Na primeira seção, iremos discutir a urgência da aplicação de um método ma
 
 # 1. Digitalização, crise e atendimento
 
-<!-- evitar citações diretas, passar o máximo delas para indiretas; para o que não for possível, garantir espaçamento de 4cm no latex https://tex.stackexchange.com/questions/83855/change-line-spacing-inside-the-document -->
-
-
 <!-- ignorar discussão de recursos escassos, falar de um contexto de restrição de recursos e citar algum manual de gestão pública em vez da wikipedia -->
-
-
 
 Os recursos, sabemos, são escassos. Frente às necessidades e desejos, a nobreza do serviço público não subverte tal incômoda realidade. Cabe aos gestores da coisa pública planejar, executar e controlar o que estiver sob sua responsabilidade de forma a conhecer a demanda e maximizar a oferta [@wikipedia_service_2019]. 
 
@@ -128,13 +124,8 @@ Este é o caso do atendimento presencial oferecido por diversos órgãos públic
 
 O atendimento já foi alvo de extensa digitalização, evidenciado em seus números. A virtualização dos serviços de atendimento da RFB avança a passos largos; entre 2012 e 2017, o e-Cac, portal de atendimento na internet da RFB, passou de 66,6 milhões de atendimentos para 145,6 milhões de atendimentos. Enquanto isso, os atendimentos presenciais caíram de 20,2 milhões para 14,9 milhões no mesmo período, de forma que o percentual destes passou de cerca de 24% do total para apenas 9%. Mesmo assim, 14,9 milhões equivalem a 40.000 cidadãos recebidos nas 522 unidades da RFB por dia, em todo o país [@receita_federal_do_brasil_relatorio_2018].
 
-<!-- juntar dois parágrafos e citação abaixo -->
-Desta realidade, surgem os dilemas do gestor. Para suprir essa necessidade de simultaneidade física entre os servidores da RFB e o cidadão demandando serviços, cabe a ele escolher como distribuir geograficamente os recursos materiais e os servidores disponíveis. 
 
-Estes dilemas não tem solução única. Possíveis respostas tem sido levantadas em outros setores de serviço, como de transporte e de saúde, com a aplicação de Sistemas de Informações Geográficas (GIS, na sigla em inglês) e técnicas de geoestatísticas que permitam encontrar soluções numericamente satisfatórias. 
-No exemplo do setor de saúde, por exemplo, o problema é exposto da seguinte forma: 
-
-> "os serviços de saúde são providos em um número finito de locais fixos, todavia, servem populações que estão distribuídas de forma contínua e desigual por uma região [@delamater_measuring_2012, pp. 1]." [^1]
+Desta realidade, surgem os dilemas do gestor. Para suprir essa necessidade de simultaneidade física entre os servidores da RFB e o cidadão demandando serviços, cabe a ele escolher como distribuir geograficamente os recursos materiais e os servidores disponíveis. Eles não tem solução única. Possíveis respostas tem sido levantadas em outros setores de serviço, como de transporte e de saúde, com a aplicação de Sistemas de Informações Geográficas (GIS, na sigla em inglês) e técnicas de geoestatísticas que permitam encontrar soluções numericamente satisfatórias. No exemplo do setor de saúde, por exemplo, o problema é exposto ao se perceber que as unidades de saúde são finitas e estão distribuídas em locais fixos, enquanto a população que elas servem estão distribuídas de forma contínua e desigual numa região [@delamater_measuring_2012, pp. 1] [^1].
 
 [^1]: "health care services are provided at a finite number of fixed locations, yet they serve populations that are continuously and unevenly distributed throughout a region".
 
@@ -147,27 +138,19 @@ Ao se analisar a relação entre população e o espaço físico, podemos eviden
 [^2]: "understand the effects of opening, closing, or realocating health care facilities".
 [^3]: "(...) manifests itself in the distribution, access to and utilization of health services between population groups".
 
-A relevância da distribuição ótima é tanto mais importante quanto mais escassos forem os recursos disponíveis. O Brasil enfrenta desde meados de 2014 uma grave crise econômica, com efeitos diversos sobre a população e sobre a estrutura administrativa do Estado. Mesmo o órgão arrecadador não escapa das restrições necessárias ao ajuste fiscal aplicado na tentativa de debela-la. Neste sentido, o TCU, em auditoria operacional realizada na RFB, relata que
-
-> "além da crise econômica que o País vem enfrentando, que impacta a receita fazendária e a previdenciária, tem-se constatado a ocorrência de baixa recuperação dos créditos trbutários administrados pela RFB" [@uniao_auditoria_2017, pp. 1]. 
+A relevância da distribuição ótima é tanto mais importante quanto mais escassos forem os recursos disponíveis. O Brasil enfrenta desde meados de 2014 uma grave crise econômica, com efeitos diversos sobre a população e sobre a estrutura administrativa do Estado. Mesmo o órgão arrecadador não escapa das restrições necessárias ao ajuste fiscal aplicado na tentativa de debela-la. Neste sentido, o TCU, em auditoria operacional realizada na RFB, relata que a crise econômica impacta tanto receitas fazendárias e previdenciárias, o que se percebe pela baixa recuperação dos créditos tributários [@uniao_auditoria_2017, pp. 1]. 
 
 Os reflexos internos na Receita Federal do Brasil são o contingenciamento de despesas e a paralisação de concursos, estancando o fluxo de renovação de servidores. Em paralelo, há um processo de aceleração nas aposentadorias, muitas delas influenciadas pelo temor que os anúncios da reforma previdenciária inspiram. 
 
 Vale lembrar que muitos servidores na ativa  já alcançaram o requisito mínimo para aposentar-se mas continuam em serviço, incentivados pelo chamado abono permanência [@uniao_auditoria_2017]. Entre 2015 e 2017, a RFB perdeu 1.831 servidores, de um total inicial de 23.687, o que representa uma diminuição de 7,7% de sua força de trabalho em apenas 3 anos.
 
-Este enxugamento, pode-se argumentar, não seria de todo impactante na organização, posto que, com o avançar da digitalização, haveria um aumento na produtividade que compensaria em parte ou mesmo totalmente os efeitos da diminuição na quantidade de servidores. Todavia, lembra o TCU  que 
-
-> "(...) não se pode contar apenas com a evolução dos meios de tecnologia da informação, pois os mesmos dependem de fatores exógenos como questões orçamentárias, disponibilidade do Serpro para desenvolvimento de sistemas e outros que não permitem sua evolução com velocidade o suficiente para suprir a nova demanda" [@uniao_auditoria_2017, pp. 20].
+Este enxugamento, pode-se argumentar, não seria de todo impactante na organização, posto que, com o avançar da digitalização, haveria um aumento na produtividade que compensaria em parte ou mesmo totalmente os efeitos da diminuição na quantidade de servidores. Todavia, o TCU no lembra no mesmo relatório que fatores exógenos à organização como restrições orçamentárias e disponibilidade do Serpro para desenvolvimento não permitem que a tecnologia avance num passo suficiente para suprir essa demanda crescente necessária [@uniao_auditoria_2017, pp. 20]. 
 
 Desta forma, temos um panorama aproximado do contexto em frente aos gestores da Receita Federal do Brasil. De um lado, há um quantitativo decrescente de servidores disponíveis para as tarefas da organização. De outro, percebemos uma gama de obstáculos que impossibilitam sua substituição imediata por canais digitais. Cabe-os então decidir, como distribuir as unidades da forma mais eficiente? De que maneira promover a equidade no acesso aos serviços da organização? O objetivo do presente trabalho é sugerir um modelo que, incluído num processo maior, possa responda às essas necessidades.
 
 Acreditamos que esse processo de distribuição das unidades de atendimento está no âmago da estratégia da Receita Federal do Brasil e de seu propósito para a sociedade. Como tal, sugerimos que, definidas as balizas estratégicas de qual público alvo deve ser atingido pelas unidades de atendimento, a organização empregue modelos geoestatísticos na tomada de decisões de que unidades abrir e fechar e quantos servidores devem se dedicar em cada unidade, de acordo com a demanda estimada para cada ponto geográfico. Desta forma, a distribuição estaria mais alinhada ao seu objetivo social, tornando-o menos vulnerável a captura política.  
 
 Este trabalho, de forma mais pontual, busca mostrar a viabilidade do cruzamento de dados estatísticos e geoestatístico do IBGE e de outras fontes para conhecer e explorar informações relevantes sobre o público alvo das unidades de atendimento, um dos passos necessários ao processo descrito acima. 
-
-<!-- jogar esse parágrafo na seção final -->
-
-Antes de passarmos a sua execução, cabe ressalva importante. Embora a disponibilidade e a distância sejam fatores relevantes, não são suficientes; o aumento da acessibilidade nem sempre é acompanhado de um aumento da utilização dos serviços, e outros fatores devem ser avaliados também, como qualidade do serviço oferecido e disponibilidade de canais mais convenientes [@thaddeus_too_1994], como os próprios canais digitais supracitados. Que fique claro que a definição de onde dispor unidades de atendimento é apenas um passo do objetivo estratégico de atender bem a população.
 
 # 2. Das fontes de dados e métodos de extração, análise e cruzamento
 ## 2.1 Mapas vetoriais e mapas em grade
@@ -184,7 +167,13 @@ Os modelos de grade são compostos por uma série de celulas regulares, geralmen
 
 Vemos acima uma conversão entre um mapa em network para um mapa em grid [@delamater_measuring_2012, figure 12]. Há uma diferença fundamental na forma como esses modelos compreendem o espaço.
 
-> "O modelo de dados em grade define o espaço como uma superfície contínua onde cada célula do espaço dos dados tem um local específico e um valor de atributo. O modelo de dados em rede define o espaço como um recipiente vazio populado apenas pelas características de locais e atributos específicos [@delamater_measuring_2012, pp. 12]" [^4].
+<!-- conferir se a identação abaixo deu certo -->
+
+\setlength{\parindent}{4cm} 
+
+\linespread{1} "O modelo de dados em grade define o espaço como uma superfície contínua onde cada célula do espaço dos dados tem um local específico e um valor de atributo. O modelo de dados em rede define o espaço como um recipiente vazio populado apenas pelas características de locais e atributos específicos [@delamater_measuring_2012, pp. 12]" [^4]. \end
+
+\setlength{\parindent}{0pt}
 
 [^4]: "The raster data model defines space as a continuous surface where each cell within the data extent has a specific location and attribute value. The network data model defines space as an empty container that is populated only by features having specific locations and attributes." 
 
@@ -253,8 +242,6 @@ A principal limitação à plena digitalização dos serviços da Receita Federa
 O certificado digital é uma assinatura eletrônica com criptografia para confirmar a identidade de uma pessoa física (e-CPF) ou empresa (e-CNPJ). Ele possui poder jurídico e contém dados do titular como nome, registro civil e assinatura da autoridade certificadora, e pode custa de cerca de 100 reais até 400 reais por ano, dependendo do segmento e do tipo do certificado [@nfe.io_quanto_2018].
 
 Devido ao alto custo, o número de pessoas físicas com certificado digital é pequeno; por outro lado, a obrigatoriedade legal da posse de certificados digitais para pessoas jurídicas está se expandindo ano a ano, e por isso, os serviços presenciais de pessoas jurídicas na RFB está em franco declínio, restando às unidades atenderem as pessoas física.  As empresas, em sua massiva maioria, já possuem certificado digital, se não por necessidade, mas por obrigação legal, que está se extendendo progressivamente aos CNPJs de menor faturamente. Em julho de 2018, por exemplo, passou a ser obrigatório para pequenas empresas[@dunder_certificacao_2018]. 
-
-<!-- conferir números na carta de serviços da RFB -->
 
 Desta forma, podemos nos concentrar nos serviços prestados ao cidadão, listados 253 nessa página da internet. É possível que, no futuro, a RFB adote outras formas mais simples e baratas de autenticação do cidadão, expandindo os acessos digitais a seus serviços. Um exemplo é o login único do governo federal, que está sendo lentamente adotado por diversos órgão da União [@ministerio_da_economia_o_nodate]. Até lá, as unidades presenciais servirão como canal de complementação àqueles que não possuírem os meios para acessar os serviços digitais. 
 
@@ -608,8 +595,7 @@ summary(pop60plus$perc_60plus)
 
 Em termos percentuais, estamos falando de no máximo 23% da população, mas a média e a mediana estão firmes em torno de 13%, portanto, em média, 87% da população encontra-se abaixo dessa faixa etária.
 
-<!-- explicar mais e melhor esse ponto do que seria o público ideal -->
-<!-- mostrar 10+ e 10- unidades de atendimento com público ideal, tanto percentual da população total quanto população-alvo absoluta -->
+<!-- explicar mais e melhor esse ponto do que seria o público ideal mostrar 10+ e 10- unidades de atendimento com público ideal, tanto percentual da população total quanto população-alvo absoluta -->
 
 Uma última análise interessante seria em relação à renda. Independente da idade, os principais motivos para que pessoas físicas se dirijam a unidades de atendimento da Receita Federal são o Cadastro de Pessoas Física (CPF) e a DIRPF (Declaração de Imposto de Renda de Pessoa Física). O CPF pode ser gerado, alterado e cancelado em diversos outros órgãos conveniados, incluindo os Correios e o Banco do Brasil. o que diminui fortemente a necessidade do cidadão se deslocar a um posto de atendimento da RFB. A DIRPF, por outro lado, só pode ser resolvida na própria instituição. 
 
@@ -667,11 +653,13 @@ Segunda opção seria, em vez de utilizar apenas os dados do OpenStreetMap, adic
 
 Por fim, devemos entender que isso é um processo, não um projeto, ou seja, ele é contínuo no tempo. À medida que os canais de atendimento presencial e físico vão se modificando, e a população também se modifica, novos testes devem ser realizados continuamente, seguindo o tradicional ciclo de planejamento, execução, controle e avaliação. Métricas devem ser estabelecidas e melhorias implementadas, buscando fidedignidade no modelo.
 
+Ademais, uma última ressalva é a de que embora a disponibilidade e a distância sejam fatores relevantes, eles não são suficientes; o aumento da acessibilidade nem sempre é acompanhado de um aumento da utilização dos serviços, e outros fatores devem ser avaliados também, como qualidade do serviço oferecido e disponibilidade de canais mais convenientes [@thaddeus_too_1994], como os próprios canais digitais supracitados. Que fique claro que a definição de onde dispor unidades de atendimento é apenas um passo do objetivo estratégico de atender bem a população.
+
 Acreditamos que, dessa forma, estará estabelecido um processo de planejamento do atendimento presencial com foco no cidadão, otimizando o gasto público mas sem deixar de lado a garantia do direito de acesso desse ao serviço público.
 
 # Conclusão
 
-<!-- ser mais específico, exploicar desigualdades regionais -->
+<!-- ser mais específico, explicar desigualdades regionais -->
 
 Neste artigo, sugeririmos um processo baseado em dados para distribuir as unidades de atendimento presencial da Receita Federal do Brasil. Da análise que realizamos sobre o público-alvo teórico das unidades atuais, percebemos que a quantidade de pessoas teoricamente atingidas, quando selecionadas por renda e/ou idade, é uma parcela relativamente pequena da população. Ademais, outliers na distribuição do total de atingidos e na distância em tempo de viagem nos sugere que há ineficiências a serem sanadas, por um lado populações desasistidas, longe demais das unidades presentes, por outro lado, unidades que atingem população ínfima, de necessidade duvidosa. 
 
