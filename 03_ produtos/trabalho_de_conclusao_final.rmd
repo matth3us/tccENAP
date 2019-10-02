@@ -332,11 +332,11 @@ map_info <- classif %>%
 
 #mapa do Brasil, divididor por municípios e colorido por unidade de
 #atendimento da RFB
-map <- ggplot(map_info) + 
-            geom_sf(aes(fill = Unidade)) + 
-            theme(legend.position = "none") + 
-            scale_colour_viridis_c()
-map
+#map <- ggplot(map_info) + 
+            #geom_sf(aes(fill = Unidade)) + 
+            #theme(legend.position = "none") + 
+            #scale_colour_viridis_c()
+#map
 ```
 
 Geramos então. o mapa completo do Brasil divididos por municípios e as cores representando as áreas atingidas por cada unidade de atendimento, medido por tempo de viagem de carro, notamos já de início alguns pontos não categorizados.  Como discutido anteriormente, na região norte, com o parco acesso a infraestrutura rodoviária e grande dependência de viagens em meio hidroviários, não disponíveis no OpenStreetMap, acaba por não haver rotas identificadas para estes municípios. 
@@ -385,15 +385,15 @@ aggr <- map_info %>%
 
 aggr_map <- map_info %>% 
                   select(ibge_destino, Estado, geometry) %>% 
+                  #filter(Estado %in% c("MA")) %>% 
                   group_by(ibge_destino) %>% 
                   summarise() %>% 
                   ungroup() %>% 
                   left_join(aggr, by=c("ibge_destino"))
 
+saveRDS(aggr_map, "aggr_map.rds")
 plot(aggr_map %>% select(Unidade, geometry))
 ```
-
-<!-- transformar gráfico em mapa com coloração de acordo com os valores numéricos -->
 
 ```{r}
 #tempoViag <- ggplot(aggr, aes(x = reorder(Unidade, duração), y= duração)) +
@@ -416,18 +416,27 @@ pop_outlier <- aggr %>%
 
 É possível que esses _outliers_ existam pelas já discutidas limitações na infraestrutura rodoviária, mas seria interessante analisar com mais calma a situação dos municípios que estão muito acima da média, de um ponto de vista de garantia da acessibilidade. Afinal são `r sum(pop_outlier$total)` de pessoas nessa situação. 
 
-<!-- transformar gráfico em mapa com coloração de acordo com os valores numéricos -->
-
 ```{r}
-popUnidades <- aggr %>% 
-                select(Unidade, ativo_2024:inativo_19less) %>% 
-                mutate(total = rowSums(.[2:ncol(.)], na.rm = T))
+popUnid <- aggr %>% 
+                select(Unidade, ibge_destino, ativo_2024:inativo_19less) %>% 
+                mutate(total = rowSums(.[3:ncol(.)], na.rm = T))
 
-popUnidsChart <- ggplot(popUnidades, aes(x = reorder(Unidade, total), y= total))+ 
-  geom_bar(stat = 'identity') + 
-  theme_minimal() + 
-  theme(axis.text.x = element_blank())
-popUnidsChart
+popUnidades <- map_info %>% 
+                  select(ibge_destino, Estado, geometry) %>% 
+                  #filter(Estado %in% c("MA")) %>% 
+                  group_by(ibge_destino) %>% 
+                  summarise() %>% 
+                  ungroup() %>% 
+                  left_join(popUnid, by=c("ibge_destino"))
+
+#popUnidsChart <- ggplot(popUnidades, aes(x = reorder(Unidade, total), y= total))+ 
+#  geom_bar(stat = 'identity') + 
+  #theme_minimal() + 
+  #theme(axis.text.x = element_blank())
+#popUnidsChart
+
+popUnidsChart <- tm_shape(popUnidades) + tm_fill(col= 'total', palette = "BuGn", style = "jenks")
+popUnidsChart    
 ```
 
 Ao levantarmos a população total atingida, novamente encontramos cenário de grandes desigualdades, que mereceriam atenção para um planejamento mais estratégico do posicionamento das unidades. A média de pessoas dentro do público-alvo das unidades é de `r summary(popUnidades$total)['Mean']`, mas essa é fortemente puxada por _outliers_ com um número muito alto de atingidos. A unidade com maior número de atendidos chega a uma população estimada de `r summary(popUnidades$total)['Max.']`, enquanto a menor unidade atinge apenas `r summary(popUnidades$total)['Min.']` pessoas.
@@ -436,13 +445,11 @@ Entretanto, até o momento, estamos tratando a população inteira dos municípi
 
 Primeiramente, podemos analisar a idade média da população econômicamente ativa atendida por cada unidade. 
 
-<!-- transformar gráfico em mapa com coloração de acordo com os valores numéricos -->
-
 ```{r}
-meanAge <- aggr %>% 
-              select(Unidade, ativo_2024:ativo_19less) %>% 
+meanAg <- aggr %>% 
+              select(Unidade, ibge_destino, ativo_2024:ativo_19less) %>% 
               mutate(
-                total = rowSums(.[2:ncol(.)]),
+                total = rowSums(.[3:ncol(.)]),
                 weightAge = (ativo_2024 * (20+24)/2 +
                 ativo_2529 * (25+29)/2 + 
                 ativo_3034 * (30+34)/2 +
@@ -456,26 +463,31 @@ meanAge <- aggr %>%
                 ativo_19less * (19)/2) / total
               ) %>% 
               filter(weightAge <= max(weightAge))
+meanAge <- map_info %>% 
+                  select(ibge_destino, Estado, geometry) %>% 
+                  #filter(Estado %in% c("MA")) %>% 
+                  group_by(ibge_destino) %>% 
+                  summarise() %>% 
+                  ungroup() %>% 
+                  left_join(meanAg, by=c("ibge_destino"))
 
+#meanAgeChart <- ggplot(
+  #meanAge, aes(x = reorder(Unidade, weightAge), y = weightAge)
+  #) + 
+  #geom_point()+  
+  #theme(axis.text.x = element_blank())
 
-meanAgeChart <- ggplot(
-  meanAge, aes(x = reorder(Unidade, weightAge), y = weightAge)
-  ) + 
-  geom_point()+  
-  theme(axis.text.x = element_blank())
-
+meanAgeChart <- tm_shape(meanAge) + tm_fill(col= 'weightAge', palette = "BuGn", style = "jenks")
 meanAgeChart
 ```
-
-<!-- transformar gráfico em mapa com coloração de acordo com os valores numéricos -->
 
 Os dados das unidades de atendimento apontam para uma população economicamente ativa relativamente jovem, com idade média de `r summary(meanAge$weightAge)[Mean]`. Contudo, não podemos nos esquecer que estes dados são do censo de 2010, e o próximo censo, de 2020, pode já apontar para uma população mais envelhecida. 
 
 ```{r}
 meanAgeTodos <- aggr %>% 
-              select(Unidade, ativo_2024:inativo_19less) %>% 
+              select(Unidade, ibge_destino, ativo_2024:inativo_19less) %>% 
               mutate(
-                total = rowSums(.[2:ncol(.)]),
+                total = rowSums(.[3:ncol(.)]),
                 
                 weightAge = (ativo_2024 * (20+24)/2 +
                 ativo_2529 * (25+29)/2 + 
@@ -510,21 +522,31 @@ Mesmo quando incluímos os inativos, as médias e medianas permanecem em torno d
 
 Em verdade, se formos investigar o percentual de pessoas com mais de 60 anos de idade, percebemos que eles não representam uma parcela relevante para praticamente nenhuma das unidades. 
 
-<!-- transformar gráfico em mapa com coloração de acordo com os valores numéricos -->
-
 ```{r}
-pop60plus <- aggr %>% 
-                    select(Unidade, ativo_2024:inativo_19less) %>% 
+pop60mais <- aggr %>% 
+                    select(Unidade, ibge_destino, ativo_2024:inativo_19less) %>% 
                     mutate(
-                      total = rowSums(.[2:ncol(.)], na.rm=T),
+                      total = rowSums(.[3:ncol(.)], na.rm=T),
                       perc_60plus = (ativo_6069+ativo_70plus+inativo_6069+inativo_70plus)/total
                     )
-plu60Chart <- ggplot(pop60plus, aes(x = reorder(Unidade, perc_60plus), y = perc_60plus)) + geom_point()+  theme(axis.text.x = element_blank())
+#plu60Chart <- ggplot(pop60plus, aes(x = reorder(Unidade, perc_60plus), y = perc_60plus)) + geom_point()+  theme(axis.text.x = element_blank())
+
+pop60plus <- map_info %>% 
+                  select(ibge_destino, Estado, geometry) %>% 
+                  #filter(Estado %in% c("MA")) %>% 
+                  group_by(ibge_destino) %>% 
+                  summarise() %>% 
+                  ungroup() %>% 
+                  left_join(pop60mais, by=c("ibge_destino"))
+
+plu60Chart <- tm_shape(pop60plus) + tm_fill(col= 'perc_60plus', palette = "BuGn", style = "jenks")
 plu60Chart
 
 ```
 
 Em termos percentuais, estamos falando de no máximo 20% da população (`r summary(pop60plus$perc_60plus)[Máx.]`), mas a média e a mediana estão firmes em torno de 13% (Média de `r summary(pop60plus$perc_60plus)[Mean]` e Mediana de `r summary(pop60plus$perc_60plus)[Median]`), ou seja, em média, 87% da população encontra-se abaixo dessa faixa etária.
+
+#### 3.2.1. Público-alvo ideal: população com renda tributável como pessoa física
 
 <!-- explicar mais e melhor esse ponto do que seria o público ideal mostrar 10+ e 10- unidades de atendimento com público ideal, tanto percentual da população total quanto população-alvo absoluta -->
 
@@ -532,17 +554,24 @@ Uma última análise interessante seria em relação à renda. Independente da i
 
 Assim, podemos argumentar que o público-alvo, neste caso, se restringiria apenas àqueles que tivessem renda mensal acima de 4 salários mínimos, posto que o salário mínimo correspondia a R$ 510,00 em 2010, ano do Censo. Como não temos o quantitativo de pessoas que ganham entre 4 e 5 salários mínimos separado, podemos analisar qual o percentual e o número absoluto da população que ganha acima de 5 salários mínimos, de acordo com o censo de 2010, como uma aproximação do que queremos visualizar. 
 
-<!-- transformar gráfico em mapa com coloração de acordo com os valores numéricos -->
-
 ```{r}
-popIrpf <- aggr %>% 
-                    select(Unidade, salMin_01to02:salMin_semrendimento) %>% 
+popIr <- aggr %>% 
+                    select(Unidade,ibge_destino, salMin_01to02:salMin_semrendimento) %>% 
                     mutate(
-                      total = rowSums(.[2:ncol(.)], na.rm=T),
+                      total = rowSums(.[3:ncol(.)], na.rm=T),
                       perc_more05 = 1-((salMin_01to02+salMin_semrendimento+salMin_02to05)/total)
                     )
 
-popIrpfChart <- ggplot(popIrpf, aes(x = reorder(Unidade, perc_more05), y = perc_more05)) + geom_point()+  theme(axis.text.x = element_blank())
+popIrpf <- map_info %>% 
+                  select(ibge_destino, Estado, geometry) %>% 
+                  #filter(Estado %in% c("MA")) %>% 
+                  group_by(ibge_destino) %>% 
+                  summarise() %>% 
+                  ungroup() %>% 
+                  left_join(popIr, by=c("ibge_destino"))
+
+#popIrpfChart <- ggplot(popIrpf, aes(x = reorder(Unidade, perc_more05), y = perc_more05)) + geom_point()+  theme(axis.text.x = element_blank())
+popIrpfChart <- tm_shape(popIrpf) + tm_fill(col= 'perc_more05', palette = "BuGn", style = "jenks")
 popIrpfChart
 
 ```
