@@ -1,465 +1,213 @@
-Introdução
-----------
+---
+title: "Proposta de procedimento geoestatísticos para a gestão estratégica do atendimento presencial da Receita Federal do Brasil"  
+date: "26/abril/2020"
+bibliography: zotero.bib
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    keep_md: yes
+---
 
-Seção 1 (por que?)
-------------------
 
-Os recursos, sabemos, são escassos frente às necessidades e desejos; a
-nobreza do serviço público não subverte tal incômoda realidade. Cabe aos
-gestores da coisa pública planejar, executar e controlar o que estiver
-sob sua responsabilidade de forma a conhecer a demanda e maximizar a
-oferta.
 
-<!-- por no zotero: https://www.wikiwand.com/en/Service_(economics) -->
-Serviços, diz a definição, são intangíveis: transações que não envolvem
-a entrega de bens materiais e conquanto, não assumem uma forma. Como
-tal, não podem ser manufaturados, transportados, nem guardados para uso
-futuro. São produzidos e consumidos simultâneamente. Hoje, com o advento
-da internet e das TIC (tecnologias da informação e da comunicação), é
-possível oferecer diversos serviços sem que seja necessária a presença
-do ofertante e do demandante no mesmo local físico. O acesso a essas
-tecnologias, claro, ainda é limitado.
 
-Este é o caso do atendimento presencial oferecido por diversos órgãos
-públicos, conjunto no qual está inserida a Secretaria da Receita Federal
-do Brasil (RFB). Esse é um dos principais canais de contato do cidadão
-com a Receita Federal, junto aos entrepostos aduaneiros. Por ele, o
-cidadão pode tanto entregar quanto requisitar informações, declarações e
-documentos essenciais à conformidade tributária, auxiliando no papel da
-instituição de recolher os recursos necessários ao provimento dos
-diversos serviços públicos oferecidos pelo Estado brasileiro. No papel
-de orientação, são também instrumentos de educação fiscal e promoção da
-auto-regularização, fomentando uma cultura de conformidade pro-ativa e
-cidadã.
 
-O atendimento já foi alvo de larga digitalização, evidenciada em seus
-números. A virtualização dos serviços de atendimento da RFB avança a
-passos largos; entre 2012 e 2017, o e-Cac, portal de atendimento na
-internet da RFB, passou de 66,6 milhões de atendimentos para 145,6
-milhões de atendimentos. Enquanto isso, os atendimentos presenciais
-caíram de 20,2 milhões para 14,9 milhões no mesmo período, de forma que
-o percentual destes passou de cerca de 24% do total para apenas 9%
-(<span class="citeproc-not-found"
-data-reference-id="gestãoRFB">**???**</span>). Mesmo assim, 14,9 milhões
-equivalem a 40.000 cidadãos recebidos nas 522 unidades da RFB por dia,
-em todo o país.
 
-Desta realidade surgem os dilemas do gestor. Para suprir essa
-necessidade de simultaneidade física entre os servidores da RFB e o
-cidadão demandando serviços, cabe a ele escolher como distribuir
-geograficamente os recursos materiais e os servidores disponíveis.
+```r
+#load de dados pelo Dropbox
+#servicos <- readRDS(url('https://www.dropbox.com/s/84hrt2ntrx9k0t0/02_servi%C3%A7os.rds?raw=1'))
+#viagens <- readRDS('https://www.dropbox.com/s/t17zlg8y8spfmno/01_viagens_2.rds?dl=0')
+#demog <- readRDS(url('https://www.dropbox.com/s/stsxm0cl98lmnzg/03_demografia.rds?raw=1'))
+#unids <- readRDS(url('https://www.dropbox.com/s/qaypq8bsoa5gfoa/04_unidadesRFB.rds?raw=1')) %>% 
+            #mutate(ibge_unid = ifelse(is.na(ibge_area), ibge_municipio,  ibge_area)) %>% 
+            #distinct()
 
-Estes dilemas não tem solução única. Possíveis respostas tem sido
-levantadas em outros setores de serviço, como de transporte e de saúde,
-com a aplicação de Sistemas de Informações Geográficas (GIS, na sigla em
-inglês) e técnicas de geoestatísticas que permitam encontrar soluções
-numericamente satisfatórias.
+servicos <- readRDS("./dados/02_serviços.rds")
+viagens <- readRDS('./dados/01_viagens_2.rds')
+demog <- readRDS('./dados/03_demografia.rds')
+unids <- readRDS('./dados/04_unidadesRFB.rds') %>% 
+            mutate(ibge_unid = ifelse(is.na(ibge_area), ibge_municipio,  ibge_area)) %>% 
+            distinct()
 
-No exemplo do setor de saúde, por exemplo, o problema é exposto da
-seguinte forma: “health care services are provided at a finite number of
-fixed locations, yet they serve populations that are continuously and
-unevenly distributed throughout a region (Delamater et al. 2012, 1)”.
-Consequência natural desse arranjo é que as desigualdades são
-inevitáveis, mas a dimensão dessas é função: do arranjo de distribuições
-das partes do sistemas; da distribuição no espaço da população; e das
-características do espaço, como infraestrutura e relevo, que dificultem
-ou facilitem a movimentação (Delamater et al. 2012).
 
-Ao se analisar a relação entre população e o espaço físico, podemos
-evidenciar o atrito contrário ao acesso a um sevriço de diferentes
-grupos populacionais, identificar áreas de maior limitação no acesso, e,
-assim, “understand the effects of opening, closing, or realocating
-health care facilities (Delamater et al. 2012, 2)”. Desta forma,
-promove-se a equidade, que “(…) manifests itself in the distribution,
-access to and utilization of health services between population groups”
-(Noor et al. 2003, 917).
+#unids <- readRDS("./02_ dados/03_ analise/00_unidades_RFB_cod_ibge.rds")
+#servicos <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/02_serviços.rds")
+#viagens <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/01_viagens.rds")
+#demog <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/Informações extras IBGE/TCC - produtos/03_demografia.rds")
+#unids <- readRDS("C:/Users/02741207399/Desktop/Escritório de Processos/Git/tccENAP/02_ dados/03_ analise/00_unidades_RFB_cod_ibge.rds") %>% 
+#        mutate(ibge_unid = ifelse(is.na(ibge_area), ibge_municipio,  ibge_area)) %>%
+        #distinct()
+```
 
-A relevância da distribuição ótima é tanto mais importante quanto mais
-escassos forem os recursos disponíveis. O Brasil enfrenta desde meados
-de 2014 uma grave crise econômica, com efeitos diversos sobre a
-população e sobre a estrutura administrativa do Estado. Mesmo o órgão
-arrecadador não escapa das restrições necessárias ao ajuste fiscal
-aplicado na tentativa de debela-la. Neste sentido, o TCU, em auditoria
-operacional realizada na RFB, relata que “além da crise econômica que o
-País vem enfrentando, que impacta a receita fazendária e a
-previdenciária, tem-se constatado a ocorrência de baixa recuperação dos
-créditos trbutários administrados pela RFB” (Contas da União 2017, 1).
 
-Os reflexos internos na Receita Federal do Brasil são o
-contingenciamento de despesas e a consequente paralisação de concursos,
-estancando o fluxo de renovação de servidores. Em paralelo, há um
-processo de aceleração no quantitativo de aposentadorias, muitas delas
-influenciadas pelo temor que os anúncios da reforma previdenciária
-inspiram. Vale lembrar que muitos servidores na ativa já alcançaram o
-requisito mínimo para aposentar-se, mas continuam em serviço,
-incentivados pelo chamado abono permanência (Contas da União 2017).
-Entre 2015 e 2017, a RFB perdeu 1.831 servidores, de um total inicial de
-23.687, o que representa uma diminuição de 7,7% de sua força de trabalho
-em apenas 3 anos.
+# Introdução
 
-Este enxugamento, pode-se argumentar não seria de todo impactante na
-organização, posto que, com o avançar da digitalização do governo,
-espera-se um aumento na produtividade que compense em parte ou mesmo
-totalmente os efeitos da diminuição no quantitativo de pessoal. Todavia,
-lembra o TCU que “(…) não se pode contar apenas com a evolução dos meios
-de tecnologia da informação, pois os mesmos dependem de fatores exógenos
-como questões orçamentárias, disponibilidade do Serpro para
-desenvolvimento de sistemas e outros que não permitem sua evolução com
-velocidade o suficiente para suprir a nova demanda” (Contas da União
-2017, 20).
+Neste artigo, buscaremos sugerir um processo baseado em dados para definir uma distribuição eficiente das unidades de atendimento presencial da Receita Federal do Brasil. Para isso, iremos realizar uma análise de dados demográficos dos municípios brasileiros, levantado no Censo de 2010, categorizando-os por proximidade em tempo de viagem de carro para a unidade de atendimento mais próxima. Com isso, poderemos descobrir e analisar o público-alvo teórico de cada unidade de atendimento, descrevendo-os estatisticamente e demonstrando como essa análise pode ser utilizada para se definir uma reorganização das unidades atuais.
 
-Desta forma, temos todos os fatos em frente aos gestores da Receita
-Federal do Brasil. De um lado, há um quantitativo decrescente de
-servidores disponíveis para todas as tarefas da organização, não apenas
-o atendimento. De outro, percebemos uma gama de obstáculos que
-impossibilitam sua substituição imediata por canais digitais. Cabe-os
-então decidir, como distribuir os recursos da forma mais eficiente? De
-que maneira promover a equidade no acesso aos serviços da organização? O
-objetivo do presente trabalho é sugerir um modelo que, incluído num
-processo maior, possa responda às essas necessidades.
+Na primeira seção, iremos discutir a urgência da aplicação de um método mais analítico e objetivo na distribuição das unidades de atendimento no território nacional, levantando obstáculos para a manutenção do _status quo_. Na segunda seção, explicaremos quais as opções de modelos geográficos para a efetuação da análise e apontaremos as fontes de dados que serão utilizadas. Na última seção, realizaremos a descrição dos públicos-alvo e discutiremos caminhos para expansão, refino e aplicação prática da análise realizada na tomada de decisão da organização. 
 
-Acreditamos, antes de tudo, que esse processo de distribuição das
-unidades de atendimento está no âmago da estratégia da Receita Federal
-do Brasil e de seu propósito para a sociedade. Como tal, sugerimos que,
-definidas as balizas estratégicas de qual o público alvo deve ser
-atingido pelas unidades de atendimento, a organização empregue modelos
-geoestatísticos na tomada de decisões de que unidades abrir e fechar e
-quantos servidores devem se dedicar em cada unidade, de acordo com a
-demanda estimada para cada ponto geográfico. Desta forma, a distribuição
-destes recursos estaria mais alinhada ao seu objetivo social, tornando-o
-menos vulnerável a captura política.
+# 1. Digitalização, crise e atendimento
 
-Este trabalho, de forma mais pontual, busca mostrar a viabilidade do
-cruzamento de dados estatísticos e geoestatístico do IBGE e de outras
-fontes para conhecer e explorar informações relevantes sobre o público
-alvo das unidades de atendimento, um dos passos necessários ao processo
-descrito acima.
+Os recursos, sabemos, são escassos. Frente às necessidades e desejos, a nobreza do serviço público não subverte tal incômoda realidade. Cabe aos gestores da coisa pública planejar, executar e controlar o que estiver sob sua responsabilidade de forma a conhecer a demanda e maximizar a oferta [@wikipedia_service_2019]. 
 
-Antes de passarmos a sua execução, cabe uma ressalva importante que deve
-ser levada em conta quando da promoção de acessibilidade. Embora a
-disponibilidade e a distância sejam fatores relevantes, não são
-suficientes; o aumento da acessibilidade nem sempre é acompanhado de um
-aumento da utilização dos serviços, e outros fatores devem ser avaliados
-também, como qualidade do serviço oferecido e disponibilidade de canais
-mais convenientes (Thaddeus and Maine 1994), como os próprios canais
-digitais supracitados. Que fique claro que a definição de onde dispor
-unidades de atendimento é apenas um passo do objetivo estratégico de
-atender bem a população.
+Serviços, diz a definição, são intangíveis:  transações que não envolvem a entrega de bens materiais e conquanto, não assumem uma forma. São produzidos e consumidos simultâneamente. Hoje, com o advento da internet e das TIC (tecnologias da informação e da comunicação), é possível oferecer diversos serviços sem que seja necessária a presença do ofertante e do demandante no mesmo local físico. O acesso a essas tecnologias, claro, ainda é limitado.
 
-Seção 2 (como?)
----------------
+Este é o caso do atendimento presencial oferecido por diversos órgãos públicos, conjunto no qual está inserida a Secretaria da Receita Federal do Brasil (RFB). Por ele, o cidadão pode tanto entregar quanto requisitar informações, declarações e documentos essenciais à conformidade tributária, auxiliando no papel da instituição de recolher os recursos necessários ao provimento dos diversos serviços públicos oferecidos pelo Estado brasileiro. No papel de orientação, são também instrumentos de educação fiscal e promoção da auto-regularização, fomentando uma cultura de conformidade pro-ativa e cidadã.
 
-### Seção 2.1 Raster and Vectors maps
+O atendimento já foi alvo de extensa digitalização, evidenciado em seus números. A virtualização dos serviços de atendimento da RFB avança a passos largos; entre 2012 e 2017, o e-Cac, portal de atendimento na internet da RFB, passou de 66,6 milhões de atendimentos para 145,6 milhões de atendimentos. Enquanto isso, os atendimentos presenciais caíram de 20,2 milhões para 14,9 milhões no mesmo período, de forma que o percentual destes passou de cerca de 24% do total para apenas 9%. Mesmo assim, 14,9 milhões equivalem a 40.000 cidadãos recebidos nas 522 unidades da RFB por dia, em todo o país [@receita_federal_do_brasil_relatorio_2018].
 
-Há duas formas de se dispor dados em sistemas de informação geográficas.
-Há os modelos vetoriais, que podem ser analisados como grafos em redes
-(network graphs); e os modelos em grade (raster).
+Desta realidade, surgem os dilemas do gestor. Para suprir essa necessidade de simultaneidade física entre os servidores da RFB e o cidadão demandando serviços, cabe a ele escolher como distribuir geograficamente os recursos materiais e os servidores disponíveis. 
 
-Os modelos vetoriais consistem de uma série de nós, conectados por
-linhas, representando os objetos geográficos. Pontos no mapa são
-representados por nós; conexões e infraestruturas como ferrovias e
-rodovias são linhas, e regiões são delimitadas por polígonos, nós
-combinados com vértices. Nos modelos vetoriais, o custo para atravessar
-uma linha é função do tamanho da linha e da velocidade de viagem
-associado àquele tipo de infraestrutura (Delamater et al. 2012). a
-movimentação, portanto, ocorre entre pontos, de acordo com as linhas
-disponíveis para cada ponto.
+Estes dilemas não tem solução única. Possíveis respostas tem sido levantadas em outros setores de serviço, como de transporte e de saúde, com a aplicação de Sistemas de Informações Geográficas (GIS, na sigla em inglês) e técnicas de geoestatísticas que permitam encontrar soluções numericamente satisfatórias. 
+No exemplo do setor de saúde, por exemplo, o problema é exposto da seguinte forma: 
 
-Os modelos de grade são compostos por uma série de celulas regulares,
-geralmente retangulares, de tamanho e distância padronizados. Cada ponto
-do mapa é resumido em um dos retângulos, e todas as informações
-relevantes do mapa dentro da região encoberta por aquele retângulo são a
-ele atribuído. No modelo de grade, as viagens ocorrem na passagem de uma
-célula para outra, sempre em entre células adjacentes; assim, diferente
-do modelo em rede, os passos da viagem são sempre regulares em
-distância, variando apenas na velocidade (Delamater et al. 2012).
+> "os serviços de saúde são providos em um número finito de locais fixos, todavia, servem populações que estão distribuídas de forma contínua e desigual por uma região [@delamater_measuring_2012, pp. 1]." [^1]
 
-![](https://www.dropbox.com/s/l06je2ddp3f2ldb/figure_12_measuring_geographic_access.png?raw=1)
+[^1]: "health care services are provided at a finite number of fixed locations, yet they serve populations that are continuously and unevenly distributed throughout a region".
 
-Vemos acima, do artigo (Delamater et al. 2012), uma conversão entre um
-mapa em network para um mapa em grid. (figure 12 no documento)
+Consequência natural desse arranjo é que as desigualdades são inevitáveis, mas a dimensão dessas é função: do arranjo de distribuições das partes do sistemas; da distribuição no espaço da população; e das características do espaço, como infraestrutura e relevo, que dificultem ou facilitem a movimentação [@delamater_measuring_2012].
 
-Há uma diferença fundamental na forma como esses modelos compreendem o
-espaço.
+Ao se analisar a relação entre população e o espaço físico, podemos evidenciar a resistência ao acesso de diferentes grupos populacionais, aos serviços identificar áreas de maior limitação no acesso, e, assim, "compreender o efeito de se abrir, fechar ou realocar unidades de saúde [@delamater_measuring_2012, pp. 2]" [^2]. Desta forma, promove-se a equidade, que "(...) se manifesta na distribuição, acesso e utilização de serviços de saúde entre grupos da população [@noor_defining_2003, p.917]" [^3].
 
-“The raster data model defines space as a continuous surface where each
-cell within the data extent has a specific location and attribute value.
-The network data model defines space as an empty container that is
-populated only by features having specific locations and attributes.”
-(Delamater et al. 2012, 12)
+[^2]: "understand the effects of opening, closing, or realocating health care facilities".
+[^3]: "(...) manifests itself in the distribution, access to and utilization of health services between population groups".
 
-Como todas as localizações do mapa são explicitamente definidadas nos
-modelos de grade, isso torna-os “(…) attractive for creating service
-areas, specially in regions without a all-encompassing transportation
-network (Delamater et al. 2012, 4)”. Todavia, “real-world connectivity
-is not accounted for in the raster data model.” (…) “Therefore, movement
-is less restricted in the raster data model than in the real world and
-travel time estimates will generaly be underestimated” (Delamater et al.
-2012, 15). Isso ocorre porque o modelo considera que todos os pontos do
-mapa são atravessáveis, fazendo, por exemplo, que um viajante pudesse
-aproveitar-se da infraestrutura ferroviária entrando em qualquer ponto
-que fosse mais próximo dele, ignorando a existência de estações ou, no
-caso de rodovias, intersecções (J. Weiss et al. 2018).
+A relevância da distribuição ótima é tanto mais importante quanto mais escassos forem os recursos disponíveis. O Brasil enfrenta desde meados de 2014 uma grave crise econômica, com efeitos diversos sobre a população e sobre a estrutura administrativa do Estado. Mesmo o órgão arrecadador não escapa das restrições necessárias ao ajuste fiscal aplicado na tentativa de debela-la. Neste sentido, o TCU, em auditoria operacional realizada na RFB, relata que
 
-Para nós, a adoção de um modelo em grade nos parece mais interessante.
-Embora ele tenha as limitações mencionadas acima, sem falar no seu custo
-computacional mais elevado, nós acreditamos que, ao se analisar a
-movimentação em todo o Brasil, especialmente em regiões mais afastadas
-dos grandes centros populacionais, os mapas em grade acabarão por nos
-fornecer uma perspectiva mais realista.
+> "além da crise econômica que o País vem enfrentando, que impacta a receita fazendária e a previdenciária, tem-se constatado a ocorrência de baixa recuperação dos créditos trbutários administrados pela RFB" [@uniao_auditoria_2017, pp. 1]. 
 
-A forma como essa movimentação é modelada também deve ser explicitada.
-Certamente que, até computacionalmente, seria consideravelmente mais
-simples estimar as distâncias “as the crow flies” (com o voar do corvo),
-ou seja, a distância linear entre cada um dos pontos e as unidades de
-atendimento. Todavia, essa estimativa ignora completamente a
-infraestrutura e os obstáculos existentes, tornando a análise pouco útil
-(Etten 2017). Não faz sentido considerar que um posto de atendimento é o
-mais próximo de um município se houver outros postos mais acessíveis
-devido à infraestrutura disponível.
+Os reflexos internos na Receita Federal do Brasil são o contingenciamento de despesas e a paralisação de concursos, estancando o fluxo de renovação de servidores. Em paralelo, há um processo de aceleração nas aposentadorias, muitas delas influenciadas pelo temor que os anúncios da reforma previdenciária inspiram. 
 
-Mais interessante é a estimativa “as the wold run” (com o correr dos
-lobos), pelo custo mínimo de viagem. Nele, atribuímos um custo de
-fricção a cada um dos pontos da grade, de acordo com as infraestruturas
-e obstáculos daquele ponto, e assim, estimamos o caminho com menor
-fricção entre os pontos e as unidades de atendimento. Para tal fim,
-utilizaremos o pacote em R gdistance, que “(…) provides functionality to
-calculate various distance measures and routes in heterogeneous
-geographic spaces represented as grids” (Etten 2017, 1).
+Vale lembrar que muitos servidores na ativa  já alcançaram o requisito mínimo para aposentar-se mas continuam em serviço, incentivados pelo chamado abono permanência [@uniao_auditoria_2017]. Entre 2015 e 2017, a RFB perdeu 1.831 servidores, de um total inicial de 23.687, o que representa uma diminuição de 7,7% de sua força de trabalho em apenas 3 anos.
 
-Para este trabalho, utilizaremos o mapa gerado pelo Malaria Atlas
-Project para estimar o custo de friccão. Ele “quantifies travel time to
-cities in 2015 at a spatial resolution of approximately one by one
-kilometre by integrating ten global-scale surfaces that characterize
-factors affecting human movement rates and 13.840 high-density urban
-centres within an established geospatial-modelling framework” (J. Weiss
-et al. 2018, 333). O resultado é um mapa com informações que “(…)
-characterize the spatial locations and properties of roads, railroads,
-rivers, bodies of water, topographical conditions (elevantion and slope
-angle), land cover and national borders” (J. Weiss et al. 2018, 337).
+Este enxugamento, pode-se argumentar, não seria de todo impactante na organização, posto que, com o avançar da digitalização, haveria um aumento na produtividade que compensaria em parte ou mesmo totalmente os efeitos da diminuição na quantidade de servidores. Todavia, lembra o TCU  que 
 
-Algumas presunções devem ser explicitadas antes de qualquer análise.
-Primeiro, os modelos assumem que todos possuem acesso a veículos
-similares e que se movimentam nesses veículos de forma similar, o que
-pode ser pouco realista mesmo considerando-se apenas viagens terrestes.
-“Wealth, in particular, is a likely determinant of whether someone
-travels on foot rather than taking a vehicle and thus substantially
-affects acessibility on the level of the individual” (J. Weiss et al.
-2018, 338).
+> "(...) não se pode contar apenas com a evolução dos meios de tecnologia da informação, pois os mesmos dependem de fatores exógenos como questões orçamentárias, disponibilidade do Serpro para desenvolvimento de sistemas e outros que não permitem sua evolução com velocidade o suficiente para suprir a nova demanda" [@uniao_auditoria_2017, pp. 20].
 
-Em segundo lugar, assume-se uniformidade nas condições de viagem,
-ignorando-se horário, sazonalidades como horário de rush ou fins de
-semana e feriados, variações temporais e climáticas, etc. Em terceiro
-lugar, assume-se que as pessoas conhecem o caminho mais eficiente; uma
-presunção razoável atualmente, com o amplo acesso à sistemas de
-navegação em celulares e computadores. Em quarto lugar, presume-se que
-as populações concentram-se num único ponto; ou seja, qualquer variação
-da distribuição interna a cada um dos retângulos da grade é ignorada, e
-atribui-se à centroide de cada retângulo a totalidade da população
-daquele espaço (Delamater et al. 2012).
+Desta forma, temos todos os fatos em frente aos gestores da Receita Federal do Brasil. De um lado, há um quantitativo decrescente de servidores disponíveis para as tarefas da organização. De outro, percebemos uma gama de obstáculos que impossibilitam sua substituição imediata por canais digitais. Cabe-os então decidir, como distribuir as unidades da forma mais eficiente? De que maneira promover a equidade no acesso aos serviços da organização? O objetivo do presente trabalho é sugerir um modelo que, incluído num processo maior, possa responda às essas necessidades.
 
-Seria mais realista um modelo que pudessemos combinar as informações
-demográficas dos grupos populacionais mais próximos, independente de
-divisões municipais. Todavia, esse tipo de levantamento de dados não
-seria apenas custoso mas também traria diversos riscos à privacidade da
-população analisada. Como tal, fazemos o registro apenas para reconher o
-risco, em nossa análise, de enfrentarmos algumas falácias estatísticas,
-como a falácia ecológica e o problema da unidade de área modificável.
+Acreditamos que esse processo de distribuição das unidades de atendimento está no âmago da estratégia da Receita Federal do Brasil e de seu propósito para a sociedade. Como tal, sugerimos que, definidas as balizas estratégicas de qual público alvo deve ser atingido pelas unidades de atendimento, a organização empregue modelos geoestatísticos na tomada de decisões de que unidades abrir e fechar e quantos servidores devem se dedicar em cada unidade, de acordo com a demanda estimada para cada ponto geográfico. Desta forma, a distribuição estaria mais alinhada ao seu objetivo social, tornando-o menos vulnerável a captura política.  
 
-### Seção 2.2 Download e preparação dos dados
+Este trabalho, de forma mais pontual, busca mostrar a viabilidade do cruzamento de dados estatísticos e geoestatístico do IBGE e de outras fontes para conhecer e explorar informações relevantes sobre o público alvo das unidades de atendimento, um dos passos necessários ao processo descrito acima. 
 
-Para realizar as analises propostas, uma gama de fontes de dados de
-natureza e informações diferentes foram levantadas. As informações
-levantadas foram:
+Antes de passarmos a sua execução, cabe ressalva importante. Embora a disponibilidade e a distância sejam fatores relevantes, não são suficientes; o aumento da acessibilidade nem sempre é acompanhado de um aumento da utilização dos serviços, e outros fatores devem ser avaliados também, como qualidade do serviço oferecido e disponibilidade de canais mais convenientes [@thaddeus_too_1994], como os próprios canais digitais supracitados. Que fique claro que a definição de onde dispor unidades de atendimento é apenas um passo do objetivo estratégico de atender bem a população.
 
-1.  Serviços de atendimento disponibilizados pela Receita Federal do
-    Brasil, tanto digitalmente quanto presenciais
-2.  Unidades de atendimento da RFB em funcionamento, com endereço e tipo
-    de unidade, de acordo com a estrutura organizacional
-3.  Malha digitais dos municípios brasileiros presentes no Censo 2010
-4.  Tabelas agregadas de população economicamente ativa e inativa e de
-    população por faixa etária em cada um dos municípios presentes no
-    Censo 2010
-5.  Malha digitais das áreas de ponderação presentes no Censo 2010,
-    restritas aos municípios de São Paulo, Rio de Janeiro, Belo
-    Horizonte e Curitiba
-6.  Tabelas agregadas de população economicamente ativa e inativa e de
-    população por faixa etária em cada uma das áreas de ponderação
-    mencionadas no Censo 2010
-7.  Duração e tempo de viagem à carro entre todos os municípios e áreas
-    de ponderação mencionadas acima
+# 2. Das fontes de dados e métodos de extração, análise e cruzamento
+## 2.1 Mapas vetoriais e mapas em grade
 
-Primeiramente, foram levantados os serviços disponíveis na Receita
-Federal, para descobrirmos quais dos serviços oferecidos necessitam do
-canal presencial das unidades de atendimento. Essas informações foram
-extraídas diretamente do site da RFB na internet. Outra informação
-obtida no site da Receita foi a lista atualizada de unidades de
-atendimento disponíveis, incluindo seus endereços e tipos.
+Há duas formas de se dispor dados em sistemas de informação geográficas. Há os modelos vetoriais, que podem ser analisados como grafos em redes ( _network graphs_ ); e os modelos em grade ( _raster_ ). 
 
-Para efetuas essas extrações, utilizamos o pacote RSelenium rodando em
-um container Docker, para garantir uma extração rápida e fácil de ser
-reproduzida. Um container é uma unidade padrão de software que empacota
-um código e todas a suas dependências, rodando-o de forma consistente e
-rápida, e muito mais leve do que se fosse criada toda uma máquina
-virtual para a tarefa
-(<a href="https://www.docker.com/resources/what-container" class="uri">https://www.docker.com/resources/what-container</a>).
-Esse esquema foi necessário porque, infelizmente, essas informações ou
-não estão disponibilizadas como Dados Abertos pela RFB, ou estão
-desatualizadas.
+Os modelos vetoriais consistem de uma série de nós, conectados por linhas, representando os objetos geográficos. Pontos no mapa são representados por nós; conexões e infraestruturas como ferrovias e rodovias são linhas, e regiões são delimitadas por polígonos, nós combinados com vértices. Nos modelos vetoriais, o custo para atravessar uma linha é função do tamanho da linha e da velocidade de viagem associado àquele tipo de infraestrutura [@delamater_measuring_2012]. a movimentação, portanto, ocorre entre pontos, de acordo com as linhas disponíveis para cada ponto. 
 
-Com os dados das unidades de atendimento e dos serviços, uma escolha
-pode ser realizada. Percebemos que, em geral, há uma divisão muito clara
-entre serviços de atendimento de natureza aduaneira e serviços de
-natureza tributária; ademais, para as pessoas físicas, os serviços
-aduaneiros resumem-se àqueles de verificação de bagagem internacional.
-Essas descobertas são melhor desenvolvidas na seção 3.1, abaixo.
+Os modelos de grade são compostos por uma série de celulas regulares, geralmente retangulares, de tamanho e distância padronizados. Cada ponto do mapa é resumido em um dos retângulos, e todas as informações relevantes do mapa dentro da região encoberta por aquele retângulo são a ele atribuído. No modelo de grade, as viagens ocorrem na passagem de uma célula para outra,  sempre em entre células adjacentes; assim, diferente do modelo em rede, os passos da viagem são sempre regulares em distância, variando apenas na velocidade [@delamater_measuring_2012].
 
-Ademais, quando restringimos as unidades de atendimento àquelas que
-prestam serviços de natureza tributária, percebemos também que elas, em
-geral, resumem-se a apemas uma unidade por municópio, com exceção dos
-municípios de São Paulo, Rio de Janeiro, Belo Horizonte e Curitiba.
+![](figure_12_measuring_geographic_access.png)
 
-Com essa informação em mãos, decidimos que a localização geográfica
-exata das unidades de atendimento, em geral, não nos interessava;
-bastava-nos saber que eles estavam localizados num município, e
-poderíamos utilizar a localização do município, registrado em banco de
-dados fornecido pelo IBGE, como localização da unidade, com baixa margem
-de erro nos cálculos de tempo de viagem entre os outros municípios e
-aquela unidade.
 
-A exceção se deu nos quatro municípios citados. Para essas unidades,
-decidimos ir ao nível de área de ponderação, subdivisão censitária
-estabelecida pelo IBGE. Por isso, precisávamos da localização de cada
-unidade de atendimento destes municípios para identificar a qual área de
-ponderação ela estava contida. Para isso, utilizamos a API do Google
-Maps, que, a partir do endereço extraído no site da RFB, nos devolvia
-uma coordenada geográfica que podíamos utilizar para definir a área de
-ponderação que a continha.
+Vemos acima uma conversão entre um mapa em network para um mapa em grid [@delamater_measuring_2012, figure 12]. Há uma diferença fundamental na forma como esses modelos compreendem o espaço.
 
-As malhas digitais dos municípios foram obtidas no IBGE. As malhas dos
-municípios puderam ser obtidas sem grandes dificuldades utilizando o
-pacote GeoBr, disponibilizado no GitHub pelo IPEA; as malhas das áreas
-de ponderação, todavia, não puderam ser obtidas com o mesmo pacote,
-devido à problemas no código desse; baixamos as malhas dos setores
-censitários, disponibilizadas em FTP pelo IBGE, e utlizando informação
-entregue pelo IBGE em consulta de SAI, fizemos o agrupamento dos setores
-nas áreas de ponderação.
+> "O modelo de dados em grade define o espaço como uma superfície contínua onde cada célula do espaço dos dados tem um local específico e um valor de atributo. O modelo de dados em rede define o espaço como um recipiente vazio populado apenas pelas características de locais e atributos específicos [@delamater_measuring_2012, pp. 12]" [^4].
 
-Para os municípios e áreas de ponderação em análise, obtivemos no IBGE
-tabelas do censo que nos dessem informações sobre a população
-economicamente ativa e inativa e sobre a distribuição da popílação por
-faixa etária, além da distribuição por faixa salarial. Para os
-municípios, essas informações vieram da Tabela 616 - Pessoas de 10 anos
-ou mais de idade por grupos de idade, condição de atividade na semana de
-referência, sexo e situação do domicílio e da tabela 1384 - Pessoas de
-10 anos ou mais de idade, por classes de rendimento nominal mensal -
-Universo. Das áreas de ponderação, vieram das tabelas 1572 - Pessoas de
-10 anos ou mais de idade, por idade e condição de atividade e de
-ocupação na semana de referência - Resultados Gerais da Amostra e 2030 -
-Pessoas de 10 anos ou mais de idade, por classes de rendimento nominal
-mensal - Resultados Gerais da Amostra.
+[^4]: "The raster data model defines space as a continuous surface where each cell within the data extent has a specific location and attribute value. The network data model defines space as an empty container that is populated only by features having specific locations and attributes." 
 
-Por fim, as informações de tempos e distâncias de viagem à carro entre
-os municípios. Útilizamos os dados disponibilizados gratuitamente no
-OpenStreetMap para fazer essas medições. Devido ao volume de dados
-vetoriais que servem de insumo a essas estimativas, além do número de
-cruzamentos diferentes, na casa dos 4 milhões, nós tivemos que montar um
-servidor local que pudesse processar esse número de operações.
-Utilizamos novamente um container docker, mas dessa vez, nós o montamos
-dentro de uma instância computacional virtual, utilizando os serviços do
-Google Cloud Platform.
+Como todas as localizações do mapa são explicitamente definidadas nos modelos de grade, isso torna-os "(...) atraentes para criação de áreas de serviço, especialmente em regiões sem redes de transporte abrangentes [@delamater_measuring_2012 p. 4]" [^5]. Todavia, "conectividade na vida real não é levada em consideração nos modelos de dados em grade (...), portanto, o movimento é menos restringido nos modelos de dados em grade do que no mundo real e as estimativas de tempo de viagem vão ser geralmente subestimadas [@delamater_measuring_2012, pp. 15]". [^6]
 
-Todos esses dados processados estão disponíveis publicamente, via
-Dropbox, nas urls abaixo:
+[^5]: "(...) attractive for creating service areas, specially in regions without a all-encompassing transportation network"
+[^6]: "real-world connectivity is not accounted for in the raster data model (...) therefore, movement is less restricted in the raster data model than in the real world and travel time estimates will generaly be underestimated"
 
--   [Arquivo RDS com informações dos tempos e distâncias de
-    viagens](https://www.dropbox.com/s/jkiiwwxz73eys9e/01_viagens.rds?raw=1)
--   [Arquivo RDS com informações dos serviços prestados pela Receita
-    Federal do
-    Brasil](https://www.dropbox.com/s/84hrt2ntrx9k0t0/02_servi%C3%A7os.rds?raw=1)
--   [Arquivo RDS com informações demográficas de municípios e áreas de
-    ponderação
-    selecionados](https://www.dropbox.com/s/stsxm0cl98lmnzg/03_demografia.rds?raw=1)
+Isso ocorre porque o modelo considera que todos os pontos do mapa são atravessáveis, fazendo, por exemplo, que um viajante pudesse aproveitar-se da infraestrutura ferroviária entrando em qualquer ponto que fosse mais próximo dele, ignorando a existência de estações ou, no caso de rodovias, intersecções [@j._weiss_global_2018].
 
-Seção 3 (o que?)
-----------------
+Para nós, a adoação de um modelo vetorial bastaria para uma primeira aproximação. O modelo em grade enfrentaria as limitações mencionadas acima e seu custo computacional seria consideravelmente mais elevado. Ademais, o modelo em grade serviria apenas para as poucas regiões do país com baixa densidade de infraestrutura.
 
-### Seção 3.1 Potencial digital dos serviços da RFB
+Inicialmente, havíamos considerado a utilização de informações de infraestrutura do Malaria Atlas Project para estimar o custo de fricção, que foi gerado a partir de informações obtidas do Open Street Map [@j._weiss_global_2018]. Optamos, todavia, pela utilização direta dos dados do Open Street Map, simplificando os municípios para pontos unitários no espaço geográfico.
 
-A principal limitação à plena digitalização dos serviços da Receita
-Federal é a necessidade de autenticação digital dos cidadãos. Devido à
-sensibilidade dos serviços da RFB, que envolvem tanto informações
-sensíveis da vida financeira e da identidade da pessoa, como também
-envolvem impactos financeiros, é necessário utilzar certificados
-digitais para a maioria dos serviços online.
+Algumas presunções devem ser explicitadas antes de qualquer análise. Primeiro, os modelos assumem que todos possuem acesso a veículos similares e que se movimentam nesses veículos de forma similar, o que pode ser pouco realista mesmo considerando-se apenas viagens terrestes. "A riqueza em particular é um determinante provável de se alguém irá viajar à pé em vez de tomar um véiculo e, portanto, afeta substancialmente a acessibilidade no nível do indivíduo [@j._weiss_global_2018, pp. 338]" [^7].
 
-O certificado digital é uma assinatura eletrônica com criptografia para
-confirmar a identidade de uma pessoa física (e-CPF) ou empresa (e-CNPJ).
-Ele possui poder jurídico e contém dados do titular como nome, registro
-civil e assinatura da autoridade certificadora, e pode custa de cerca de
-100 reais até 400 reais por ano, dependendo do segmento e do tipo do
-certificado
-(<a href="https://nfe.io/blog/assinatura/quanto-custa-certificado-digital/" class="uri">https://nfe.io/blog/assinatura/quanto-custa-certificado-digital/</a>).
+[^7]: "Wealth, in particular, is a likely determinant of whether someone travels on foot rather than taking a vehicle and thus substantially affects acessibility on the level of the individual"
 
-Devido ao alto custo, o número de pessoas físicas com certificado
-digital é pequeno; por outro lado, a obrigatoriedade legal da posse de
-certificados digitais para pessoas jurídicas está se expandindo ano a
-ano, e por isso, os serviços presenciais de pessoas jurídicas na RFB
-está em franco declínio, restando às unidades atenderemas pessoas
-física.
+Em segundo lugar, assume-se uniformidade nas condições de viagem, ignorando-se horário, sazonalidades como horário de rush ou fins de semana e feriados, variações temporais e climáticas, etc.  Em terceiro lugar, assume-se que as pessoas conhecem o caminho mais eficiente; uma presunção razoável atualmente, com o amplo acesso à sistemas de navegação em celulares e computadores. Em quarto lugar, presume-se que as populações concentram-se num único ponto; ou seja, qualquer variação da distribuição interna a cada um dos retângulos da grade é ignorada, e atribui-se à centroide de cada retângulo a totalidade da população daquele espaço [@delamater_measuring_2012].
 
-É possível que, no futuro, a RFB adote outras formas mais simples e
-baratas de autenticação do cidadão, expandindo os acessos digitais a
-seus serviços. Um exemplo é o login único do governo federal, que está
-sendo lentamente adotado por diversos órgão da União
-(<a href="http://faq-login-unico.servicos.gov.br/en/latest/_perguntasdafaq/oquee.html" class="uri">http://faq-login-unico.servicos.gov.br/en/latest/_perguntasdafaq/oquee.html</a>).
-Até lá, as unidades presenciais servirão como canal de complementação
-àqueles que não possuírem os meios para acessar os serviços digitais.
+Seria mais realista um modelo que pudessemos combinar as informações demográficas dos grupos populacionais mais próximos, independente de divisões municipais. Todavia, esse tipo de levantamento de dados não seria apenas custoso mas também traria diversos riscos à privacidade da população analisada. Como tal, fazemos o registro apenas para reconher o risco, em nossa análise, de enfrentarmos algumas falácias estatísticas, como a falácia ecológica e o problema da unidade de área modificável. 
 
-Mas quantos serviços são esses? Como os serviços voltados às pessoas
-jurídicas caminham rapidamente para a completa digitalização, temos que
-levantar os serviços que possuem como alvo as pessoas físicas. De acordo
-com o site da Receita federal, temos 253 serviços que tem como público
-alvo as pessoas físicas ou jurídicas.
+## 2.2 Download e preparação dos dados
 
-``` r
-servicos <- readRDS(url('https://www.dropbox.com/s/84hrt2ntrx9k0t0/02_servi%C3%A7os.rds?raw=1'))
+Para realizar as analises propostas, uma gama de fontes de dados de natureza e informações diferentes foram levantadas. As informações levantadas foram:
+
+1. Serviços de atendimento disponibilizados pela Receita Federal do Brasil, tanto digitalmente quanto presenciais [@receita_federal_do_brasil_lista_nodate]
+1. Unidades de atendimento da RFB em funcionamento, com endereço e tipo de unidade, de acordo com a estrutura organizacional [@receita_federal_do_brasil_unidades_nodate]
+1. Malha digitais dos municípios brasileiros presentes no Censo 2010 [@pereira_geobr:_nodate]
+1. Tabelas agregadas de população economicamente ativa e inativa e de população por faixa etária em cada um dos municípios presentes no Censo 2010 [@ibge_censo_2011]
+1. Malha digitais das áreas de ponderação presentes no Censo 2010, restritas aos municípios de São Paulo, Rio de Janeiro, Belo Horizonte e Curitiba [@pereira_geobr:_nodate]
+1. Tabelas agregadas de população economicamente ativa e inativa e de população por faixa etária em cada uma das áreas de ponderação mencionadas no Censo 2010 [@ibge_censo_2011]
+1. Duração e tempo de viagem à carro entre todos os municípios e áreas de ponderação mencionadas acima [@geofabrik_openstreetmap_nodate]
+
+Primeiramente, foram levantados os serviços disponíveis na Receita Federal, para descobrirmos quais dos serviços oferecidos necessitam do canal presencial das unidades de atendimento. Essas informações foram extraídas diretamente do site da RFB na internet. Outra informação obtida no site da Receita foi a lista atualizada de unidades de atendimento disponíveis, incluindo seus endereços e tipos. 
+
+Para efetuas essas extrações, utilizamos o pacote RSelenium rodando em um container Docker, para garantir uma extração rápida e fácil de ser reproduzida. Um container é uma unidade padrão de software que empacota um código e todas a suas dependências, rodando-o de forma consistente e rápida, e muito mais leve do que se fosse criada toda uma máquina virtual para a tarefa [@docker_what_nodate]. Esse esquema foi necessário porque, infelizmente, essas informações ou não estão disponibilizadas como Dados Abertos pela RFB, ou estão desatualizadas. 
+
+Com os dados das unidades de atendimento e dos serviços, uma escolha pode ser realizada. Percebemos que, em geral, há uma divisão muito clara entre serviços de atendimento de natureza aduaneira e serviços de natureza tributária; ademais, para as pessoas físicas, os serviços aduaneiros resumem-se àqueles de verificação de bagagem internacional. Essas descobertas são melhor desenvolvidas na seção 3.1, abaixo.
+
+Ademais, quando restringimos as unidades de atendimento àquelas que prestam serviços de natureza tributária, percebemos também que elas, em geral, resumem-se a apemas uma unidade por municópio, com exceção dos municípios de São Paulo, Rio de Janeiro, Belo Horizonte e Curitiba. 
+
+Com essa informação em mãos, decidimos que a localização geográfica exata das unidades de atendimento, em geral, não nos interessava; bastava-nos saber que eles estavam localizados num município, e poderíamos utilizar a localização do município, registrado em banco de dados fornecido pelo IBGE, como localização da unidade, com baixa margem de erro nos cálculos de tempo de viagem entre os outros municípios e aquela unidade.
+
+A exceção se deu nos quatro municípios citados. Para essas unidades, decidimos ir ao nível de área de ponderação, subdivisão censitária estabelecida pelo IBGE. Por isso, precisávamos da localização de cada unidade de atendimento destes municípios para identificar a qual área de ponderação ela estava contida. Para isso, utilizamos a API do Google Maps, que, a partir do endereço extraído no site da RFB, nos devolvia uma coordenada geográfica que podíamos utilizar para definir a área de ponderação que a continha [@google_plataforma_nodate].
+
+As malhas digitais dos municípios foram obtidas no IBGE. As malhas dos municípios puderam ser obtidas sem grandes dificuldades utilizando o pacote GeoBr, disponibilizado no GitHub pelo IPEA; as malhas das áreas de ponderação, todavia, não puderam ser obtidas com o mesmo pacote, devido à problemas no código desse; baixamos as malhas dos setores censitários, disponibilizadas em FTP pelo IBGE, e utlizando informação entregue pelo IBGE em consulta de SAI, fizemos o agrupamento dos setores nas áreas de ponderação. 
+
+Para os municípios e áreas de ponderação em análise, obtivemos no IBGE tabelas do censo que nos dessem informações sobre a população economicamente ativa e inativa e sobre a distribuição da popílação por faixa etária, além da distribuição por faixa salarial.  Para os municípios, essas informações vieram da Tabela 616 - Pessoas de 10 anos ou mais de idade por grupos de idade, condição de atividade na semana de referência, sexo e situação do domicílio e da tabela 1384 - Pessoas de 10 anos ou mais de idade, por classes de rendimento nominal mensal - Universo. Das áreas de ponderação, vieram das tabelas 1572 - Pessoas de 10 anos ou mais de idade, por idade e condição de atividade e de ocupação na semana de referência - Resultados Gerais da Amostra e 2030 - Pessoas de 10 anos ou mais de idade, por classes de rendimento nominal mensal - Resultados Gerais da Amostra.
+
+Por fim, as informações de tempos e distâncias de viagem à carro entre os municípios. Útilizamos os dados disponibilizados gratuitamente no OpenStreetMap para fazer essas medições. Devido ao volume de dados vetoriais que servem de insumo a essas estimativas, além do número de cruzamentos diferentes, na casa dos 4 milhões, nós tivemos que montar um servidor local que pudesse processar esse número de operações. Utilizamos novamente um container docker, mas dessa vez, nós o montamos dentro de uma instância computacional virtual, utilizando os serviços do Google Cloud Platform. 
+Todos esses dados processados estão disponíveis publicamente, via Dropbox, nas urls abaixo:
+
+- [Arquivo RDS com informações dos tempos e distâncias de viagens](https://www.dropbox.com/s/jkiiwwxz73eys9e/01_viagens.rds?raw=1)
+- [Arquivo RDS com informações dos serviços prestados pela Receita Federal do Brasil](https://www.dropbox.com/s/84hrt2ntrx9k0t0/02_servi%C3%A7os.rds?raw=1)
+- [Arquivo RDS com informações das unidades da Receita Federal do Brasil](https://www.dropbox.com/s/qaypq8bsoa5gfoa/04_unidadesRFB.rds?raw=1)
+- [Arquivo RDS com informações demográficas de municípios e áreas de ponderação selecionados](https://www.dropbox.com/s/stsxm0cl98lmnzg/03_demografia.rds?raw=1)
+
+# 3. Dos resultados
+## 3.1 Potencial digital dos serviços da RFB
+
+A principal limitação à plena digitalização dos serviços da Receita Federal está na necessidade de autenticação digital dos cidadãos. Devido à sensibilidade dos serviços da RFB, que envolvem tanto informações sensíveis da vida financeira e da identidade da pessoa, como também envolvem impactos financeiros, é necessário utilzar certificados digitais para a maioria dos serviços online. 
+
+O certificado digital é uma assinatura eletrônica com criptografia para confirmar a identidade de uma pessoa física (e-CPF) ou empresa (e-CNPJ). Ele possui poder jurídico e contém dados do titular como nome, registro civil e assinatura da autoridade certificadora, e pode custa de cerca de 100 reais até 400 reais por ano, dependendo do segmento e do tipo do certificado [@nfe.io_quanto_2018].
+
+Devido ao alto custo, o número de pessoas físicas com certificado digital é pequeno; por outro lado, a obrigatoriedade legal da posse de certificados digitais para pessoas jurídicas está se expandindo ano a ano, e por isso, os serviços presenciais de pessoas jurídicas na RFB está em franco declínio, restando às unidades atenderem as pessoas física.  As empresas, em sua massiva maioria, já possuem certificado digital, se não por necessidade, mas por obrigação legal, que está se extendendo progressivamente aos CNPJs de menor faturamente. Em julho de 2018, por exemplo, passou a ser obrigatório para pequenas empresas. Desta forma, podemos nos concentrar nos serviços prestados ao cidadão, listados 253 nessa página da internet [@dunder_certificacao_2018].
+
+É possível que, no futuro, a RFB adote outras formas mais simples e baratas de autenticação do cidadão, expandindo os acessos digitais a seus serviços. Um exemplo é o login único do governo federal, que está sendo lentamente adotado por diversos órgão da União [@ministerio_da_economia_o_nodate]. Até lá, as unidades presenciais servirão como canal de complementação àqueles que não possuírem os meios para acessar os serviços digitais. 
+
+
+Pois bem, podemos então nos perguntar, que serviços não estão digitalizados e, como tal, a resolução do problema do certificado digital não bastaria para que deixassem de ser realizados em unidades de atedimento? Pelas razões já citadas, iremos nos ater aos serviços ao cidadão, e não às empresas, como listados no site da Receita Federal [@receita_federal_do_brasil_lista_nodate]. 
+
+
+
+```r
 nrow(servicos)
 ```
 
-    ## [1] 253
+```
+## [1] 253
+```
 
-Os serviços cujos alvos são tanto pessoas físicas e jurídicas são
-serviços que, em geral, são realizados por pessas jurídicas, mas que não
-há impedimento legal à realização por pessoa física, como é o caso de
-diversos serviços aduaneiros.
+Alguns dos serviços desta lista se misturam com os serviços às empresas, posto que podem ser fornecidos aos dois. Em geral, um serviço que se presta a uma empresa mas também pode ser prestado a um cidadão é fornecido desta maneira simplesmente para não criar obstáculos desnecessários àqueles que ainda não tenham um CNPJ. Na prática, são serviços exclusivos para CNPJs, que, por desburocratização, podem ser prestados a alguém que não o tenha em mão. Por isso, para saber quais os serviços criados com foco nas pessoas físicas, devemos filtrar essa lista.
 
-Como tal, para entender a demanda por unidades de atendimento
-presencial, devemos nos restringir aos serviços voltados exclusivamente
-às pessoas físicas.
 
-``` r
+```r
 eval02 <- servicos %>% filter(publico_alvo %in% c("Pessoa Física"))
 nrow(eval02)
 ```
 
-    ## [1] 60
+```
+## [1] 60
+```
 
-Desses, a imensa maioria já está parcialmente ou completamente
-digitalizado. Por parcialmente, falamos dos que podem ser realizados por
-meio digital, mas que há ainda a opção de realizá-lo em unidade
-presencial. Ora, como discutido acima, o principal entrave à completa
-digitalização desses serviços é a dificuldade de autenticação, um
-problema de política pública mais amplo do que a simples
-disponibilização pela organização de sistemas que forneça o serviço.
+Resta-nos portanto, 60 serviços prestados pela Receita Federal a pessoas físicas, ou seja, a pessoas que não são obrigadas a possuir e, como discutido, provavelmente não possuem certificados digitais. Diversos desses serviços tem o canal digital, portanto, como opcional. Se a pessoa possuir o certificado digital, ela pode acessar um canal eletrônico da Receita (geralmente mas nem sempre o e-Cac), mas, se não possuir, pode se dirigir a uma unidade de atendimento. 
 
-Nos perguntamos então, quais seria os serviços completamente
-presenciais? Aqueles que nem mesmo há um sistema oferecido para
-realizá-lo, ainda que facultativamente, por via digital? Esses serviços
-seriam, por óbvio, o maior entrave imediato à digitalização completa do
-atendimento da organização
+Assim, para responder a pergunta de quantos serviços são exclusivamente presenciais, temos que filtrar essa lista mais ainda, para os serviços que não possuem qualquer opção de canal eletrônico. 
 
-``` r
+
+```r
 eval03 <- servicos %>% 
             filter((tipo_atendimento %in% c("Atendimento pela internet", "Atendimento e-CAC"))) %>%
             filter(publico_alvo %in% c("Pessoa Física")) %>% 
@@ -470,71 +218,80 @@ eval04 <- servicos %>%
             left_join(eval03, by=c("nome")) %>%
             filter(is.na(tipo_atendimento.y)) %>% 
             select(nome:descricao)
-eval04
+
+kable(eval04) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
 ```
 
-    ##                                                           nome
-    ## 1                             Bagagem - Tratamento Tributário 
-    ## 2                                          Bagagem Acompanhada
-    ## 3   Bagagem Acompanhada - Cálculo do Imposto e emissão do DARF
-    ## 4                                 Habilitação - Pessoa Física 
-    ## 5 Concluir o Serviço no CPF que gerou protocolo de atendimento
-    ## 6                         Realizar Serviços no CPF - Falecidos
-    ## 7                               DIRPF - Solicitar Cancelamento
-    ## 8                         Incluir/Excluir o Nome Social no CPF
-    ##           nome_popular
-    ## 1              Bagagem
-    ## 2 Bagagem acompanhada 
-    ## 3 Bagagem Acompanhada 
-    ## 4                 <NA>
-    ## 5                 <NA>
-    ## 6                 <NA>
-    ## 7                 <NA>
-    ## 8                 <NA>
-    ##                                                                                                                                                                                                                                                                                                                                                                                 descricao
-    ## 1                                                                                                                                                                                                                                                                                                                   Orientações acerca do conceito e do tratamento tributário de bagagem.
-    ## 2                                                                                                                                                                                                                                                                                                                                      Apresentação da declaração de bagagem acompanhada.
-    ## 3                                                                                                                                                                                                                                                                                              Solicitar o cálculo do Imposto de Importação e a emissão de Darf para bagagem acompanhada.
-    ## 4                                                                                                                                                                                                                                                                                                                     Solicitar habilitação da pessoa física para importar e/ou exportar.
-    ## 5                                                                                                                                                                    Concluir o pedido de inscrição, alteração ou regularização no CPF cuja solicitação foi iniciada em um conveniado (Ex: Banco do Brasil, Caixa, Correios e outros) e gerou um protocolo de atendimento não conclusivo.
-    ## 6                                                                                                                                                                                                                                                  Solicitar atendimento em unidade da Receita Federal para inscrição, alteração, regularização e cancelamento no CPF de pessoa falecida.
-    ## 7 Solicitar o cancelamento da declaração do IRPF, a partir do exercício de 2008.\nÉ possível solicitar o cancelamento da DIRPF nas seguintes situações:\nA pedido do contribuinte, desde que não sejam identificados indícios de fraude, informando o motivo do cancelamento da declaração entregue.\nQuando o contribuinte não reconhecer a DIRPF entregue e alegar fraude ou falsidade.
-    ## 8                                                                                                                                                                       Incluir/excluir no cadastro de pessoa física o nome pela qual a pessoa travesti ou transexual é socialmente reconhecido e que constará no comprovante de inscrição e no comprovante de situação cadastral do CPF.
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> nome </th>
+   <th style="text-align:left;"> nome_popular </th>
+   <th style="text-align:left;"> descricao </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Bagagem - Tratamento Tributário </td>
+   <td style="text-align:left;"> Bagagem </td>
+   <td style="text-align:left;"> Orientações acerca do conceito e do tratamento tributário de bagagem. </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Bagagem Acompanhada </td>
+   <td style="text-align:left;"> Bagagem acompanhada </td>
+   <td style="text-align:left;"> Apresentação da declaração de bagagem acompanhada. </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Bagagem Acompanhada - Cálculo do Imposto e emissão do DARF </td>
+   <td style="text-align:left;"> Bagagem Acompanhada </td>
+   <td style="text-align:left;"> Solicitar o cálculo do Imposto de Importação e a emissão de Darf para bagagem acompanhada. </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Habilitação - Pessoa Física </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> Solicitar habilitação da pessoa física para importar e/ou exportar. </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Concluir o Serviço no CPF que gerou protocolo de atendimento </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> Concluir o pedido de inscrição, alteração ou regularização no CPF cuja solicitação foi iniciada em um conveniado (Ex: Banco do Brasil, Caixa, Correios e outros) e gerou um protocolo de atendimento não conclusivo. </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Realizar Serviços no CPF - Falecidos </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> Solicitar atendimento em unidade da Receita Federal para inscrição, alteração, regularização e cancelamento no CPF de pessoa falecida. </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> DIRPF - Solicitar Cancelamento </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> Solicitar o cancelamento da declaração do IRPF, a partir do exercício de 2008.
+É possível solicitar o cancelamento da DIRPF nas seguintes situações:
+A pedido do contribuinte, desde que não sejam identificados indícios de fraude, informando o motivo do cancelamento da declaração entregue.
+Quando o contribuinte não reconhecer a DIRPF entregue e alegar fraude ou falsidade. </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Incluir/Excluir o Nome Social no CPF </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> Incluir/excluir no cadastro de pessoa física o nome pela qual a pessoa travesti ou transexual é socialmente reconhecido e que constará no comprovante de inscrição e no comprovante de situação cadastral do CPF. </td>
+  </tr>
+</tbody>
+</table>
 
-Como podemos conferir, dos 253 serviços iniciais, apenas 8 se encaixam
-nessa lista restrita. 3 deles se referem a casos específicos de
-tratamento de CPF, 1 se refere a habilitação aduaneira de pessoa física,
-3 se referem ao tratamento de bagagem para viajantes internacionais e 1
-a possibilidade de cancelamento do imposto de renda. Como tal, com
-exceção óbvia dos serviços de análise de bagagens em viagens
-internacionais, parece-nos pouco provável que esses serviços não possam
-ser digitalizados.
+Como podemos conferir, dos 253 serviços iniciais, apenas oito se encaixam nessa lista restrita. Três deles se referem a casos específicos de tratamento de CPF, um se refere a habilitação aduaneira de pessoa física, três se referem ao tratamento de bagagem para viajantes internacionais e um a possibilidade de cancelamento do imposto de renda. Como tal, com exceção óbvia dos serviços de análise de bagagens em viagens internacionais, realizadas na descida do avião de passageiro de vôo internacional, parece-nos pouco provável que esses serviços escapariam à digitalização. 
 
-Portanto, o que tiramos disso é que a necessidade das unidades
-presenciais se deve muito menos à inexistência de canais digitais, para
-os serviços da organização, e mais à dificuldade de se conceder acesso
-seguro e barato à população a esses canais.
+Portanto, o que concluímos disso é que a necessidade das unidades presenciais se deve muito menos à inexistência de canais digitais e muito mais à dificuldade de se conceder acesso seguro e barato à população nesses canais. 
 
-### Seção 3.2 Cruzamento e análise da demografia dos público-alvos da unidades de atendimento da Receita Federal do Brasil
+## 3.2 Público-alvo da unidades de atendimento da Receita Federal do Brasil
 
-Mapa das durações percorridas em cada município/área de ponderação
+Posto que o problema dos certificados digitais não está resolvido, resta-nos analisar as unidades de atendimento existentes. A análise que faremos será de buscar qual o público-alvo hipotético de cada unidade de atendimento da Receita Federal. 
 
-``` r
-# usar dados de viagens para, para cada município, descobrir a unidade de atendimento mais próxima
-# produzir mapas com essas informações
-#viagens <- readRDS(url("https://www.dropbox.com/s/jkiiwwxz73eys9e/01_viagens.rds?raw=1"))
-#demog <- readRDS(url('https://www.dropbox.com/s/stsxm0cl98lmnzg/03_demografia.rds?raw=1'))
-#load pelo URL temporariamente dando problema, fazer load local
+Nós estamos definindo público alvo de uma unidade de atendimento como toda a população dos municípios para os quais é mais rápido, em tempo de viagem, chegar à aquela unidade de atendimento do que a qualquer outra unidade de atendimento disponível. 
 
-viagens <- readRDS("/home/celso/Área de Trabalho/git_folders/tccENAP/viagens.rds")
-demog <- readRDS("/home/celso/Área de Trabalho/git_folders/tccENAP/demografia.rds")
+Nós dizemos que é hipotético porque, como discutido nas ressalvas finais da seção 1, o tempo de viagem e a distância não são os únicos fatores a definirem para onde o cidadão vai escolher ser atendido. Ainda assim, acreditamos ser dos fatores mais importantes, e por isso, uma boa primeira aproximação.
 
-#quais os códigos de ibge dos municípios e áreas de ponderação para cada unidade da RFB?
-## por arquivo de unidades no Dropbox
-unids <- readRDS("/home/celso/Área de Trabalho/git_folders/tccENAP/02_ dados/03_ analise/00_unidades_RFB_cod_ibge.rds") %>% 
-            mutate(ibge_unid = ifelse(is.na(ibge_area), ibge_municipio,  ibge_area)) %>% 
-            distinct()
 
+```r
 #qual a unidade de atendimento mais próxima, saindo do município?
 classif <- viagens %>% 
   filter(destino %in% unids$ibge_unid) %>% 
@@ -571,18 +328,21 @@ map_info <- classif %>%
               select(ibge_unid, ibge_nome, ibge_tipo, duração, ibge_destino, Unidade:Logradouro, salMin_01to02:geometry) %>% 
               st_as_sf()
 
-#plot de teste para ver o que é possível com as informações do Map_info
-#Este mapa mostra todos os municípios que estejam mais próximos das Unidades de atendimento da 3RF (Maranhão, Piauí e Ceará)
-#Note que os municípios extrapolam os três estados, posto que há municípios em estados vizinhos cuja proximidade, medida em duração de tempo de viagem de carro, é mais próximo destas unidades separadas do que de unidades dentro de seus próprios estados
-map_test <- map_info %>% select(Unidade, Estado, geometry) %>% filter(Estado %in% c('MA', 'PI', 'CE'))
-theme_set(theme_bw())
-map <- ggplot(map_test) + geom_sf(aes(fill = Unidade))
+#mapa do brasi, divididor por municípios e colorido por unidade de atendimento da RFB
+map_test <- map_info %>% select(Unidade, Estado, geometry)
+map <- ggplot(map_test) + geom_sf(aes(fill = Unidade)) + theme(legend.position = "none") + scale_colour_viridis_c()
 map
 ```
 
-![](trabalho_de_conclusao_files/figure-markdown_github/unnamed-chunk-4-1.png)
+![](trabalho_de_conclusao_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
-``` r
+Geramos então. o mapa completo do Brasil divididos por municípios e as cores representando as áreas atingidas por cada unidade de atendimento, medido por tempo de viagem de carro, notamos já de início alguns pontos não categorizados.  Como discutido anteriormente, na região norte, com o parco acesso a infraestrutura rodoviária e grande dependência de viagens em meio hidroviários, não disponíveis no OpenStreetMap, acaba por não haver rotas identificadas para estes municípios. 
+
+Haveria duas possíveis soluções. Uma solução seria inserir informações vetoriais de rotas hidrográficas disponíveis na região. A segunda solução seria a o uso de mapas em grade ( _raster_ ) especificamente nessas regiões, para identificas as unidades mais próximas nos municípios que ficaram de fora. Seja como for, deixa evidenciado como as diferentes realidades do país impedem a aplicação de uma única técnicas para todas as situações.
+
+
+```r
+# dados demográficos agregados por unidade de atendimento da RFB 
 aggr <- map_info %>% 
           sf::st_drop_geometry() %>% 
           group_by(
@@ -620,246 +380,248 @@ aggr <- map_info %>%
             inativo_19less = sum(inativo_19less, na.rm = T)
           ) %>% 
         ungroup()
-head(aggr)
 ```
 
-    ## # A tibble: 6 x 34
-    ##   Unidade Tipo  Estado Cidade Bairro duração salMin_01to02 salMin_02to05
-    ##   <chr>   <chr> <chr>  <chr>  <chr>    <dbl>         <dbl>         <dbl>
-    ## 1 Abaete… ARF   PA     Abaet… Centro   94.4          38602         16038
-    ## 2 Acaraú  ARF   CE     Acaraú Centro   26.0           9819          3507
-    ## 3 Adaman… ARF   SP     Adama… Centro   24.6          29309         15735
-    ## 4 Aeropo… CAC   MG     Confi… Aerop…    9.48         22632         12050
-    ## 5 Alagoi… ARF   BA     Alago… Centro   41.1          45092         25216
-    ## 6 Alegre… ARF   RS     Alegr… Centro   65.6          22006         10962
-    ## # … with 26 more variables: salMin_05to10 <dbl>, salMin_10to20 <dbl>,
-    ## #   salMin_20plus <dbl>, salMin_semrendimento <dbl>, ativo_2024 <dbl>,
-    ## #   ativo_2529 <dbl>, ativo_3034 <dbl>, ativo_3539 <dbl>,
-    ## #   ativo_4044 <dbl>, ativo_4549 <dbl>, ativo_5054 <dbl>,
-    ## #   ativo_5559 <dbl>, ativo_6069 <dbl>, ativo_70plus <dbl>,
-    ## #   ativo_19less <dbl>, inativo_2024 <dbl>, inativo_2529 <dbl>,
-    ## #   inativo_3034 <dbl>, inativo_3539 <dbl>, inativo_4044 <dbl>,
-    ## #   inativo_4549 <dbl>, inativo_5054 <dbl>, inativo_5559 <dbl>,
-    ## #   inativo_6069 <dbl>, inativo_70plus <dbl>, inativo_19less <dbl>
 
-``` r
-# qual a média de duração de viagem no Brasil (em minutos)? Qual a máxima duração, e qual a mínima?
-map_eval1 <- c(media = mean(aggr$duração), máxima=max(aggr$duração), mínima = min(aggr %>% filter(!(duração %in% c(0))) %>% select(duração)))
-map_eval1
+```r
+tempoViag <- ggplot(aggr, aes(x = reorder(Unidade, duração), y= duração)) + geom_bar(stat = 'identity') + theme_minimal() + theme(axis.text.x = element_blank())
+tempoViag
 ```
 
-    ##    media   máxima   mínima 
-    ##   80.276 7944.811    3.300
+![](trabalho_de_conclusao_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
-``` r
-#Qual a unidade com maior público-alvo? E a com menor público alvo? Qual o público alvo médio da população?
-map_eval2_info <- aggr %>% select(ativo_2024:inativo_19less) %>% mutate(total = rowSums(., na.rm = T))
+Ao analisarmos o tempo de viagem entre os municípios e suas respectivas unidades de atendimento, percebemos que há uma grande uniformidade, mas com alguns outliers com tempos fora do normal. 
 
-map_eval2 <- c(
-  maior = max(map_eval2_info$total),
-  menor = min(map_eval2_info$total),
-  medio = mean(map_eval2_info$total)
-)
-map_eval2
+
+```r
+summary(aggr$duração)
 ```
 
-    ##       maior       menor       medio 
-    ## 120726288.0      6172.0    848874.5
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##    0.00   28.34   42.67   76.16   65.62 7944.81
+```
 
-``` r
-# qual o percentual MÉDIO no público alvo das unidades DE
-# qual o percentual MEDIANO no público alvo das unidades DE
-# qual o percentual MÁXIMO no público alvo das unidades DE 
-# qual o percentual MÍNIMO no público alvo das unidades DE 
-# pessoas com mais de 10 anos e menos de 02 salários mínimos (isentos do IRPF)
-map_eval3_info <- aggr %>% 
-                    select(salMin_01to02:salMin_semrendimento) %>% 
+Em verdade, percebemos que o tempo mediano de viagem para uma unidade de atendimento é de 42 minutos de carro, e a média vai para 76 minutos, certamente puxado pelos outliers.
+
+
+```r
+pop_outlier <- aggr %>% filter(duração > mean(aggr$duração)) %>% select(ativo_2024:inativo_19less) %>% mutate(total = rowSums(., na.rm = T))
+sum(pop_outlier$total)
+```
+
+```
+## [1] 33478112
+```
+
+É possível que esses outliers existam pelas já discutidas limitações na infraestrutura rodoviária, mas seria interessante analisar com mais calma a situação dos municípios que estão muito acima da média, de um ponto de vista de garantia da acessibilidade. Afinal, como podemos ver acima, são 3 milhões e 300 mil pessoas nessa situação. 
+
+
+```r
+popUnidades <- aggr %>% select(Unidade, ativo_2024:inativo_19less) %>% mutate(total = rowSums(.[2:ncol(.)], na.rm = T))
+popUnidsChart <- ggplot(popUnidades, aes(x = reorder(Unidade, total), y= total))+ geom_bar(stat = 'identity') + theme_minimal() + theme(axis.text.x = element_blank())
+popUnidsChart
+```
+
+![](trabalho_de_conclusao_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+
+
+```r
+summary(popUnidades$total)
+```
+
+```
+##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+##     19577    164968    262686    867280    398886 120726288
+```
+
+Ao levantarmos a população total atingida, novamente encontramos cenário de grandes desigualdades, que mereceriam atenção para um planejamento mais estratégico do posicionamento das unidades. A média de pessoas dentro do público-alvo das unidades é de cerca de 870 mil, mas essa média é fortemente puxada por outliers com um número muito alto de atingidos. A unidade com maior número de atendidos chega a uma população estimada de 12 milhões de pessoas, enquanto a menor unidade atinge apenas 20 mil pessoa.
+
+Entretanto, até o momento, estamos tratando a população inteira dos municípios como população-alvo das unidades de atendimento. Na prática, aqueles que não possuem renda, que estejam economicamente inativos, em geral, não possuem grandes motivos para lidar com a Receita Federal. Ademais, há também o argumento de que o serviços presenciais servem principalmente às populações mais velhas, com menos familiaridade com os canais digitais. Essas seleções são exemplos de como se poderia refinar e definir com mais precisão o público das unidades de atendimento, a fim de prestar um melhor serviço. 
+
+Primeiramente, podemos analisar a idade média da população econômicamente ativa atendida por cada unidade. 
+
+
+```r
+meanAge <- aggr %>% 
+              select(Unidade, ativo_2024:ativo_19less) %>% 
+              mutate(
+                total = rowSums(.[2:ncol(.)]),
+                
+                weightAge = (ativo_2024 * (20+24)/2 +
+                ativo_2529 * (25+29)/2 + 
+                ativo_3034 * (30+34)/2 +
+                ativo_3539 * (35+39)/2 +
+                ativo_4044 * (40+44)/2 +
+                ativo_4549 * (45+49)/2 +
+                ativo_5054 * (50+54)/2 +
+                ativo_5559 * (55+59)/2 +
+                ativo_6069 * (60+69)/2 +
+                ativo_70plus * (70+100)/2 +
+                ativo_19less * (19)/2) / total
+              ) %>% 
+              filter(weightAge <= max(weightAge))
+
+
+meanAgeChart <- ggplot(meanAge, aes(x = reorder(Unidade, weightAge), y = weightAge)) + geom_point()+  theme(axis.text.x = element_blank())
+meanAgeChart
+```
+
+![](trabalho_de_conclusao_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+
+A idade média das unidades de atendimento aponta para uma população economicamente ativa relativamente jovem, com idade média próxima dos 36 anos de idade. Todavia, não podemos nos esquecer que estes dados são do censo de 2010, e o próximo censo, de 2020, pode já apontar uma população mais envelhecida. 
+
+
+```r
+summary(meanAge$weightAge)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   33.40   36.00   36.79   36.83   37.58   41.93
+```
+
+
+```r
+meanAgeTodos <- aggr %>% 
+              select(Unidade, ativo_2024:inativo_19less) %>% 
+              mutate(
+                total = rowSums(.[2:ncol(.)]),
+                
+                weightAge = (ativo_2024 * (20+24)/2 +
+                ativo_2529 * (25+29)/2 + 
+                ativo_3034 * (30+34)/2 +
+                ativo_3539 * (35+39)/2 +
+                ativo_4044 * (40+44)/2 +
+                ativo_4549 * (45+49)/2 +
+                ativo_5054 * (50+54)/2 +
+                ativo_5559 * (55+59)/2 +
+                ativo_6069 * (60+69)/2 +
+                ativo_70plus * (70+100)/2 +
+                ativo_19less * (19)/2 +
+                  
+                inativo_2024 * (20+24)/2 +
+                inativo_2529 * (25+29)/2 + 
+                inativo_3034 * (30+34)/2 +
+                inativo_3539 * (35+39)/2 +
+                inativo_4044 * (40+44)/2 +
+                inativo_4549 * (45+49)/2 +
+                inativo_5054 * (50+54)/2 +
+                inativo_5559 * (55+59)/2 +
+                inativo_6069 * (60+69)/2 +
+                inativo_70plus * (70+100)/2 +
+                inativo_19less * (19)/2
+                  
+                ) / total
+              ) %>% 
+              filter(weightAge <= max(weightAge))
+
+summary(meanAgeTodos$weightAge)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   29.37   34.41   35.73   35.64   37.02   44.47
+```
+
+Mesmo quando incluímos os inativos, as médias e medianas permanecem em torno de 35 anos, indicando-nos que as unidades atendem uma população mais jovem, que provavelmente possui mais contato e conhecimento de uso dos canais digitais.
+
+Em verdade, se formos investigar o percentual de pessoas com mais de 60 anos de idade, percebemos que eles não representam uma parcela relevante para praticamente nenhuma das unidades. 
+
+
+```r
+pop60plus <- aggr %>% 
+                    select(Unidade, ativo_2024:inativo_19less) %>% 
                     mutate(
-                      total = rowSums(., na.rm=T),
-                      perc_less02 = salMin_01to02/total
-                    )
-map_eval3 <- c(
-  maior = max(map_eval3_info$perc_less02),
-  menor = min(map_eval3_info$perc_less02),
-  medio = mean(map_eval3_info$perc_less02),
-  mediano = median(map_eval3_info$perc_less02)
-)
-map_eval3  
-```
-
-    ##     maior     menor     medio   mediano 
-    ## 0.7325217 0.3107443 0.5906037 0.5945266
-
-``` r
-# qual o percentual MÉDIO no público alvo das unidades DE
-# qual o percentual MEDIANO no público alvo das unidades DE
-# qual o percentual MÁXIMO no público alvo das unidades DE 
-# qual o percentual MÍNIMO no público alvo das unidades DE 
-# pessoas com mais de 60 anos de idade
-
-map_eval4_info <- aggr %>% 
-                    select(ativo_2024:inativo_19less) %>% 
-                    mutate(
-                      total = rowSums(., na.rm=T),
+                      total = rowSums(.[2:ncol(.)], na.rm=T),
                       perc_60plus = (ativo_6069+ativo_70plus+inativo_6069+inativo_70plus)/total
                     )
-map_eval4 <- c(
-  maior = max(map_eval4_info$perc_60plus),
-  menor = min(map_eval4_info$perc_60plus),
-  medio = mean(map_eval4_info$perc_60plus),
-  mediano = median(map_eval4_info$perc_60plus)
-)
-map_eval4  
+plu60Chart <- ggplot(pop60plus, aes(x = reorder(Unidade, perc_60plus), y = perc_60plus)) + geom_point()+  theme(axis.text.x = element_blank())
+plu60Chart
 ```
 
-    ##      maior      menor      medio    mediano 
-    ## 0.20089286 0.05516678 0.12951715 0.13018217
+![](trabalho_de_conclusao_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
 
-``` r
-# qual o percentual MÉDIO no público alvo das unidades DE
-# qual o percentual MEDIANO no público alvo das unidades DE
-# qual o percentual MÁXIMO no público alvo das unidades DE 
-# qual o percentual MÍNIMO no público alvo das unidades DE 
-# pessoas com menos de 30 anos de idade
 
-map_eval5_info <- aggr %>% 
-                    select(ativo_2024:inativo_19less) %>% 
+```r
+summary(pop60plus$perc_60plus)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+## 0.05517 0.11543 0.13128 0.13130 0.14802 0.23851
+```
+
+Em termos percentuais, estamos falando de no máximo 23% da população, mas a média e a mediana estão firmes em torno de 13%, portanto, em média, 87% da população encontra-se abaixo dessa faixa etária.
+
+Uma última análise interessante seria em relação à renda. Independente da idade, os principais motivos para que pessoas físicas se dirijam a unidades de atendimento da Receita Federal são o Cadastro de Pessoas Física (CPF) e a DIRPF (Declaração de Imposto de Renda de Pessoa Física). O CPF pode ser gerado, alterado e cancelado em diversos outros órgãos conveniados, incluindo os Correios e o Banco do Brasil. o que diminuir fortemente a necessidade do cidadão se deslocar a um posto de atendimento da RFB. A DIRPF, por outro lado, só pode ser resolvida na própria instituição. 
+
+Assim, podemos argumentar que o público-alvo, neste caso, se restringiria apenas àqueles que tivessem renda mensal acima de 4 salários mínimos, posto que o salário mínimo correspondia a R$ 510,00 em 2010, ano do Censo. Como não temos o quantitativo de pessoas que ganham entre 4 e 5 salários mínimos separado, podemos analisar qual o percentual e o número absoluto da população que ganha acima de 5 salários mínimos, de acordo com o censo de 2010, como uma aproximação do que queremos visualizar. 
+
+
+
+```r
+popIrpf <- aggr %>% 
+                    select(Unidade, salMin_01to02:salMin_semrendimento) %>% 
                     mutate(
-                      total = rowSums(., na.rm=T),
-                      perc_30less = (ativo_19less+ativo_2024+ativo_2529+inativo_19less+inativo_2024+inativo_2529)/total
+                      total = rowSums(.[2:ncol(.)], na.rm=T),
+                      perc_more05 = 1-((salMin_01to02+salMin_semrendimento+salMin_02to05)/total)
                     )
 
-map_eval5 <- c(
-  maior = max(map_eval5_info$perc_30less),
-  menor = min(map_eval5_info$perc_30less),
-  medio = mean(map_eval5_info$perc_30less),
-  mediano = median(map_eval5_info$perc_30less)
-)
-map_eval5  
+popIrpfChart <- ggplot(popIrpf, aes(x = reorder(Unidade, perc_more05), y = perc_more05)) + geom_point()+  theme(axis.text.x = element_blank())
+popIrpfChart
 ```
 
-    ##     maior     menor     medio   mediano 
-    ## 0.5715041 0.3569383 0.4332140 0.4211964
+![](trabalho_de_conclusao_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
 
-``` r
-#escolher uma unidade de atendimento para remover, removê-la, e testar novamente as informações demográficas acima
-#Possibilidade de simulações: qual o impacto nas unidades de atendimento próximas se a unidade de atendimento com menor público alvo for fechada?
+
+```r
+summary(popIrpf$perc_more05)
 ```
 
-### Seção 3.3
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+## 0.04292 0.08581 0.09942 0.11252 0.12014 0.45919
+```
 
-<!-- Buscar livros com definição de políticas públicas e a importância do público alvo -->
-Políticas públicas são respostas intencionais do Estado a um problema
-específico, seja pela ação ou pela omissão. Como tal, são definidas em
-torno de um problema enfrentado por uma seção da população. Para serem
-efetivas, as políticas públicas devem ser construídas de forma a
-maximizar o efeito dos recursos empregados sobre a população-alvo ao
-mesmo tempo em que se minimiza o dispêndio de recursos com aqueles fora
-da população-alvo, de forma a garantir a eficiência da resposta do
-Estado.
+A informação que tiramos é que a população brasileira é bastante carente, e que a parcela que tem mais contato com a Receita Federal é bastante pequena. Enquanto há unidades atendendo a um máximo de 46% do público-alvo, a média e a mediana são em torno de 10%, com um mínimo de 4% do público-alvo. 
+Todas essas análises são aproximações, utilizando dados antigos, do Censo de 2010. Todavia, podem ser refinados, e mesmo como aproximações, já nos servem para algumas lições. 
 
-A definição de qual é a população-alvo de uma política pública, é
-portanto, um dos pontos mais cruciais para garantir sua eficiência,
-eficácia e efetividade. Se essa população não estiver bem definida,
-corre-se o risco de, dentro de um orçamento finito, não haver recursos o
-suficiente para resolver o problema para o qual a política pública foi
-inicialmente desenhada.
+Percebemos que a população atingida por cada uma das unidades da Receita Federal é, no geral, relativamente pobre e relativamente jovem. Disso, tiramos que, por um lado, é uma população que não deveria ter grande dificuldade de aprender a acessar os canais digitais, para os que necessitassem de acesso, o que, pela análise da renda, não é uma parcela tão grande da população. 
 
-A disponibilização de atendimento presencial na Receita Federal do
-Brasil é uma política pública. O serviço serve, primordialmente, para
-garantir que o cidadão terá acesso não só a informações necessárias para
-agir em conformidade com a norma tributária, mas também e eventualmente,
-ter acesso aos meios de efetivar essa conformidade, pela entrega e
-emissão de documentos e formulários assim como na geração e atualização
-de cadastros e outras informações.
+Por outro lado, a Receita Federal poderia desde já, buscar aumentar o foco de suas unidades presenciais. Estudar os pontos fora da curva de população atingida e de duração de viagem poderiam das _insights_ importantes sobre possíveis fechamentos e aberturas de unidades, reorganizando a distribuição no território da população e buscando aumentar a acessibilidade de seus serviços. 
 
-Com o avanço da digitalização dos serviços governamentais, cabe ao
-Estado repensar o público-alvo do atendimento presencial. Como o custo
-do atendimento digital é múltiplas vezes menor que o de manter postos de
-atendimento presenciais, cabe ao Estado equilibrar a garantia de acesso
-com a disponibilidade de recursos, buscando um ponto que maximize as
-duas variáveis conflitantes. Este ponto de equilíbrio muito
-provavelmente estará na oferta do serviço presencial preferencialmente
-àqueles que não podem ou não saber como acessar digitalmente.O primeiro
-passo, portanto, é identificar, hoje, quem são essas pessoas.
+Acima de tudo, nos ensina que há ineficiências que podem ser visualizadas com a mais simples das aproximações analíticas, e que, portanto, existe um potencial significativo no uso de análise de dados para a gestão do atendimento da Receita Federal do Brasil.
 
-Seria interessante que a Receita Federal do Brasil testasse hipóteses em
-cima das relações entre variáveis demográficas como renda, idade, gênero
-e nível educacional e a preferência entre os canais digitais e
-presenciais. Esses estudos podem ser realizados em cima das bases de
-dado internas de acesso ao e-Cac e de atendimentos realizados, estes
-últimos registrados no Sistema Nacional de Apoio ao Gerenciamento de
-Atendimento (SAGA).
 
-<!-- por no Zotero: https://repositorio.enap.gov.br/handle/1/585 -->
-O SAGA, ou Sistema Nacional de Apoio ao Gerenciamento do Atendimento, é
-um sistema eletrônico de coleta de dados e gerenciamento do atendimento
-da Receita Federal, em todas as suas etapas. A partir de sua
-configuração, torna-se possível ajustar as disponibilidades de material
-e recursos humanos às demandas quantitativas e qualitativas por parte
-dos contribuintes, de modo a diminuir os tempos de espera e de
-atendimento e obter um alto grau de conclusividade. Como tal, é o
-sistema que melhor permitiria à instituição conhecer o perfil
-demográfico de seu público-alvo, e, cruzando com dados do IBGE e de
-outras fontes, medir o nível de acesso de cada setor da população aos
-serviços presenciais da secretaria.
+## 3.3 Atendimento tributário como política pública
 
-Para avaliarmos esse nível de acesso, poderia-se expandir o processo de
-mensuração do acesso realizado nesse artigo. Uma primeira opção seria
-realizar comparação mais paciente entre o uso de mapas de grade e mapas
-de rede, especialmente nas regiões do país com menor acesso à
-infraestrutura de transporte. A comparação forneceria maior
-flexibilidade ao modelo, buscando-se a melhor simulação possível.
+Políticas públicas são respostas intencionais do Estado a um problema específico, seja pela ação ou pela omissão. Como tal, são definidas em torno de um problema enfrentado por uma seção da população. Para serem efetivas, as políticas públicas devem ser construídas de forma a maximizar o efeito dos recursos empregados sobre a população-alvo ao mesmo tempo em que se minimiza o dispêndio de recursos com aqueles fora da população-alvo, de forma a garantir a eficiência da resposta do Estado. 
 
-Segunda opção seria, em vez de utilizar apenas os dados do
-OpenStreetMap, adicionar mais bases de dados de infraestrutura e mais
-modais de transporte, como o hidroviário no norte do país. Aumentaria-se
-assim o realismo do modelo geográfico, possibilitando a construção de
-estimativas mais úteis.
+A definição de qual é a população-alvo de uma política pública, é portanto, um dos pontos mais cruciais para garantir sua eficiência, eficácia e efetividade. Se essa população não estiver bem definida, corre-se o risco de, dentro de um orçamento finito, não haver recursos o suficiente para resolver o problema para o qual a política pública foi inicialmente desenhada.
 
-Por fim, devemos entender que isso é um processo, não um projeto, ou
-seja, ele é contínuo no tempo. À medida que os canais de atendimento
-presencial e físico vão se modificando, e a população também se
-modifica, novos testes devem ser realizados continuamente, seguindo o
-tradicional ciclo de planejamento, execução, controle e avaliação.
-Métricas devem ser estabelecidas e melhorias implementadas, buscando
-fidedignidade no modelo.
+A disponibilização de atendimento presencial na Receita Federal do Brasil é uma política pública. O serviço serve, primordialmente, para garantir que o cidadão terá acesso não só a informações necessárias para agir em conformidade com a norma tributária, mas também e eventualmente, ter acesso aos meios de efetivar essa conformidade, pela entrega e emissão de documentos e formulários assim como na geração e atualização de cadastros e outras informações.
 
-Acreditamos que, dessa forma, estará estabelecido um processo de
-planejamento do atendimento presencial com foco no cidadão, otimizando o
-gasto público mas sem deixar de lado a garantia do direito de acesso
-desse ao serviço público.
+Com o avanço da digitalização dos serviços governamentais, cabe ao Estado repensar o público-alvo do atendimento presencial. Como o custo do atendimento digital é múltiplas vezes menor que o de manter postos de atendimento presenciais, cabe ao Estado equilibrar a garantia de acesso com a disponibilidade de recursos, buscando um ponto que maximize as duas variáveis conflitantes. Este ponto de equilíbrio muito provavelmente estará na oferta do serviço presencial preferencialmente àqueles que não podem ou não saber como acessar digitalmente.O primeiro passo, portanto, é identificar, hoje, quem são essas pessoas. 
 
-Conclusão
----------
+Seria interessante que a Receita Federal do Brasil testasse hipóteses em cima das relações entre variáveis demográficas como renda, idade, gênero e nível educacional e a preferência entre os canais digitais e presenciais. Esses estudos podem ser realizados em cima das bases de dado internas de acesso ao e-Cac e de atendimentos realizados, estes últimos registrados no Sistema Nacional de Apoio ao Gerenciamento de Atendimento (SAGA)[@ministerio_da_economia_sistema_2000].
 
-Referências
------------
+O SAGA, ou Sistema Nacional de Apoio ao Gerenciamento do Atendimento, é um sistema eletrônico de coleta de dados e gerenciamento do atendimento da Receita Federal, em todas as suas etapas. Como tal, é o sistema que melhor permitiria à instituição conhecer o perfil demográfico de seu  público-alvo, e, cruzando com dados do IBGE e de outras fontes, medir o nível de acesso de cada setor da população aos serviços presenciais da secretaria. 
 
-Contas da União, Tribunal de. 2017. “Auditoria Operacional Realizada Na
-Secretaria Da Receita Federal Do Brasil.”
+Para avaliarmos esse nível de acesso, poderia-se expandir o processo de mensuração do acesso realizado nesse artigo. Uma primeira opção seria realizar comparação mais paciente entre o uso de mapas de grade e mapas de rede, especialmente nas regiões do país com menor acesso à infraestrutura de transporte. A comparação forneceria maior flexibilidade ao modelo, buscando-se a melhor simulação possível.
 
-Delamater, Paul, Joseph Messina, Ashton M Shortridge, and Sue C Grady.
-2012. “Measuring Geographic Access to Health Care: Raster and
-Network-Based Methods.” *International Journal of Health Geographics* 11
-(May): 15. <https://doi.org/10.1186/1476-072X-11-15>.
+Segunda opção seria, em vez de utilizar apenas os dados do OpenStreetMap, adicionar mais bases de dados de infraestrutura e mais modais de transporte, como o hidroviário no norte do país. Aumentaria-se assim o realismo do modelo geográfico, possibilitando a construção de estimativas mais úteis.
 
-Etten, Jacob van. 2017. “R Package Gdistance: Distances and Routes on
-Geographical Grids.” *Journal of Statistical Software* 76 (13).
-<https://www.researchgate.net/publication/305656946_R_Package_gdistance_Distances_and_Routes_on_Geographical_Grids>.
+Por fim, devemos entender que isso é um processo, não um projeto, ou seja, ele é contínuo no tempo. À medida que os canais de atendimento presencial e físico vão se modificando, e a população também se modifica, novos testes devem ser realizados continuamente, seguindo o tradicional ciclo de planejamento, execução, controle e avaliação. Métricas devem ser estabelecidas e melhorias implementadas, buscando fidedignidade no modelo.
 
-J. Weiss, D, Andy Nelson, Harry Gibson, W Temperley, Stephen Peedel, A
-Lieber, M Hancher, et al. 2018. “A Global Map of Travel Time to Cities
-to Assess Inequalities in Accessibility in 2015.” *Nature* 553 (7688).
-<https://www.researchgate.net/publication/322368535_A_global_map_of_travel_time_to_cities_to_assess_inequalities_in_accessibility_in_2015?_sg=Im7RuSiWTkiNinanqup8V53CG0MB12I6dJ_p_Dvci_6XlpcaXrK517NFRuTIudP0Temj5nV3IkWmaog>.
+Acreditamos que, dessa forma, estará estabelecido um processo de planejamento do atendimento presencial com foco no cidadão, otimizando o gasto público mas sem deixar de lado a garantia do direito de acesso desse ao serviço público.
 
-Noor, Abdisalan, Simon Iain Hay, D Zurovac, S.A. Ochola, and Robert W
-Snow. 2003. “Defining Equity in Physical Access to Clinical Services
-Using Geographical Information Systems as Part of Malaria Planning and
-Monitoring in Kenya.” *Tropical Medicine & International Health* 8 (10):
-917–26.
-<https://www.researchgate.net/publication/9075228_Defining_Equity_in_Physical_Access_to_Clinical_Services_Using_Geographical_Information_Systems_as_Part_of_Malaria_Planning_and_Monitoring_in_Kenya>.
+# Conclusão
 
-Thaddeus, Sereen, and Deborah Maine. 1994. “Too Far to Walk: Maternal
-Mortality in Context.” *Social Science & Medicine* 38 (8): 1091–1110.
-<https://www.researchgate.net/publication/46505614_Too_Far_to_Walk_Maternal_Mortality_in_Context>.
+Neste artigo, sugeririmos um processo baseado em dados para distribuir as unidades de atendimento presencial da Receita Federal do Brasil. Da análise que realizamos sobre o público-alvo teórico das unidades atuais, percebemos que a quantidade de pessoas teoricamente atingidas, quando selecionadas por renda e/ou idade, é uma parcela relativamente pequena da população. Ademais, outliers na distribuição do total de atingidos e na distância em tempo de viagem nos sugere que há ineficiências a serem sanadas, por um lado populações desasistidas, longe demais das unidades presentes, por outro lado, unidades que atingem população ínfima, de necessidade duvidosa. 
+
+Várias são as avenidas para aplicarmos os modelos deste artigo na prática. Primeiro, poderíamos melhorarm os dados geográficos atuais, inserindo informações de outros meios de transporte como o hidroviário, largamente utilizado na região Norte. Segundo, poderíamos atualizar os dados demográficos, não só com os resultados do iminente Censo 2020, mas também com outras fontes de informações. Terceiro, poderíamos cruzar essas informações com dados reais dos atendimentos realizados, permitindo-nos estimar os fatores mais relevantes para a escolha da unidade de atendimento por um contribuinte. 
+
+Com tudo isso, afirmamos ter demonstrado a plena viabilidade de se tomar decisões quanto a estratégia de atendimento da Receita Federal do Brasil de forma imparcial, objetiva, e com o foco no melhor atendimento ao cidadão que efetivamente utiliza seus serviços. 
+
+## Referências

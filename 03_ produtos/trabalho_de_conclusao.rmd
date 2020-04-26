@@ -6,6 +6,7 @@ output:
   prettydoc::html_pretty:
     theme: cayman
     highlight: github
+    keep_md: yes
 ---
 
 
@@ -28,10 +29,10 @@ theme_set(theme_bw())
             #mutate(ibge_unid = ifelse(is.na(ibge_area), ibge_municipio,  ibge_area)) %>% 
             #distinct()
 
-servicos <- readRDS("02_serviços.rds")
-viagens <- readRDS('01_viagens.rds')
-demog <- readRDS('03_demografia.rds')
-unids <- readRDS('04_unidadesRFB.rds') %>% 
+servicos <- readRDS("./dados/02_serviços.rds")
+viagens <- readRDS('./dados/01_viagens_2.rds')
+demog <- readRDS('./dados/03_demografia.rds')
+unids <- readRDS('./dados/04_unidadesRFB.rds') %>% 
             mutate(ibge_unid = ifelse(is.na(ibge_area), ibge_municipio,  ibge_area)) %>% 
             distinct()
 

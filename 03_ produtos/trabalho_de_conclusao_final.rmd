@@ -382,7 +382,6 @@ aggr <- map_info %>%
           ) %>% 
         ungroup()
 
-
 aggr_map <- map_info %>% 
                   select(ibge_destino, Estado, geometry) %>% 
                   #filter(Estado %in% c("MA")) %>% 
@@ -391,7 +390,6 @@ aggr_map <- map_info %>%
                   ungroup() %>% 
                   left_join(aggr, by=c("ibge_destino"))
 
-saveRDS(aggr_map, "aggr_map.rds")
 plot(aggr_map %>% select(Unidade, geometry))
 ```
 
@@ -423,7 +421,7 @@ popUnid <- aggr %>%
 
 popUnidades <- map_info %>% 
                   select(ibge_destino, Estado, geometry) %>% 
-                  #filter(Estado %in% c("MA")) %>% 
+                  filter(Estado %in% c("MA")) %>% 
                   group_by(ibge_destino) %>% 
                   summarise() %>% 
                   ungroup() %>% 
@@ -481,7 +479,7 @@ meanAgeChart <- tm_shape(meanAge) + tm_fill(col= 'weightAge', palette = "BuGn", 
 meanAgeChart
 ```
 
-Os dados das unidades de atendimento apontam para uma população economicamente ativa relativamente jovem, com idade média de `r summary(meanAge$weightAge)[Mean]`. Contudo, não podemos nos esquecer que estes dados são do censo de 2010, e o próximo censo, de 2020, pode já apontar para uma população mais envelhecida. 
+Os dados das unidades de atendimento apontam para uma população economicamente ativa relativamente jovem, com idade média de `r summary(meanAg$weightAge)['Mean']`. Contudo, não podemos nos esquecer que estes dados são do censo de 2010, e o próximo censo, de 2020, pode já apontar para uma população mais envelhecida. 
 
 ```{r}
 meanAgeTodos <- aggr %>% 
@@ -518,7 +516,7 @@ meanAgeTodos <- aggr %>%
               filter(weightAge <= max(weightAge))
 ```
 
-Mesmo quando incluímos os inativos, as médias e medianas permanecem em torno de 35 anos (Média de `r summary(meanAgeTodos$weightAge)[Mean]` e Mediana de `r summary(meanAgeTodos$weightAge)[Median]`), indicando-nos que as unidades atendem uma população mais jovem, que provavelmente possui mais contato e conhecimento de uso dos canais digitais.
+Mesmo quando incluímos os inativos, as médias e medianas permanecem em torno de 35 anos (Média de `r summary(meanAgeTodos$weightAge)['Mean']` e Mediana de `r summary(meanAgeTodos$weightAge)['Median']`), indicando-nos que as unidades atendem uma população mais jovem, que provavelmente possui mais contato e conhecimento de uso dos canais digitais.
 
 Em verdade, se formos investigar o percentual de pessoas com mais de 60 anos de idade, percebemos que eles não representam uma parcela relevante para praticamente nenhuma das unidades. 
 
@@ -544,7 +542,7 @@ plu60Chart
 
 ```
 
-Em termos percentuais, estamos falando de no máximo 20% da população (`r summary(pop60plus$perc_60plus)[Máx.]`), mas a média e a mediana estão firmes em torno de 13% (Média de `r summary(pop60plus$perc_60plus)[Mean]` e Mediana de `r summary(pop60plus$perc_60plus)[Median]`), ou seja, em média, 87% da população encontra-se abaixo dessa faixa etária.
+Em termos percentuais, estamos falando de no máximo 20% da população (`r summary(pop60mais$perc_60plus)['Máx.']`), mas a média e a mediana estão firmes em torno de 13% (Média de `r summary(pop60mais$perc_60plus)['Mean']` e Mediana de `r summary(pop60mais$perc_60plus)['Median']`), ou seja, em média, 87% da população encontra-se abaixo dessa faixa etária.
 
 #### 3.2.1. Público-alvo ideal: população com renda tributável como pessoa física
 
@@ -573,10 +571,11 @@ popIrpf <- map_info %>%
 #popIrpfChart <- ggplot(popIrpf, aes(x = reorder(Unidade, perc_more05), y = perc_more05)) + geom_point()+  theme(axis.text.x = element_blank())
 popIrpfChart <- tm_shape(popIrpf) + tm_fill(col= 'perc_more05', palette = "BuGn", style = "jenks")
 popIrpfChart
+ 
 
 ```
 
-A informação que tiramos é que a população brasileira é bastante carente, e que a parcela que tem mais contato com a Receita Federal é bastante pequena. Enquanto há unidades atendendo a um máximo de 46% do público-alvo, a média e a mediana são em torno de 10% (Média de `r summary(popIrpf$perc_more05)[Mean]` e Mediana de `r summary(popIrpf$perc_more05)[Median]`), com um mínimo de `r summary(popIrpf$perc_more05)[Min.]` do público-alvo. 
+A informação que tiramos é que a população brasileira é bastante carente, e que a parcela que tem mais contato com a Receita Federal é bastante pequena. Enquanto há unidades atendendo a um máximo de 46% do público-alvo, a média e a mediana são em torno de 10% (Média de `r summary(popIr$perc_more05)['Mean']` e Mediana de `r summary(popIr$perc_more05)['Median']`), com um mínimo de `r summary(popIr$perc_more05)['Min.']` do público-alvo. 
 
 Todas essas análises são aproximações, utilizando dados antigos, do Censo de 2010. Todavia, podem ser refinados, e mesmo como aproximações, já nos servem para algumas lições. Percebemos que a população atingida por cada uma das unidades da Receita Federal é, no geral, relativamente pobre e relativamente jovem. Disso, tiramos que, por um lado, é uma população que não deveria ter grande dificuldade de aprender a acessar os canais digitais, para os que necessitassem de acesso, o que, pela análise da renda, não é uma parcela tão grande da população. 
 
@@ -619,17 +618,5 @@ Neste artigo, sugeririmos um processo baseado em dados para distribuir as unidad
 Várias são as avenidas para aplicarmos os modelos deste artigo na prática. Primeiro, poderíamos melhorarm os dados geográficos atuais, inserindo informações de outros meios de transporte como o hidroviário, largamente utilizado na região Norte. Segundo, poderíamos atualizar os dados demográficos, não só com os resultados do iminente Censo 2020, mas também com outras fontes de informações. Terceiro, poderíamos cruzar essas informações com dados reais dos atendimentos realizados, permitindo-nos estimar os fatores mais relevantes para a escolha da unidade de atendimento por um contribuinte. 
 
 Com tudo isso, afirmamos ter demonstrado a plena viabilidade de se tomar decisões quanto a estratégia de atendimento da Receita Federal do Brasil de forma imparcial, objetiva, e com o foco no melhor atendimento ao cidadão que efetivamente utiliza seus serviços. 
-
-<!-- conferir datas faltandos nas referências no Zotero:
-
-Geobr
-Geofabrik
-Plataforma do Google maps
-Lista de Serviços
-Unidades de Atendimento
-What is a Container
-Login Único Serviços GovBr
-
--->
 
 ## Referências
